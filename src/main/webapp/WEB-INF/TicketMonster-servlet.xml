@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- the application context definition for the Spring DispatcherServlet of the TicketMonster application-->
+    
+    <bean name="/home.htm" class="org.jboss.spring.ticketmonster.mvc.HomeController">
+        <property name="productManager" ref="productManager"/>
+    </bean>
+    
+    <bean name="/event/{id}.htm" class="org.jboss.spring.ticketmonster.mvc.ViewEventController">
+    	<property name="eventDetail" ref="eventDetail"/>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
+        <property name="prefix" value="/WEB-INF/jsp/"></property>
+        <property name="suffix" value=".jsp"></property>        
+    </bean>
+
+</beans>
