@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
  *
  */
 
-@Controller
-@RequestMapping("/events")
+/*@Controller
+@RequestMapping("/events")*/
 public class ViewEventController {
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	@Autowired
+	//@Autowired
 	private EventDetailDaoImpl eventDetailDao;
 	
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	//@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public @ModelAttribute("eventDetail")
 	EventDetail getEventDetails(@PathVariable("id") Long id) {
 		EventDetail eventDetail = eventDetailDao.getEventDetail(id);

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+	<persistence-unit name="ticketmonsterPU" transaction-type="jta">
+		<jta-data-source>java:/TicketMonsterDS</jta-data-source>
+		<properties>
+			<property name="jboss.entity.manager.jndi.name" value="java:/TicketMonster/entityManager"/>
+        	<property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+			<property name="hibernate.show_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>
