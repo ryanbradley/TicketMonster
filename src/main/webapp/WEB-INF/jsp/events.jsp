@@ -11,8 +11,10 @@
 		
 		<h3>Upcoming Events</h3>
 		<c:forEach items="${events}" var="event">
-		<c:out value="${event.name}"/><br><br><i>
-		<c:out value="${event.description.content}"/></i><br><br>
+		<c:out value="${event.name}"/><br><br>
+        <p/>
+		${event.description.active.content}
+        <p/>
 		</c:forEach>
 	</body>
 
