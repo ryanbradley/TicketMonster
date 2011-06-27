@@ -8,12 +8,18 @@
 		<p><fmt:message key="greeting"></fmt:message></p>
 		
 		<h3>Upcoming Events</h3>
+		<table border="0">
 		<c:forEach items="${events}" var="event">
-		<c:out value="${event.name}"/><br><br>
+		<tr>
+		<td>		
+		<c:out value=""/><br>
         <p/>
 		${event.description.active.content}
         <p/>
+   		</td>
+        </tr>
 		</c:forEach>
+		</table>
 	</body>
 
 </html>

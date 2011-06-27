@@ -15,6 +15,8 @@
 	
 	<context:component-scan base-package="org.jboss.spring.ticketmonster.domain"/>
 	
+	<bean id="eventDetailDao" class="org.jboss.spring.ticketmonster.action.EventDetailDaoImpl"/>
+	
 	<jee:jndi-lookup jndi-name="java:/TicketMonsterDS" id="dataSource" expected-type="javax.sql.DataSource" />
 	<jee:jndi-lookup jndi-name="java:/TicketMonster/entityManager" id="entityManager" expected-type="javax.persistence.EntityManager" />
 	
