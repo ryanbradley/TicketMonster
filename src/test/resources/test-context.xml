@@ -27,8 +27,7 @@
 	</bean>
 
 	<jdbc:embedded-database id="dataSource">
-		<jdbc:script location="classpath:create_products.sql"/>
-		<jdbc:script location="classpath:load_data.sql"/>
+		<jdbc:script location="classpath:import.sql"/>
 	</jdbc:embedded-database>
     
 </beans>

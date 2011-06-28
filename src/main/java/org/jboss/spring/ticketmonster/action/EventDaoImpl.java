@@ -53,7 +53,7 @@ public class EventDaoImpl implements EventDao {
 		List<Event> events = this.getEvents();
 		
 		for(Event e : events) {
-			if((e.getStartDate().before(startDate)) || (e.getEndDate().after(endDate)))
+			if(!((e.getStartDate().after(startDate)) && (e.getEndDate().before(endDate))))
 				events.remove(e);
 		}
 		return events;
