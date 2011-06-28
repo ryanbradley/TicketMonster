@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
+	<persistence-unit name="tutorialPU" transaction-type="RESOURCE_LOCAL">
+		<class>org.jboss.spring.ticketmonster.domain.Event</class>
+		<class>org.jboss.spring.ticketmonster.domain.Venue</class>
+		<class>org.jboss.spring.ticketmonster.domain.Show</class>
+		<class>org.jboss.spring.ticketmonster.domain.Document</class>
+		<class>org.jboss.spring.ticketmonster.domain.Allocation</class>
+		<class>org.jboss.spring.ticketmonster.domain.EventCategory</class>
+		<class>org.jboss.spring.ticketmonster.domain.EventDetail</class>
+		<class>org.jboss.spring.ticketmonster.domain.PriceCategory</class>
+		<class>org.jboss.spring.ticketmonster.domain.Revision</class>
+		<class>org.jboss.spring.ticketmonster.domain.Section</class>
+		<class>org.jboss.spring.ticketmonster.domain.SectionRow</class>
+		<class>org.jboss.spring.ticketmonster.domain.TicketCategory</class>
+		<class>org.jboss.spring.ticketmonster.domain.User</class>
+		<class>org.jboss.spring.ticketmonster.domain.VenueLayout</class>																										
+	</persistence-unit>
+</persistence>
