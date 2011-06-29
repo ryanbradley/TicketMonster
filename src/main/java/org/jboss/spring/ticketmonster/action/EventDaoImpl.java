@@ -50,11 +50,17 @@ public class EventDaoImpl implements EventDao {
 	}
 
 	public List<Event> searchDate(Date startDate, Date endDate) {
-		List<Event> events = this.getEvents();
+		List<Event> allEvents = this.getEvents();
+		List<Event> events = new ArrayList<Event>();
 		
-		for(Event e : events) {
-			if(!((e.getStartDate().after(startDate)) && (e.getEndDate().before(endDate))))
-				events.remove(e);
+		if(startDate.after(endDate))
+			return events;
+		
+		for(Event e : allEvents) {
+			if(e.getStartDate().after(startDate) || e.getStartDate().equals(startDate))
+				events.add(e);
+			else if(e.getEndDate().before(endDate) || e.getEndDate().equals(endDate))
+				events.add(e);
 		}
 		return events;
 	}

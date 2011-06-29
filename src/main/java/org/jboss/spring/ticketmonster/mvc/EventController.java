@@ -42,7 +42,7 @@ public class EventController {
 		logger.info("Searching URL for any search parameters, such as category, date, major");
 		
 		List<Event> events = null;
-		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		String majorString = request.getParameter("major");
 		String fromDate = request.getParameter("from");
@@ -51,19 +51,15 @@ public class EventController {
 		
 		if(fromDate != null && endDate != null) {
 			logger.info("Found date parameters, from: " + fromDate + " and until: " + endDate + ".");
-			Date from = new Date(), until = new Date();
+			Date from = null, until = null;
 			
 			try {
 				from = dateFormat.parse(fromDate);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			try {
 				until = dateFormat.parse(endDate);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			
+		
 			events = eventDao.searchDate(from, until);
 			logger.info("Returning all events occurring between " + fromDate + " and " + endDate + ".");			
 		}

@@ -3,6 +3,7 @@ package org.jboss.spring.ticketmonster.test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -61,17 +62,17 @@ public class EventDaoTest {
 		List<Event> events = eventDao.searchCategory((long)1);
 		Assert.assertEquals("Rock concert of the decade", events.get(0).getName());
 		events = eventDao.searchCategory((long)2);
-		Assert.assertEquals("Shane's Sock Puppets", events.get(1).getName());
+		Assert.assertEquals("Shane's Sock Puppets", events.get(0).getName());
 		return;
 	}
 
 	@Transactional
 	@Test
 	public void testSearchDateSuccess() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		List<Event> events = new ArrayList<Event>();
 		try {
-			events = eventDao.searchDate(formatter.parse("01-01-2011"),formatter.parse("01-02-2011"));
+			events = eventDao.searchDate(formatter.parse("2011-01-01"),formatter.parse("2011-02-02"));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -83,14 +84,41 @@ public class EventDaoTest {
 	
 	@Transactional
 	@Test
-	public void testSearchDateFail() {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-		List<Event> events = new ArrayList<Event>();
+	public void testSearchDate() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		List<Event> events = eventDao.getEvents();
+		
+		Date start = null, end = null;
+		
 		try {
-			events = eventDao.searchDate(formatter.parse("01-12-2010"),formatter.parse("01-03-2011"));
+			start = formatter.parse("2011-01-01");
+			end = formatter.parse("2011-02-01");
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+		}
+
+		Event e = events.get(1);
+		Assert.assertEquals(start, e.getStartDate());
+		Assert.assertEquals(end, e.getEndDate());
+		Assert.assertEquals(true, start.before(end));
+		Assert.assertEquals(true, end.after(start));
+	}
+	
+	@Transactional
+	@Test
+	public void testSearchDateFail() {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		List<Event> events = new ArrayList<Event>();
+		Date start = null, end = null;
+		
+		try {
+			start = formatter.parse("2011-01-01");
+			end = formatter.parse("2011-01-31");
+			events = eventDao.searchDate(start,end);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
 		Assert.assertEquals(true, events.isEmpty());
 		return;
 	}
@@ -101,8 +129,8 @@ public class EventDaoTest {
 		Event event = eventDao.getEvent((long)1);
 		List<Venue> venues = eventDao.getVenues(event);
 		Assert.assertEquals(2, venues.size());
-		Assert.assertEquals("City Central Concert Hall", venues.get(0));
-		Assert.assertEquals("Sydney Opera House", venues.get(1));
+		Assert.assertEquals("City Central Concert Hall", venues.get(0).getName());
+		Assert.assertEquals("Sydney Opera House", venues.get(1).getName());
 		return;
 	}
 }
