@@ -7,5 +7,17 @@
 	<definition name="venues" extends="standard">
         <put-attribute name="body" value="/WEB-INF/views/venues.jsp"/>
     </definition>
+    
+    <definition name="events" extends="standard">
+    	<put-attribute name="body" value="/WEB-INF/views/events.jsp"/>
+    </definition>
+    
+    <definition name="eventDetails" extends="standard">
+    	<put-attribute name="body" value="/WEB-INF/views/eventDetails.jsp"/>
+    </definition>
+
+    <definition name="venueDetails" extends="standard">
+    	<put-attribute name="body" value="/WEB-INF/views/venueDetails.jsp"/>
+    </definition>
 
 </tiles-definitions>

@@ -1,4 +1,4 @@
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ include file="/WEB-INF/views/include.jsp" %>
 <div class="section">
     <div class="sectionHeader"><fmt:message key="venues.heading"/></div>
     <div class="sectionContent">
@@ -11,7 +11,7 @@
                                 <c:out value="${venue.name}"/><br>
                                 <c:out value="${venue.address}"/><br>
                                 ${venue.description.active.content}<br><br>
-
+                                
                         <p/>
                     </td>
                 </tr>
