@@ -2,6 +2,7 @@
 
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
 	<persistence-unit name="tutorialPU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<class>org.jboss.spring.ticketmonster.domain.Event</class>
 		<class>org.jboss.spring.ticketmonster.domain.Venue</class>
 		<class>org.jboss.spring.ticketmonster.domain.Show</class>
@@ -15,6 +16,9 @@
 		<class>org.jboss.spring.ticketmonster.domain.SectionRow</class>
 		<class>org.jboss.spring.ticketmonster.domain.TicketCategory</class>
 		<class>org.jboss.spring.ticketmonster.domain.User</class>
-		<class>org.jboss.spring.ticketmonster.domain.VenueLayout</class>																										
+		<class>org.jboss.spring.ticketmonster.domain.VenueLayout</class>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+        </properties>
 	</persistence-unit>
 </persistence>

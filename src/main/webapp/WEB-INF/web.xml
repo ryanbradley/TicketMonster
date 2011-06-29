@@ -10,7 +10,8 @@
   <display-name>Ticket Monster</display-name>
   	<context-param>
   		<param-name>contextConfigLocation</param-name>
-  		<param-value>classpath:/META-INF/spring/ticketmonster-business-context.xml,/WEB-INF/dataSource.xml</param-value>
+  		<param-value>classpath:/META-INF/spring/ticketmonster-business-context.xml,
+              classpath:/META-INF/spring/infrastructure.xml</param-value>
   	</context-param>
   	
   <listener>
