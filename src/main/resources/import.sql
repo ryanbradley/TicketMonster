@@ -355,7 +355,7 @@ insert into eventcategory (id, description) values (3, 'Musical');
 insert into eventcategory (id, description) values (4, 'Sporting');
 insert into eventcategory (id, description) values (5, 'Comedy');
 
-insert into event (id, name, document_id, startDate, endDate, category_id, major) values (1, 'Rock concert of the decade', 100, '2011-01-01', '2011-02-01', 1, true);
+insert into event (id, name, document_id, startDate, endDate, category_id, major) values (1, 'Rock Concert of the Decade', 100, '2011-01-01', '2011-02-01', 1, true);
 insert into event (id, name, document_id, startDate, endDate, category_id, major) values (2, 'Shane''s Sock Puppets', 101, '2011-01-01', '2011-02-01', 2, true);
 
 insert into show (id, event_id, venue_id, showdate, layout_id) values (1, 1, 1, '2011-01-01 19:00', 1);

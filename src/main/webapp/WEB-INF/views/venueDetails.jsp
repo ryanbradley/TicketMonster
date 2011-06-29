@@ -9,7 +9,7 @@
 				<c:forEach items="${events}" var="event">
 					<tr>
 						<td>
-							<c:out value=""/>
+							<a href="<c:url value="../events/${event.id}.htm"/>">${event.name}</a>
 							<p>${event.description.active.content}<p/>
 						</td>
 					</tr>

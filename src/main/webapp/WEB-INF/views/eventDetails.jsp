@@ -9,7 +9,7 @@
 					<c:forEach items="${venues}" var="venue">
 						<tr>
 							<td>
-								<c:out value="${venue.name}"/>
+								<a href="<c:url value="../venues/${venue.id}.htm"/>">${venue.name}</a>
 							</td>
 						</tr>
 					</c:forEach>
