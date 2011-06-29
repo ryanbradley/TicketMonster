@@ -19,7 +19,7 @@
 	<bean id="venueDao" class="org.jboss.spring.ticketmonster.action.VenueDaoImpl"/>
 	
 	<jee:jndi-lookup jndi-name="java:/TicketMonster/entityManager" id="entityManager" expected-type="javax.persistence.EntityManager" />
-	
+
 	<tx:jta-transaction-manager />
 	<tx:annotation-driven />
 

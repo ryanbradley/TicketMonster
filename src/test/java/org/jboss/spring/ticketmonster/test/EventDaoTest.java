@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
-"classpath:META-INF/spring/ticketmonster-business-context.mxl"})
+"classpath:META-INF/spring/ticketmonster-business-context.xml"})
 @TransactionConfiguration(defaultRollback=true)
 public class EventDaoTest {
 	
