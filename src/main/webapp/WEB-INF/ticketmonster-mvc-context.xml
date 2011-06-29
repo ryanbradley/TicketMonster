@@ -14,10 +14,27 @@
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/"/>
 		<property name="suffix" value=".jsp"/>
+        <property name="order" value="1"/>
 	</bean>
 
     <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="basename" value="messages"/>
     </bean>
+    
+    <!-- Maps view names to Tiles Definitions with support for partial re-rendering -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.tiles2.TilesViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
+        <property name="order" value="0"/>
+	</bean>
+		
+	<!-- Initializes the Apache Tiles CompositeView system -->
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<property name="definitions">
+            <list>
+                <value>/WEB-INF/**/layouts.xml</value>
+                <value>/WEB-INF/**/views.xml</value>
+            </list>
+        </property>
+	</bean>
 
 </beans>

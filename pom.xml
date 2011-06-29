@@ -17,13 +17,14 @@
         <hibernate.entitymanager.version>3.4.0.GA</hibernate.entitymanager.version>
         <spring.version>3.0.5.RELEASE</spring.version>
         <cglib.nodep.version>2.2</cglib.nodep.version>
-        <jstl.impl.version>1.1.2</jstl.impl.version>
+        <standard.taglib.version>1.1.2</standard.taglib.version>
         <slf4j.version>1.4.2</slf4j.version>
         <commons.dbcp.version>1.2.2</commons.dbcp.version>
         <commons.logging.version>1.1.1</commons.logging.version>
         <commons.pool.version>1.3</commons.pool.version>
         <hsqldb.version>1.8.0.10</hsqldb.version>
         <jboss.servlet.api.version>1.0.0.Final</jboss.servlet.api.version>
+        <tiles.version>2.1.3</tiles.version>
     </properties>
 
     <dependencies>
@@ -166,8 +167,20 @@
         <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
-            <version>${jstl.impl.version}</version>
+            <version>${standard.taglib.version}</version>
         </dependency>
+        <dependency>
+			<groupId>org.apache.tiles</groupId>
+			<artifactId>tiles-jsp</artifactId>
+			<version>${tiles.version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of SLF4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging-api</artifactId>
+				 </exclusion>
+			</exclusions>
+		</dependency>
     </dependencies>
     <build>
         <finalName>ticketmonster</finalName>

@@ -1,0 +1,171 @@
+/* CSS Reset styles */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+:focus {
+	outline: 0;
+}
+
+body {
+	line-height: 1;
+	color: black;
+  background: url(background.png) top left repeat-x;
+  margin: 0px;
+  font: 80% Arial,Helvetica,sans-serif;
+}
+
+ol, ul {
+	list-style: none;
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+caption, th, td {
+	text-align: left;
+	font-weight: normal;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: "";
+}
+
+blockquote, q {
+	quotes: "" "";
+}
+
+/* Application styles */
+
+div#header {
+  width: 100%;
+  height: 40px;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+  padding: 8px 4px 4px 8px;
+}
+
+div#menu {
+  position: absolute;
+  top: 80px;
+  left: 12px;
+  width: 160px;
+  border: 1px solid #000000;
+  background: #ffffff;
+  padding: 8px;
+  height: 280px;
+}
+
+a, a:visited, a:hover {
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+a, a:visited {
+  color: #555555;  
+}
+
+a:hover {
+  color: #aaaaaa;
+}
+
+div#content {
+  margin: 10px 20px 20px 200px;
+  border: 1px solid #000000;
+  background-color: #ffffff;
+  padding: 8px;
+  min-height: 600px;
+}
+
+div.heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+table.grid {
+  border: 1px solid black;  
+  width: 98%;
+}
+
+table.grid td {
+  padding: 2px;
+}
+
+th.header {
+  background: url(table_header.png) top left repeat-x;
+  color: #ffffff;
+  padding: 3px 3px 3px 3px;
+  font-weight: bold;
+}
+
+td.footer {
+  color: #333333;
+  font-weight: bold;
+  padding: 3px 3px 3px 3px; 
+  border-top: 1px solid #000000;
+}
+
+tr.odd {
+  background-color: #ffffff;
+}
+
+tr.even {
+  background-color: #e9e9e9;
+}
+
+/** form styles */
+
+/* General form styles */
+
+div.formRow {
+  padding: 3px 4px 3px 2px;  
+  clear: both;
+}
+
+div.formRow label {
+  float: left;
+  width: 120px; 
+  padding: 2px 2px 2px 2px;
+}
+
+div.formRow input[type='text'] {
+  width: 240px;
+}
+
+div.formRow input[type='password'] {
+  width: 120px;
+}
+
+div.validationError {
+  margin-left: 120px;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+.errorMessage {
+  font-weight: bold;
+  color: #ff0000; 
+}
