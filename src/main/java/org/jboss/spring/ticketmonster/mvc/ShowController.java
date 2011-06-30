@@ -1,5 +1,7 @@
 package org.jboss.spring.ticketmonster.mvc;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Event;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.Venue;
@@ -20,6 +22,8 @@ import java.util.List;
 @Controller
 public class ShowController {
 
+    protected final Log logger = LogFactory.getLog(getClass());
+
     @Autowired
     private EventDao eventDao;
 
@@ -28,6 +32,8 @@ public class ShowController {
 
     @RequestMapping(value = "/shows", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<ShowTime> getShowTimes(Long eventId, Long venueId) {
+
+        logger.info("Retrieving show times for event " + eventId + " at venue " + venueId);
         Event event = eventDao.getEvent(eventId);
         Venue venue = venueDao.getVenue(venueId);
         List<Show> shows = eventDao.getShows(event, venue);

@@ -6,6 +6,9 @@
     <title>Ticket Monster</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<link rel="stylesheet" href="<c:url value="/style/default.css"/>"/>
+
+    <script type="text/javascript" src="<c:url value="/jquery-1.6.1.min.js" />"></script>
+
 </head>
 
 <body>
@@ -15,7 +18,7 @@
         <div id="header">
 
             <div class="headerTitle">
-                <a href="events.htm"><img src="<c:url value="/style/ticket.png"/>"></img></a>
+                <a href="events.htm"><img src="<c:url value="/style/ticket.png"/>"/></a>
             </div>
 
             <div class="headerSearch">
