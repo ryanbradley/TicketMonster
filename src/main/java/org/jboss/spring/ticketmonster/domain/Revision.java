@@ -1,5 +1,7 @@
 package org.jboss.spring.ticketmonster.domain;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,7 +27,10 @@ public class Revision implements Serializable
    private static final long serialVersionUID = 6197879518040782042L;
 
    private Long id;
+
+   @JsonIgnore
    private Document document;
+
    private Date created;
    private String createdBy;
    private Date modified;

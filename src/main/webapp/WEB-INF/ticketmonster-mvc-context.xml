@@ -18,7 +18,7 @@
     <!-- Maps view names to Tiles Definitions with support for partial re-rendering -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.tiles2.TilesViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>
-        <property name="order" value="0"/>
+        <property name="order" value="1"/>
 	</bean>
 		
 	<!-- Initializes the Apache Tiles CompositeView system -->
@@ -31,4 +31,8 @@
         </property>
 	</bean>
 
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <property name="ignoreAcceptHeader" value="true"/>
+        <property name="order" value="0"/>
+    </bean>
 </beans>

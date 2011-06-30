@@ -11,8 +11,6 @@
 		   http://www.springframework.org/schema/jee 
 		   http://www.springframework.org/schema/jee/spring-jee.xsd">
 
-	<jee:jndi-lookup jndi-name="java:/TicketMonsterDS" id="dataSource" expected-type="javax.sql.DataSource" />
-
     <jee:jndi-lookup jndi-name="java:/TicketMonster/entityManager" id="entityManager" expected-type="javax.persistence.EntityManager" />
 
     <tx:jta-transaction-manager />
