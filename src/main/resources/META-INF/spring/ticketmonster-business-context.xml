@@ -15,8 +15,8 @@
 	
 	<context:component-scan base-package="org.jboss.spring.ticketmonster.domain"/>
 	
-	<bean id="eventDao" class="org.jboss.spring.ticketmonster.action.EventDaoImpl"/>
-	<bean id="venueDao" class="org.jboss.spring.ticketmonster.action.VenueDaoImpl"/>
+	<bean id="eventDao" class="org.jboss.spring.ticketmonster.repo.EventDaoImpl"/>
+	<bean id="venueDao" class="org.jboss.spring.ticketmonster.repo.VenueDaoImpl"/>
 	
 	<tx:annotation-driven />
 

@@ -1,4 +1,4 @@
-package org.jboss.spring.ticketmonster.action;
+package org.jboss.spring.ticketmonster.repo;
 
 import java.util.ArrayList;
 import java.util.Date;
