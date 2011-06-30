@@ -85,7 +85,7 @@ public class EventDaoImpl implements EventDao {
 
 	@SuppressWarnings("unchecked")	
 	public List<Show> getShows(Event event, Venue venue) {
-		Query query = entityManager.createQuery("select s Show s from where s.event = :event and s.venue = :venue");
+		Query query = entityManager.createQuery("select s from Show s where s.event = :event and s.venue = :venue");
 		query.setParameter("event", event);
 		query.setParameter("venue", venue);
 		List<Show> shows = query.getResultList();
