@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/views/include.jsp"%>
+
 <script type="text/javascript">
         var dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         var monthNames = ["January", "February", "March", "April", "May", "June",
@@ -29,6 +30,7 @@
             });
         }
     </script>
+    
 <div class="section">
 
 	<div class="sectionHeader"><fmt:message key="event.heading"/></div>
@@ -47,7 +49,7 @@
 					</c:forEach>
 			</table>
             <p/>
-            <h3>Show times</h3>
-            <select id="times"/>
+            <h3>Show Times</h3>
+            <select id="times"></select>
 	</div>
 </div>
