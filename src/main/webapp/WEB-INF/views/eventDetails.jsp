@@ -41,7 +41,7 @@
 						<tr>
 							<td>
 								<a href="<c:url value="../venues/${venue.id}.htm"/>">${venue.name}</a>
-                                <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show times</a>
+                                <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show Times</a>
 							</td>
 						</tr>
 					</c:forEach>
