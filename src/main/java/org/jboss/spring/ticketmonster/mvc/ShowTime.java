@@ -5,6 +5,7 @@ import java.util.Date;
 /**
  * @author Marius Bogoevici
  */
+
 public class ShowTime {
 
     private long showId;

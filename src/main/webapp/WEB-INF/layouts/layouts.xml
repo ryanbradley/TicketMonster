@@ -6,5 +6,7 @@
 <tiles-definitions>
 
 	<definition name="standard" template="/WEB-INF/layouts/standard.jsp"/>
+	
+	<definition name="submenu" template="/WEB-INF/layouts/submenu.jsp"/>
 
 </tiles-definitions>
