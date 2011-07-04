@@ -1,6 +1,6 @@
 package org.jboss.spring.ticketmonster.domain;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -21,6 +21,7 @@ import javax.persistence.ManyToOne;
  *
  */
 
+@JsonIgnoreProperties(value = "document")
 @Entity
 public class Revision implements Serializable
 {
@@ -28,7 +29,6 @@ public class Revision implements Serializable
 
    private Long id;
 
-   @JsonIgnore
    private Document document;
 
    private Date created;

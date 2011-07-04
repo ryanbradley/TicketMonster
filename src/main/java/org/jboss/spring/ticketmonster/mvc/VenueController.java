@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * A web controller for 'Venue' related stories, such as the display of all venues in the database, 
@@ -50,6 +51,13 @@ public class VenueController {
 		List<Event> events = venueDao.getEvents(venue);
 		model.addAttribute("events", events);
 		return "venueDetails";
+	}
+	
+	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces = "application/json")
+	public @ResponseBody Venue viewVenueDetails(@PathVariable("id") Long id) {
+		logger.info("Retrieving the venue specified by the ID token in the url: " + id.toString() + ".");
+		Venue venue = venueDao.getVenue(id);
+		return venue;
 	}
 	
 

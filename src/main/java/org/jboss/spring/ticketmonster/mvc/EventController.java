@@ -2,6 +2,7 @@ package org.jboss.spring.ticketmonster.mvc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class EventController {
 	List<Event> displayEvents(HttpServletRequest request) {
 		logger.info("Searching URL for any search parameters, such as category, date, major");
 		
-		List<Event> events = null;
+		List<Event> events = new ArrayList<Event>();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		String majorString = request.getParameter("major");

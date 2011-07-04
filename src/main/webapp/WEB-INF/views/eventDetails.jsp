@@ -21,15 +21,20 @@
         }
 
         function refreshTimes(venueId, eventId) {
-            baseUrl = '<c:url value="/shows.htm?"/>'
+            baseUrl = '<c:url value="/shows.htm?"/>';
             jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
-                $("select#times").empty()
+                $("select#times").empty();
                 jQuery.each(result, function (index, value) {
                     $("select#times").append("<option value='" + value.showId + "'>" + prettyDate( new Date(value.date)) + "</option>");
                 });
             });
-        }
-    </script>
+        	jQuery.getJSON('<c:url value="/venues/"/>' + venueId + ".htm", function (result) {
+				$("div#venueDetails").empty();
+	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
+            });
+        }        
+
+</script>
     
 <div class="section">
 
@@ -38,18 +43,22 @@
 		<c:out value=""/>
 		<p>${event.description.active.content}<p/>
 			<h3>Venues</h3>
-				<table border="0">
-					<c:forEach items="${venues}" var="venue">
-						<tr>
-							<td>
-								<a href="<c:url value="../venues/${venue.id}.htm"/>">${venue.name}</a>
-                                <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show Times</a>
-							</td>
-						</tr>
-					</c:forEach>
-			</table>
+            <p/>
+            <select id="venues">
+            <c:forEach items="${venues}" var="venue">
+				<option value='${venue.id}'>${venue.name}</option>
+			</c:forEach>
+            </select>
+            <div class="sectionContent" id="venueDetails"></div>
             <p/>
             <h3>Show Times</h3>
             <select id="times"></select>
 	</div>
 </div>
+
+<script type="text/javascript">
+$("select#venues").change(function () {
+	$("select option:selected ").each( refreshTimes($(this).val(), <c:out value="${event.id}"/>));
+}).change();
+
+</script>
