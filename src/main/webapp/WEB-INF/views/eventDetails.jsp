@@ -28,11 +28,15 @@
                     $("select#times").append("<option value='" + value.showId + "'>" + prettyDate( new Date(value.date)) + "</option>");
                 });
             });
-        	jQuery.getJSON('<c:url value="/venues/"/>' + venueId + ".htm", function (result) {
+        }
+
+        function getVenueDetails(venueId) {
+            baseUrl = '<c:url value= "/venues/"/>';
+        	jQuery.getJSON(baseUrl + venueId + ".htm", function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
             });
-        }        
+        }
 
 </script>
     
@@ -60,5 +64,12 @@
 $("select#venues").change(function () {
 	$("select option:selected ").each( refreshTimes($(this).val(), <c:out value="${event.id}"/>));
 }).change();
+</script>
+
+<script type="text/javascript">
+$("select$venues").change(function () {
+	$("select iption:selected ").each( getVenueDetails($(this).val()));
+}).change();
+})
 
 </script>
