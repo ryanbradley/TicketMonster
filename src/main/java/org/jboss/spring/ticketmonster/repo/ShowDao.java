@@ -3,8 +3,8 @@ package org.jboss.spring.ticketmonster.repo;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Show;
+import org.jboss.spring.ticketmonster.domain.ShowTime;
 import org.jboss.spring.ticketmonster.domain.VenueLayout;
-import org.jboss.spring.ticketmonster.mvc.ShowTime;
 
 /**
  * Interface for Show-related database access.

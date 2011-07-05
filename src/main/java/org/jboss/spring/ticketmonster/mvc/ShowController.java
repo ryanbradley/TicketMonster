@@ -3,6 +3,7 @@ package org.jboss.spring.ticketmonster.mvc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Show;
+import org.jboss.spring.ticketmonster.domain.ShowTime;
 import org.jboss.spring.ticketmonster.domain.VenueLayout;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,6 @@ public class ShowController {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-/*    @Autowired
-    private EventDao eventDao;
-
-    @Autowired
-    private VenueDao venueDao;
-*/
     @Autowired
     private ShowDao showDao;
 

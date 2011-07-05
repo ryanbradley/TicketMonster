@@ -82,16 +82,4 @@ public class EventDaoImpl implements EventDao {
 	public Event getEvent(Long id) {
 		return entityManager.find(Event.class, id);
 	}
-
-/*	
-	@SuppressWarnings("unchecked")
-	public List<Show> getShows(Event event, Venue venue) {
-		List<Show> shows = new ArrayList<Show>();
-		Query query = entityManager.createQuery("select s from Show s where s.event = :event and s.venue = :venue");
-		query.setParameter("event", event);
-		query.setParameter("venue", venue);
-		shows = query.getResultList();
-		return shows;
-	}
-*/
 }
