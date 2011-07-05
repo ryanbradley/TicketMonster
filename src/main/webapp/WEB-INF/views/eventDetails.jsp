@@ -64,12 +64,9 @@
 
 <script type="text/javascript">
 $("select#venues").change(function () {
-	$("select option:selected ").each(refreshTimes($(this).val(), <c:out value="${event.id}"/>));
-}).change();
-</script>
-
-<script type="text/javascript">
-$("select").change(function () {
-	$("select option:selected ").each(getVenueDetails($(this).val()));
+	$("select option:selected ").each(function() {
+        refreshTimes($(this).val(), <c:out value="${event.id}"/>);
+        getVenueDetails($(this).val());
+    });
 }).change();
 </script>
