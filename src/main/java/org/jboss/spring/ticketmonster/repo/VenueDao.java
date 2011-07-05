@@ -3,7 +3,6 @@ package org.jboss.spring.ticketmonster.repo;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Event;
-import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.Venue;
 
 /**
@@ -20,6 +19,4 @@ public interface VenueDao {
 	Venue getVenue(Long id);
 	
 	List<Event> getEvents(Venue venue);
-	
-	List<Show> getShows(Event event, Venue venue);
 }

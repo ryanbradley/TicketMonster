@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Event;
-import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.Venue;
 
 /**
@@ -28,6 +27,5 @@ public interface EventDao {
 	
 	public Event getEvent(Long id);
 	
-	public List<Show> getShows(Event event, Venue venue);
-
+//	public List<Show> getShows(Event event, Venue venue);
 }

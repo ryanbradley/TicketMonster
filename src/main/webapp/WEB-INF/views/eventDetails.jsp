@@ -36,9 +36,9 @@
         	jQuery.getJSON(baseUrl + venueId + ".htm", function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
-            });
+       });
 			
-        }
+}
 
 </script>
     
