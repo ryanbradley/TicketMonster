@@ -32,8 +32,8 @@
         }
 
         function getVenueDetails(venueId) {
-            baseUrl = '<c:url value= "/venues/"/>';
-        	jQuery.getJSON(baseUrl + venueId + ".htm", function (result) {
+            baseUrl = '<c:url value= "/venues/[venueId].htm" />';
+        	jQuery.getJSON(baseUrl.replace("[venueId]", venueId), function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
        });
@@ -64,7 +64,7 @@
 
 <script type="text/javascript">
 $("select#venues").change(function () {
-	$("select option:selected ").each(function() {
+	$("select#venues option:selected ").each(function() {
         refreshTimes($(this).val(), <c:out value="${event.id}"/>);
         getVenueDetails($(this).val());
     });
