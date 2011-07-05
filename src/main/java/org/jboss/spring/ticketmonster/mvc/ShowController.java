@@ -2,9 +2,8 @@ package org.jboss.spring.ticketmonster.mvc;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
-import org.jboss.spring.ticketmonster.domain.VenueLayout;
+import org.jboss.spring.ticketmonster.domain.TicketCategory;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,8 +38,7 @@ public class ShowController {
     }
     
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody VenueLayout getVenueLayoutName(Show show) {
-    	
-    	return show.getVenueLayout();
+    public @ResponseBody List<TicketCategory> getCategories(Long showId) {
+    	return showDao.getCategories(showId);
     }
 }

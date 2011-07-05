@@ -7,8 +7,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.jboss.spring.ticketmonster.domain.Event;
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
+import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
+import org.jboss.spring.ticketmonster.domain.TicketCategory;
 import org.jboss.spring.ticketmonster.domain.Venue;
 import org.jboss.spring.ticketmonster.domain.VenueLayout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +55,28 @@ public class ShowDaoImpl implements ShowDao {
 		return show;
 	}
 
-	public VenueLayout getVenueLayout(Long showId) {
+	@SuppressWarnings("unchecked")
+	public List<TicketCategory> getCategories(Long showId) {
+		List<TicketCategory> categories = new ArrayList<TicketCategory>();
 		Show show = this.getShow(showId);
 		VenueLayout layout = show.getVenueLayout();
-		return layout;
+		
+		Query q1 = entityManager.createQuery("select s from Section s where s.layout = :layout");
+		q1.setParameter("layout", layout);
+		List<Section> sections = q1.getResultList();
+		
+		Query q2 = entityManager.createQuery("select p from PriceCategory p where p.section = :section");
+		
+		for(Section section : sections) {
+			q2.setParameter("section", section);
+			List<PriceCategory> priceCategories = q2.getResultList();
+			for(PriceCategory category : priceCategories) {
+				if(!categories.contains(category.getCategory()))
+					categories.add(category.getCategory());
+			}
+		}
+		
+		return categories;
 	}
 
 }

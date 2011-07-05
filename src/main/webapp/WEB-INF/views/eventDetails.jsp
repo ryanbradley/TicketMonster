@@ -31,12 +31,19 @@
 
         }
 
-        function getVenueDetails(venueId) {
+			function getVenueDetails(venueId) {
             baseUrl = '<c:url value= "/venues/[venueId].htm" />';
         	jQuery.getJSON(baseUrl.replace("[venueId]", venueId), function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
-       });
+	       });
+
+/*			function getShowDetails(showId) {
+			baseUrl = '<c:url value= "/shows/[showId].htm" />';
+			jQuery.getJSON(baseUrl.replace("[showId]", showId), function (result) {
+				$("div#showDetails").empty();
+				$("div#showDetails").append(result.name);
+			});	*/
 			
 }
 
@@ -59,6 +66,8 @@
             <p/>
             <h3>Show Times</h3>
             <select id="times"></select>
+            <p/>
+            <div class="sectionContent" id="showDetails"></div>
 	</div>
 </div>
 
@@ -70,3 +79,12 @@ $("select#venues").change(function () {
     });
 }).change();
 </script>
+
+
+<!-- <script type="text/javascript">
+$("select#times").change(function () {
+	$("select#times option:selected ").each(function () {
+		getShowDetails($(this).val().showId);
+	});
+}).change();
+</script> -->
