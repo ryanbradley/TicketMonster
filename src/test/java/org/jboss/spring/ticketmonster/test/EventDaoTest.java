@@ -19,6 +19,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * JUnit tests for the implementation of the EventDao interface.
+ * 
+ * @author Ryan Bradley
+ *
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
 "classpath:META-INF/spring/ticketmonster-business-context.xml"})
