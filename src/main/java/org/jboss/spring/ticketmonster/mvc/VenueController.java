@@ -42,7 +42,7 @@ public class VenueController {
 		return venues;
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces = {"text/html", "application/xhtml+xml"})
 	public String viewVenue(@PathVariable("id") Long id, Model model) {
 		logger.info("Retrieving the venue specified by the ID token in the url: " + id.toString() + ".");
 		Venue venue = venueDao.getVenue(id);
