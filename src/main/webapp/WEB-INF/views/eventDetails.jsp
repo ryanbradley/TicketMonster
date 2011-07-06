@@ -28,23 +28,24 @@
                     $("select#times").append("<option value='" + value.showId + "'>" + prettyDate( new Date(value.date)) + "</option>");
                 });
             });
-
         }
 
-			function getVenueDetails(venueId) {
+		function getVenueDetails(venueId) {
             baseUrl = '<c:url value= "/venues/[venueId].htm" />';
         	jQuery.getJSON(baseUrl.replace("[venueId]", venueId), function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
-	       });
+		    });
 
-/*			function getShowDetails(showId) {
-			baseUrl = '<c:url value= "/shows/[showId].htm" />';
-			jQuery.getJSON(baseUrl.replace("[showId]", showId), function (result) {
-				$("div#showDetails").empty();
-				$("div#showDetails").append(result.name);
-			});	*/
-			
+        function getPriceCategories(eventId, venueId) {
+			baseUrl = '<c:url value= "/categories.htm?"/>';
+			jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
+				$("div#priceCategories").empty();
+				jQuery.each(result, function (index, value) {
+					$("div#priceCategories").append("<p/>" + value.section.name + ": " + "$" + value.price);
+					});
+				});
+        }
 }
 
 </script>
@@ -67,7 +68,7 @@
             <h3>Show Times</h3>
             <select id="times"></select>
             <p/>
-            <div class="sectionContent" id="showDetails"></div>
+            <div class="sectionContent" id="priceCategories"></div>
 	</div>
 </div>
 
@@ -76,15 +77,7 @@ $("select#venues").change(function () {
 	$("select#venues option:selected ").each(function() {
         refreshTimes($(this).val(), <c:out value="${event.id}"/>);
         getVenueDetails($(this).val());
+        getPriceCategories(<c:out value="${event.id}"/>, $(this).val());
     });
 }).change();
 </script>
-
-
-<!-- <script type="text/javascript">
-$("select#times").change(function () {
-	$("select#times option:selected ").each(function () {
-		getShowDetails($(this).val().showId);
-	});
-}).change();
-</script> -->
