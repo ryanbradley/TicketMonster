@@ -8,6 +8,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
@@ -66,4 +67,50 @@ public class ShowDaoTest {
 		Date fourthShow = showTimes.get(1).getDate();
 		Assert.assertEquals(fourthShowExpected, fourthShow);
 	}
+	
+	@Test
+	public void testGetCategories() {
+		List<PriceCategory> categories = showDao.getCategories((long)1, (long)1);
+		
+		PriceCategory category = categories.get(0);
+		Assert.assertEquals(219.50, category.getPrice(), 0);
+		category = categories.get(1);
+		Assert.assertEquals(199.50, category.getPrice(), 0);
+		category = categories.get(2);
+		Assert.assertEquals(179.50, category.getPrice(), 0);
+		category = categories.get(3);
+		Assert.assertEquals(149.50, category.getPrice(), 0);
+		
+		categories = showDao.getCategories((long)1, (long)2);
+		
+		category = categories.get(0);
+		Assert.assertEquals(157.50, category.getPrice(),0);
+		category = categories.get(1);
+		Assert.assertEquals(167.75, category.getPrice(),0);
+		category = categories.get(2);
+		Assert.assertEquals(187.50, category.getPrice(),0);
+		category = categories.get(3);
+		Assert.assertEquals(197.75, category.getPrice(),0);
+		category = categories.get(4);
+		Assert.assertEquals(157.50, category.getPrice(),0);
+		category = categories.get(5);
+		Assert.assertEquals(167.75, category.getPrice(),0);
+		category = categories.get(6);
+		Assert.assertEquals(145.0, category.getPrice(),0);
+		category = categories.get(7);
+		Assert.assertEquals(155.0, category.getPrice(),0);
+		category = categories.get(8);
+		Assert.assertEquals(145.0, category.getPrice(),0);
+		category = categories.get(9);
+		Assert.assertEquals(155.0, category.getPrice(),0);
+		category = categories.get(10);
+		Assert.assertEquals(145.0, category.getPrice(),0);
+		category = categories.get(11);
+		Assert.assertEquals(155.0, category.getPrice(),0);
+		category = categories.get(12);
+		Assert.assertEquals(112.5, category.getPrice(),0);
+		category = categories.get(13);
+		Assert.assertEquals(122.5, category.getPrice(),0);
+	}
+	
 }

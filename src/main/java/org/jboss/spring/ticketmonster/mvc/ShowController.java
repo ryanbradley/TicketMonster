@@ -3,7 +3,6 @@ package org.jboss.spring.ticketmonster.mvc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
-import org.jboss.spring.ticketmonster.domain.TicketCategory;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,10 +34,5 @@ public class ShowController {
         showTimes = showDao.getShowTimes(eventId, venueId);
         
         return showTimes;
-    }
-    
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
-    public @ResponseBody List<TicketCategory> getCategories(Long showId) {
-    	return showDao.getCategories(showId);
     }
 }

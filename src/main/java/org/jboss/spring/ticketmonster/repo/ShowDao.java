@@ -2,9 +2,9 @@ package org.jboss.spring.ticketmonster.repo;
 
 import java.util.List;
 
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
-import org.jboss.spring.ticketmonster.domain.TicketCategory;
 
 /**
  * Interface for Show-related database access.
@@ -19,5 +19,5 @@ public interface ShowDao {
 	
 	Show getShow(Long showId);
 	
-	List<TicketCategory> getCategories(Long showId);
+	List<PriceCategory> getCategories(Long eventId, Long venueId);
 }
