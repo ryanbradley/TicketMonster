@@ -42,8 +42,15 @@
 			baseUrl = '<c:url value= "/categories.htm?"/>';
 			jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
 				$("div#priceCategories").empty();
+				currentSection = 0;
 				jQuery.each(result, function (index, value) {
-					$("div#priceCategories").append("<p/>" + value.section.name + ": " + "$" + value.price);
+					if(currentSection != value.section.id) {
+						$("div#priceCategories").append("<h3><a href="#">" + value.section.name + "</a></h3>");
+						currentSection = value.section.id;
+					}
+						$("div#priceCategories").append("<div><ul>");
+						$("div#priceCategories").append("<li>" + value.category.name + " - $" + value.price);
+						$("div#priceCategories").append("</div");
 					});
 				});
         }
@@ -87,27 +94,5 @@ $("select#venues").change(function () {
 
 
 </script>
-
-
-<div id="accordion">
-    <h3 class="sectionHeader"><a href="#" >S1 - Balcony</a></h3>
-
-    <div class="sectionContent">
-        <p/>
-        <ul>
-            <li> Adult - 10^6</li>
-            <li> Child - 0.4</li>
-        </ul>
-    </div>
-    <h3><a href="#">S2 - Roof</a></h3>
-
-    <div>
-        <p/>
-        <ul>
-            <li> Adult - 99</li>
-            <li> Child - 102</li>
-        </ul>
-    </div>
-</div>
 
 
