@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="<c:url value="/style/default.css"/>"/>
 
     <script type="text/javascript" src="<c:url value="/jquery-1.6.1.min.js" />"></script>
+        <script type="text/javascript" src="<c:url value="/jquery-ui-1.8.14.custom.min.js" />"></script>
 
 </head>
 

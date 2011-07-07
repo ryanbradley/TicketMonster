@@ -36,6 +36,7 @@
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
 		    });
+        }
 
         function getPriceCategories(eventId, venueId) {
 			baseUrl = '<c:url value= "/categories.htm?"/>';
@@ -46,7 +47,6 @@
 					});
 				});
         }
-}
 
 </script>
     
@@ -80,4 +80,34 @@ $("select#venues").change(function () {
         getPriceCategories(<c:out value="${event.id}"/>, $(this).val());
     });
 }).change();
+
+	$(function() {
+		$( "#accordion" ).accordion();
+	});
+
+
 </script>
+
+
+<div id="accordion">
+    <h3 class="sectionHeader"><a href="#" >S1 - Balcony</a></h3>
+
+    <div class="sectionContent">
+        <p/>
+        <ul>
+            <li> Adult - 10^6</li>
+            <li> Child - 0.4</li>
+        </ul>
+    </div>
+    <h3><a href="#">S2 - Roof</a></h3>
+
+    <div>
+        <p/>
+        <ul>
+            <li> Adult - 99</li>
+            <li> Child - 102</li>
+        </ul>
+    </div>
+</div>
+
+
