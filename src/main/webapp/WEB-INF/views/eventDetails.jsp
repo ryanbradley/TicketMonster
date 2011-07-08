@@ -38,25 +38,32 @@
 		    });
         }
 
-        function getPriceCategories(eventId, venueId) {
-			baseUrl = '<c:url value= "/categories.htm?"/>';
-			jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
-				$("div#priceCategories").empty();
-				currentSection = 0;
-				jQuery.each(result, function (index, value) {
-					if(currentSection != value.section.id) {
-						if(currentSection != 0) {
-						$("div#priceCategories").append("</ul></div>");
-						}
-						$("div#priceCategories").append("<h3><a href='#'>" + value.section.name + "</a></h3>");
-						$("div#priceCategories").append("<div><ul>");
-						currentSection = value.section.id;					
-					}
-						$("div#priceCategories").append("<li>" + value.category.description + " - $" + value.price + "</li>");
-						$("div#priceCategories").append("</div>");
-					});
-				});
-        }
+		 function getPriceCategories(eventId, venueId) {
+	            baseUrl = '<c:url value= "/categories.htm?"/>';
+	            jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
+	                $("#priceCategories").accordion("destroy");
+	                $("#priceCategories").empty();
+	                currentSection = 0;
+	                var html = "";
+	                jQuery.each(result, function (index, value) {
+	                    if (currentSection != value.section.id) {
+	                        if (currentSection != 0) {
+	                            html += ("</ul></div>");
+	                        }
+	                        html += ("<h3><a href='#'>" + value.section.name + "</a></h3>");
+	                        html += ("<div><ul>");
+	                        currentSection = value.section.id;
+	                    }
+	                    html += ("<li>" + value.category.description + " - $" + value.price + "</li>");
+	                });
+	                if (currentSection != 0) {
+	                    html += ("</ul></div>");
+	                }
+	                $("#priceCategories").append($(html));
+	                $("#priceCategories").accordion();
+	            });
+
+	        }
 
 </script>
     
