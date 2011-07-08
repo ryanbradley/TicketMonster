@@ -48,7 +48,7 @@
 						if(currentSection != 0) {
 						$("div#priceCategories").append("</ul></div>");
 						}
-						$("div#priceCategories").append("<h3><a href='#''>" + value.section.name + "</a></h3>");
+						$("div#priceCategories").append("<h3><a href='#'>" + value.section.name + "</a></h3>");
 						$("div#priceCategories").append("<div><ul>");
 						currentSection = value.section.id;					
 					}
@@ -78,7 +78,7 @@
             <h3>Show Times</h3>
             <select id="times"></select>
             <p/>
-            <br><br>
+            <br><br><br><br>
             <div class="sectionContent" id="priceCategories"></div>
 	</div>
 </div>
