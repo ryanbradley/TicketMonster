@@ -34,7 +34,7 @@
             baseUrl = '<c:url value= "/venues/[venueId].htm" />';
         	jQuery.getJSON(baseUrl.replace("[venueId]", venueId), function (result) {
 				$("div#venueDetails").empty();
-	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);		
+	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);
 		    });
         }
 
@@ -45,12 +45,15 @@
 				currentSection = 0;
 				jQuery.each(result, function (index, value) {
 					if(currentSection != value.section.id) {
-						$("div#priceCategories").append("<h3><a href="#">" + value.section.name + "</a></h3>");
-						currentSection = value.section.id;
-					}
+						if(currentSection != 0) {
+						$("div#priceCategories").append("</ul></div>");
+						}
+						$("div#priceCategories").append("<h3><a href='#''>" + value.section.name + "</a></h3>");
 						$("div#priceCategories").append("<div><ul>");
-						$("div#priceCategories").append("<li>" + value.category.name + " - $" + value.price);
-						$("div#priceCategories").append("</div");
+						currentSection = value.section.id;					
+					}
+						$("div#priceCategories").append("<li>" + value.category.description + " - $" + value.price + "</li>");
+						$("div#priceCategories").append("</div>");
 					});
 				});
         }
@@ -75,6 +78,7 @@
             <h3>Show Times</h3>
             <select id="times"></select>
             <p/>
+            <br><br>
             <div class="sectionContent" id="priceCategories"></div>
 	</div>
 </div>
@@ -85,14 +89,13 @@ $("select#venues").change(function () {
         refreshTimes($(this).val(), <c:out value="${event.id}"/>);
         getVenueDetails($(this).val());
         getPriceCategories(<c:out value="${event.id}"/>, $(this).val());
+        $("div#priceCategories").accordion();
     });
 }).change();
 
 	$(function() {
 		$( "#accordion" ).accordion();
 	});
-
-
 </script>
 
 
