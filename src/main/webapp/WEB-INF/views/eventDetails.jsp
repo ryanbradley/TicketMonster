@@ -104,5 +104,3 @@ $("select#venues").change(function () {
 		$( "#accordion" ).accordion();
 	});
 </script>
-
-

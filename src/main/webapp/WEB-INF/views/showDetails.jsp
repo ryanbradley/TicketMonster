@@ -23,6 +23,7 @@
 
 <div class="section">
 	<div class="sectionHeader"><fmt:message key="bookings.heading"/></div>
+	<div class="sectionContent" id="showDate"></div>
 	<div class="sectionContent">
 			<c:out value=""/>
 			<p>${show.event.description.active.content}</p>
@@ -34,5 +35,5 @@
 </div>
 
 <script type="text/javascript">
-	
+$("div#showDate").append(prettyDate(<c:-Out value="${show.showDate}"/>));
 </script>
