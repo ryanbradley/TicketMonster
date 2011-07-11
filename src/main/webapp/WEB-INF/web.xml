@@ -39,5 +39,6 @@
   	<welcome-file>venues.jsp</welcome-file>
   	<welcome-file>venueDetails.jsp</welcome-file>
   	<welcome-file>include.jsp</welcome-file>
+  	<welcome-file>showDetails.jsp</welcome-file>
   </welcome-file-list>
 </web-app>

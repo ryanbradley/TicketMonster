@@ -19,5 +19,9 @@
     <definition name="venueDetails" extends="submenu">
     	<put-attribute name="body" value="/WEB-INF/views/venueDetails.jsp"/>
     </definition>
+    
+    <definition name="showDetails" extends="submenu">
+    	<put-attribute name="body" value="/WEB-INF/views/showDetails.jsp"/>
+    </definition>
 
 </tiles-definitions>

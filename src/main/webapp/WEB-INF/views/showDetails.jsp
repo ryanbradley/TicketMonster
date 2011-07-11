@@ -19,21 +19,17 @@
             while (val.length < digits) val = "0" + val;
             return val;
         }
-
 </script>
 
 <div class="section">
-	<div class="sectionHeader"><fmt:message key="show.heading"/></div>
+	<div class="sectionHeader"><fmt:message key="bookings.heading"/></div>
 	<div class="sectionContent">
-		<h3>Show Details</h3>
 			<c:out value=""/>
 			<p>${show.event.description.active.content}</p>
 			
-			<p>${show.venue.name}<br>
-			${show.venue.address}</p><br>
-			<p>${show.venue.description.active.content}</p><br><br>
-			
-		
+			<p>${show.venue.name}</p>
+			<p>${show.venue.address}</p><br>
+			<p>${show.venue.description.active.content}</p><br><br>		
 	</div>
 </div>
 
