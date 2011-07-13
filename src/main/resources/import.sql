@@ -364,7 +364,7 @@ insert into show (id, event_id, venue_id, showdate, layout_id) values (3, 1, 2, 
 insert into show (id, event_id, venue_id, showdate, layout_id) values (4, 1, 2, '2011-01-04 19:30', 1);
 
 insert into TicketCategory (id, description) values (1, 'Adult');
-insert into TicketCategory (id, description) values (2, 'Child 0-14yrs');
+insert into TicketCategory (id, description) values (2, 'Child 0-14 years');
 
 insert into PriceCategory (id, event_id, venue_id, section_id, category_id, price) values (1, 1, 2, 100, 1, 167.75);
 insert into PriceCategory (id, event_id, venue_id, section_id, category_id, price) values (2, 1, 2, 101, 1, 197.75);
