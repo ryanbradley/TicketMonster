@@ -19,30 +19,6 @@
             while (val.length < digits) val = "0" + val;
             return val;
         }
-
-		function getPriceCategories(eventId, venueId) {
-			baseUrl = '<c:url value= "/categories.htm?"/>';
-	        jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
-	        	$("#priceCategories").empty();
-	            currentSection = 0;
-	            var html = "";
-	            jQuery.each(result, function (index, value) {
-	            	if (currentSection != value.section.id) {
-	            		if (currentSection != 0) {
-	                    	html += ("</ul></div>");
-	                    }
-	                    html += ("<h3><a href='#'>" + value.section.name + "</a></h3>");
-	                    html += ("<div><ul>");
-	                    currentSection = value.section.id;
-	                }
-	                html += ("<li>" + value.category.description + " - $" + value.price + "</li>");
-				});
-	            if (currentSection != 0) {
-	            	html += ("</ul></div>");
-	            }
-	            $("#priceCategories").append($(html));
-			});
-		 }
 </script>
 
 <div class="section">
@@ -53,16 +29,19 @@
 			<p>${show.event.description.active.content}</p>
 			
 			<p>${show.venue.name}</p>
-			<p>${show.venue.address}</p>
-			<p>${show.venue.description.active.content}</p><br>		
+			<p>${show.venue.address}<br>
+			${show.venue.description.active.content}<br>	
 	</div>
 	<div class="sectionContent" id="priceCategories">
 		<c:forEach items="${categories}" var="category">
-			<h3><a href="#"><c:out value="${category.section.name}"/></a></h3>
+			<c:if test="${category.section.name != lastSection}">
+				<h3><a href="#"><c:out value="${category.section.name}"/></a></h3>
+			</c:if>
+			<c:set var="lastSection" value="${category.section.name}"/>			
 			<ul>
-				<li><c:out value="${category.category.description} - ${category.price}"/></li>
-			</ul><br>
-		</c:forEach>			
+				<c:out value="${category.category.description} - ${category.price}"/>
+			</ul>
+		</c:forEach>	
 	</div>
 </div>
 
