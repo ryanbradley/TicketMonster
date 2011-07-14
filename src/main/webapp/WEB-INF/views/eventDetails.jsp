@@ -48,16 +48,16 @@
 	                jQuery.each(result, function (index, value) {
 	                    if (currentSection != value.section.id) {
 	                        if (currentSection != 0) {
-	                            html += ("</ul></div>");
+	                            html += ("</tr></div>");
 	                        }
 	                        html += ("<h3><a href='#'>" + value.section.name + "</a></h3>");
-	                        html += ("<div><ul>");
+	                        html += ("<div><tr>");
 	                        currentSection = value.section.id;
 	                    }
-	                    html += ("<li>" + value.category.description + " - $" + value.price + "</li>");
+	                    html += ("<td>" + value.category.description + " - $" + value.price + "</td><br>");
 	                });
 	                if (currentSection != 0) {
-	                    html += ("</ul></div>");
+	                    html += ("</tr></div>");
 	                }
 	                $("#priceCategories").append($(html));
 	                $("#priceCategories").accordion();

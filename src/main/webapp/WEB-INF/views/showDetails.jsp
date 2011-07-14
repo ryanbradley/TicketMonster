@@ -28,20 +28,24 @@
 			<c:out value=""/>
 			<p>${show.event.description.active.content}</p>
 			
-			<p>${show.venue.name}</p>
-			<p>${show.venue.address}<br>
-			${show.venue.description.active.content}<br>	
+			<p>${show.venue.name}<br>
+			${show.venue.address}
+			${show.venue.description.active.content}</p>
 	</div>
 	<div class="sectionContent" id="priceCategories">
+		<table border="0">
 		<c:forEach items="${categories}" var="category">
 			<c:if test="${category.section.name != lastSection}">
-				<h3><a href="#"><c:out value="${category.section.name}"/></a></h3>
+				<tr>			
+				<td><h3><a href="#"><c:out value="${category.section.name}"/></a></h3></td>
+				</tr>
 			</c:if>
 			<c:set var="lastSection" value="${category.section.name}"/>			
-			<ul>
-				<c:out value="${category.category.description} - ${category.price}"/>
-			</ul>
-		</c:forEach>	
+			<tr>
+				<td><c:out value="${category.category.description} - ${category.price}"/></td>
+			</tr>
+		</c:forEach>
+		</table>
 	</div>
 </div>
 
