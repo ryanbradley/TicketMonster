@@ -41,4 +41,9 @@
   	<welcome-file>include.jsp</welcome-file>
   	<welcome-file>showDetails.jsp</welcome-file>
   </welcome-file-list>
+
+   <persistence-context-ref>
+       <persistence-context-ref-name>persistence/TicketMonster/entityManager</persistence-context-ref-name>
+       <persistence-unit-name>ticketmonsterPU</persistence-unit-name>
+   </persistence-context-ref>
 </web-app>
