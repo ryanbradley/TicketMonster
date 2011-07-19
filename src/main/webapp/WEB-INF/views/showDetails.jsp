@@ -34,7 +34,7 @@
 	</div>
 	<div class="sectionContent" id="priceCategories">
 		<table border="0">
-		<c:forEach items="${categories}" var="category">
+		<c:forEach items="${bookingRequest.categories}" var="category" varStatus="categoryStatus">
 			<c:if test="${category.section.name != lastSection}">
 				<tr>			
 				<td><h3><a href="#"><c:out value="${category.section.name}"/></a></h3></td>
@@ -43,6 +43,15 @@
 			<c:set var="lastSection" value="${category.section.name}"/>			
 			<tr>
 				<td><c:out value="${category.category.description} - ${category.price}"/></td>
+				<td>
+					<spring:bind path="bookingRequest[${categoryStatus.index}].quantity">
+						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
+					</spring:bind>
+					
+					<spring:bind path="bookingRequest[${categoryStatus.index}].priceCategoryId">
+						<input type="hidden" name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
+					</spring:bind>
+				</td>
 			</tr>
 		</c:forEach>
 		</table>

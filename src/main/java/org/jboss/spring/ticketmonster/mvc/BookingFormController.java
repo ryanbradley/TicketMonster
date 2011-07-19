@@ -7,16 +7,19 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
+import org.jboss.spring.ticketmonster.service.BookingRequest;
+import org.jboss.spring.ticketmonster.service.PriceCategoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/bookings")
-public class BookingController {
+public class BookingFormController {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
@@ -35,5 +38,24 @@ public class BookingController {
 		model.addAttribute("categories", categories);
 		
 		return "showDetails";
+	}
+	
+	@RequestMapping(method=RequestMethod.GET)
+	public @ModelAttribute("bookingRequest")
+	Object formBackingObject(Long showId) {
+		BookingRequest bookingRequest = new BookingRequest();
+		bookingRequest.setShowId(showId);
+		bookingRequest.initializeRequest();
+		
+		return bookingRequest;
+	}
+	
+	@RequestMapping(method=RequestMethod.POST)
+	public String onSubmit(BookingRequest command) {
+		List<PriceCategoryRequest> requests = command.getRequests();
+		
+		String view = "redirect:bookings/" + command.getShowId() + ".htm";
+		
+		return view;
 	}
 }
