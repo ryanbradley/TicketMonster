@@ -50,12 +50,14 @@ public class BookingFormController {
 		return bookingRequest;
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
-	public String onSubmit(BookingRequest command) {
+/*	@RequestMapping(method=RequestMethod.POST)
+	public String onSubmit(BookingRequest command, Model model) {
 		List<PriceCategoryRequest> requests = command.getRequests();
 		
-		String view = "redirect:bookings/" + command.getShowId() + ".htm";
+		Show show = showDao.getShow(command.getShowId());
+		model.addAttribute("show", show);
+		model.addAttribute("requests", requests);
 		
-		return view;
-	}
+		return "showDetails";
+	}*/
 }
