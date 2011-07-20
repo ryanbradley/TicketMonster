@@ -44,11 +44,11 @@
 			<tr>
 				<td><c:out value="${categoryRequest.priceCategory.category.description} - ${categoryRequest.priceCategory.price}"/></td>
 				<td>
-					<spring:bind path="bookingRequest[${categoryStatus.index}].quantity">
+					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
 						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
 					</spring:bind>
 					
-					<spring:bind path="bookingRequest[${categoryStatus.index}].priceCategoryId">
+					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
 						<input type="hidden" name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
 					</spring:bind>
 				</td>

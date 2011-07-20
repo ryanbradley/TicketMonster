@@ -35,7 +35,7 @@ public class BookingRequest {
 	}
 	
 	public void initializeRequest(List<PriceCategory> priceCategories) {
-		List<PriceCategoryRequest> categoryRequests = (List<PriceCategoryRequest>)(new ArrayList<PriceCategoryRequest>());
+		categoryRequests = (List<PriceCategoryRequest>)(new ArrayList<PriceCategoryRequest>());
 		
 		for(PriceCategory priceCategory : priceCategories) {
 			categoryRequests.add(new PriceCategoryRequest(priceCategory));
