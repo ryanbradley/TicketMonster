@@ -17,9 +17,12 @@ public class PriceCategoryRequest {
 	
 	private String description;
 	
+	private PriceCategory priceCategory;
+	
 	public PriceCategoryRequest(PriceCategory category) {
 		this.priceCategoryId = category.getId();
 		this.description = category.getCategory().getDescription();
+		this.priceCategory = category;
 		this.quantity = 0;
 	}
 
@@ -45,5 +48,13 @@ public class PriceCategoryRequest {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public PriceCategory getPriceCategory() {
+		return priceCategory;
+	}
+
+	public void setPriceCategory(PriceCategory category) {
+		this.priceCategory = category;
 	}
 }

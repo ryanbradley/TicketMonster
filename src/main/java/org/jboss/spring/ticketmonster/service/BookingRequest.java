@@ -1,11 +1,9 @@
 package org.jboss.spring.ticketmonster.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
-import org.jboss.spring.ticketmonster.domain.Show;
-import org.jboss.spring.ticketmonster.repo.ShowDao;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Class for a booking request, potentially consisting of multiple different PriceCategory objects, for a specific show.
@@ -16,12 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class BookingRequest {
 	
-	@Autowired
-	private ShowDao showDao;
-	
 	private Long showId;
 	
-	private List<PriceCategoryRequest> requests;
+	private List<PriceCategoryRequest> categoryRequests;
 	
 	public Long getShowId() {
 		return showId;
@@ -31,25 +26,19 @@ public class BookingRequest {
 		this.showId = showId;
 	}
 
-	public List<PriceCategoryRequest> getRequests() {
-		return requests;
+	public List<PriceCategoryRequest> getCategoryRequests() {
+		return categoryRequests;
 	}
 
-	public void setRequests(List<PriceCategoryRequest> requests) {
-		this.requests = requests;
+	public void setCategoryRequests(List<PriceCategoryRequest> categories) {
+		this.categoryRequests = categories;
 	}
 	
-	public void initializeRequest() {
-		Show show = showDao.getShow(showId);
-		
-		List<PriceCategory> priceCategories = showDao.getCategories(show.getEvent().getId(), show.getVenue().getId());
+	public void initializeRequest(List<PriceCategory> priceCategories) {
+		List<PriceCategoryRequest> categoryRequests = (List<PriceCategoryRequest>)(new ArrayList<PriceCategoryRequest>());
 		
 		for(PriceCategory priceCategory : priceCategories) {
-			requests.add(new PriceCategoryRequest(priceCategory));
-		}
-		
-		for(PriceCategoryRequest request : this.requests) {
-			request.setQuantity(0);
+			categoryRequests.add(new PriceCategoryRequest(priceCategory));
 		}
 	}
 }

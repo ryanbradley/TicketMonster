@@ -8,11 +8,9 @@ import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.BookingRequest;
-import org.jboss.spring.ticketmonster.service.PriceCategoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,17 +35,12 @@ public class BookingFormController {
 		List<PriceCategory> categories = showDao.getCategories(eventId, venueId);
 		model.addAttribute("categories", categories);
 		
-		return "showDetails";
-	}
-	
-	@RequestMapping(method=RequestMethod.GET)
-	public @ModelAttribute("bookingRequest")
-	Object formBackingObject(Long showId) {
 		BookingRequest bookingRequest = new BookingRequest();
-		bookingRequest.setShowId(showId);
-		bookingRequest.initializeRequest();
+		bookingRequest.setShowId(id);
+		bookingRequest.initializeRequest(categories);
+		model.addAttribute("bookingRequest", bookingRequest);
 		
-		return bookingRequest;
+		return "showDetails";		
 	}
 	
 /*	@RequestMapping(method=RequestMethod.POST)
