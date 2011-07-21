@@ -1,9 +1,8 @@
-package org.jboss.spring.ticketmonster.service;
+package org.jboss.spring.ticketmonster.domain;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.spring.ticketmonster.domain.PriceCategory;
 
 /**
  * Class for a booking request, potentially consisting of multiple different PriceCategory objects, for a specific show.

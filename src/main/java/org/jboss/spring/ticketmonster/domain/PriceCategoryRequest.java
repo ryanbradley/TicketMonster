@@ -1,6 +1,5 @@
-package org.jboss.spring.ticketmonster.service;
+package org.jboss.spring.ticketmonster.domain;
 
-import org.jboss.spring.ticketmonster.domain.PriceCategory;
 
 /**
  * Class representing the booking request for a specific PriceCategory object.

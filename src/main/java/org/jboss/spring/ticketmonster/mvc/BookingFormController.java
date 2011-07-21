@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
+import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
-import org.jboss.spring.ticketmonster.service.BookingRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,14 +44,15 @@ public class BookingFormController {
 		return "showDetails";		
 	}
 	
-/*	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
-		List<PriceCategoryRequest> requests = command.getRequests();
 		
-		Show show = showDao.getShow(command.getShowId());
-		model.addAttribute("show", show);
-		model.addAttribute("requests", requests);
+		for(PriceCategoryRequest categoryRequest : command.getCategoryRequests()) {
+			int quantity = categoryRequest.getQuantity();
+			// Reserve that quantity of seats in the specific category.
+			// bookingManager.reserve(categoryRequest);
+		}
 		
 		return "showDetails";
-	}*/
+	}
 }
