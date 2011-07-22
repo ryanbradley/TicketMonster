@@ -12,15 +12,15 @@
     	<put-attribute name="body" value="/WEB-INF/views/events.jsp"/>
     </definition>
     
-    <definition name="eventDetails" extends="submenu">
+    <definition name="eventDetails" extends="standard">
     	<put-attribute name="body" value="/WEB-INF/views/eventDetails.jsp"/>
     </definition>
 
-    <definition name="venueDetails" extends="submenu">
+    <definition name="venueDetails" extends="standard">
     	<put-attribute name="body" value="/WEB-INF/views/venueDetails.jsp"/>
     </definition>
     
-    <definition name="showDetails" extends="submenu">
+    <definition name="showDetails" extends="standard">
     	<put-attribute name="body" value="/WEB-INF/views/showDetails.jsp"/>
     </definition>
 

@@ -19,7 +19,7 @@
         <div id="header">
 
             <div class="headerTitle">
-                <a href="<c:url value="events.htm"/>"><img src="<c:url value="/style/ticket.png"/>"/></a>
+                <a href="<c:url value="/events.htm"/>"><img src="<c:url value="/style/ticket.png"/>"/></a>
             </div>
 
             <div class="headerSearch">
@@ -30,13 +30,13 @@
 
 
         <div id="menu" class="menu">
-            <div id="menuItem1" class="menuItem"><a href="<c:url value="events.htm?major=true"/>">Major Events</a></div>
-            <div id="menuItem2" class="menuItem"><a href="<c:url value="events.htm?category=1"/>">Concerts</a></div>
-            <div id="menuItem3" class="menuItem"><a href="<c:url value="events.htm?category=2"/>">Theatre</a></div>
-            <div id="menuItem4" class="menuItem"><a href="<c:url value="events.htm?category=3"/>">Musicals</a></div>
-            <div id="menuItem5" class="menuItem"><a href="<c:url value="events.htm?category=4"/>">Sports</a></div>
-            <div id="menuItem6" class="menuItem"><a href="<c:url value="events.htm?category=5"/>">Comedy</a></div>
-            <div id="menuItem7" class="menuItem"><a href="<c:url value="venues.htm"/>">Venues</a></div>
+            <div id="menuItem1" class="menuItem"><a href="<c:url value="/events.htm?major=true"/>">Major Events</a></div>
+            <div id="menuItem2" class="menuItem"><a href="<c:url value="/events.htm?category=1"/>">Concerts</a></div>
+            <div id="menuItem3" class="menuItem"><a href="<c:url value="/events.htm?category=2"/>">Theatre</a></div>
+            <div id="menuItem4" class="menuItem"><a href="<c:url value="/events.htm?category=3"/>">Musicals</a></div>
+            <div id="menuItem5" class="menuItem"><a href="<c:url value="/events.htm?category=4"/>">Sports</a></div>
+            <div id="menuItem6" class="menuItem"><a href="<c:url value="/events.htm?category=5"/>">Comedy</a></div>
+            <div id="menuItem7" class="menuItem"><a href="<c:url value="/venues.htm"/>">Venues</a></div>
         </div>
 
         <div id="content">
