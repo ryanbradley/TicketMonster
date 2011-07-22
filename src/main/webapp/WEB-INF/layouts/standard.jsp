@@ -19,7 +19,7 @@
         <div id="header">
 
             <div class="headerTitle">
-                <a href="events.htm"><img src="<c:url value="/style/ticket.png"/>"/></a>
+                <a href="<c:url value="events.htm"/>"><img src="<c:url value="/style/ticket.png"/>"/></a>
             </div>
 
             <div class="headerSearch">
