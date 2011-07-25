@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
-import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
+import org.jboss.spring.ticketmonster.domain.SectionRequest;
 
 /**
  * Interface containing methods to reserve seating that has been allocated.
@@ -14,8 +14,10 @@ import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
  */
 
 public interface ReservationDao {
-
-	List<Allocation> reserveSeats(BookingRequest booking);
 	
-	Allocation findContiguousSeats(PriceCategoryRequest priceCategoryRequest);
+	List<SectionRequest> createSectionRequests(BookingRequest booking);
+
+	List<Allocation> reserveSeats(List<SectionRequest> sectionRequests);
+	
+	Allocation findContiguousSeats(SectionRequest sectionRequest);
 }

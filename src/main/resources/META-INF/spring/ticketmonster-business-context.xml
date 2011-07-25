@@ -18,6 +18,7 @@
 	<bean id="eventDao" class="org.jboss.spring.ticketmonster.repo.EventDaoImpl"/>
 	<bean id="venueDao" class="org.jboss.spring.ticketmonster.repo.VenueDaoImpl"/>
 	<bean id="showDao" class="org.jboss.spring.ticketmonster.repo.ShowDaoImpl"/>
+	<bean id="reservationDao" class="org.jboss.spring.ticketmonster.repo.ReservationDaoImpl"/>
 	
 	<tx:annotation-driven />
 
