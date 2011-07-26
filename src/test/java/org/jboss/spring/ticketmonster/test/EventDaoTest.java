@@ -48,7 +48,7 @@ public class EventDaoTest {
 	public void testGetEventsById() {
 		Event e1 = eventDao.getEvent((long)1);
 		Event e2 = eventDao.getEvent((long)2);
-		Assert.assertEquals("Rock concert of the decade", e1.getName());
+		Assert.assertEquals("Rock Concert of the Decade", e1.getName());
 		Assert.assertEquals("Shane's Sock Puppets", e2.getName());
 		return;
 	}
@@ -58,7 +58,7 @@ public class EventDaoTest {
 	public void testSearchMajor() {
 		List<Event> events = eventDao.searchMajor(true);
 		Assert.assertEquals(2, events.size());
-		Assert.assertEquals("Rock concert of the decade", events.get(0).getName());
+		Assert.assertEquals("Rock Concert of the Decade", events.get(0).getName());
 		Assert.assertEquals("Shane's Sock Puppets", events.get(1).getName());
 		return;
 	}
@@ -67,7 +67,7 @@ public class EventDaoTest {
 	@Test
 	public void testSearchCategory() {
 		List<Event> events = eventDao.searchCategory((long)1);
-		Assert.assertEquals("Rock concert of the decade", events.get(0).getName());
+		Assert.assertEquals("Rock Concert of the Decade", events.get(0).getName());
 		events = eventDao.searchCategory((long)2);
 		Assert.assertEquals("Shane's Sock Puppets", events.get(0).getName());
 		return;
@@ -84,7 +84,7 @@ public class EventDaoTest {
 			e.printStackTrace();
 		}
 		Assert.assertEquals(2, events.size());
-		Assert.assertEquals("Rock concert of the decade", events.get(0).getName());
+		Assert.assertEquals("Rock Concert of the Decade", events.get(0).getName());
 		Assert.assertEquals("Shane's Sock Puppets", events.get(1).getName());
 		return;
 	}

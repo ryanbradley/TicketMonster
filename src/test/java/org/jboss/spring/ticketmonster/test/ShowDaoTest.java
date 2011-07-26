@@ -38,10 +38,10 @@ public class ShowDaoTest {
 		Show s2 = showDao.getShow((long)3);
 		
 		Assert.assertEquals("City Central Concert Hall", s1.getVenue().getName());
-		Assert.assertEquals("Rock concert of the decade", s1.getEvent().getName());
+		Assert.assertEquals("Rock Concert of the Decade", s1.getEvent().getName());
 		
 		Assert.assertEquals("Sydney Opera House", s2.getVenue().getName());
-		Assert.assertEquals("Rock concert of the decade", s2.getEvent().getName());
+		Assert.assertEquals("Rock Concert of the Decade", s2.getEvent().getName());
 	}
 	
 	@Test

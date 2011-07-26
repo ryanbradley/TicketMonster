@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
-import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +46,11 @@ public class BookingFormController {
 	@RequestMapping(method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
 		
-		for(PriceCategoryRequest categoryRequest : command.getCategoryRequests()) {
-			int quantity = categoryRequest.getQuantity();
+		// for(PriceCategoryRequest categoryRequest : command.getCategoryRequests()) {
+			// int quantity = categoryRequest.getQuantity();
 			// Reserve that quantity of seats in the specific category.
 			// bookingManager.reserve(categoryRequest);
-		}
+		// }
 		
 		return "showDetails";
 	}

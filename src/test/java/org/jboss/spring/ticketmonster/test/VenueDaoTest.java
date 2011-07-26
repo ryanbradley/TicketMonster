@@ -54,7 +54,7 @@ public class VenueDaoTest {
 		Venue venue = venueDao.getVenue((long)1);
 		List<Event> events = venueDao.getEvents(venue);
 		Assert.assertEquals(1, events.size());
-		Assert.assertEquals("Rock concert of the decade", events.get(0).getName());
+		Assert.assertEquals("Rock Concert of the Decade", events.get(0).getName());
 		return;
 	}
 }
