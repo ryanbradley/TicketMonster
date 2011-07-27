@@ -17,23 +17,20 @@ public class SectionRequest {
 		return sectionId;
 	}
 	
-	public void setSectionId(PriceCategoryRequest one, PriceCategoryRequest two) {
-		if(one.getPriceCategory().getSection().getId() == two.getPriceCategory().getSection().getId())
-			this.sectionId = one.getPriceCategory().getSection().getId();
-		else
-			this.sectionId = (long) -1;
-		
+	public void setSectionId(PriceCategoryRequest one) {
+		this.sectionId = one.getPriceCategory().getSection().getId();
 	}
 
 	public int getQuantity() {
 		return quantity;
 	}
 	
-	public void setQuantity(PriceCategoryRequest one, PriceCategoryRequest two) {
-		if(one.getPriceCategory().getSection().getId() == two.getPriceCategory().getSection().getId())
-			this.quantity = one.getQuantity() + two.getQuantity();
-		else
-			this.quantity = 0;
+	public void setQuantity(PriceCategoryRequest one) {
+		this.quantity = one.getQuantity();
+	}
+
+	public void addQuantity(PriceCategoryRequest categoryRequest) {
+		this.quantity += categoryRequest.getQuantity();		
 	}
 		
 }

@@ -19,6 +19,8 @@
 	<bean id="venueDao" class="org.jboss.spring.ticketmonster.repo.VenueDaoImpl"/>
 	<bean id="showDao" class="org.jboss.spring.ticketmonster.repo.ShowDaoImpl"/>
 	
+	<bean id="reservationManager" class="org.jboss.spring.ticketmonster.service.SimpleReservationManager"/>
+	
 	<tx:annotation-driven />
 
 </beans>
