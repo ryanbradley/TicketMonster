@@ -18,8 +18,7 @@ public class User implements Serializable
    
    private Long id;
 //   private IdentityObject identity;
-   private String firstName;
-   private String lastName;
+   private String username;
    
    @Id
    @GeneratedValue
@@ -46,23 +45,13 @@ public class User implements Serializable
    }
 */
    
-   public String getFirstName()
+   public String getUsername()
    {
-      return firstName;
+      return username;
    }
    
-   public void setFirstName(String firstName)
+   public void setUsername(String username)
    {
-      this.firstName = firstName;
-   }
-   
-   public String getLastName()
-   {
-      return lastName;
-   }
-   
-   public void setLastName(String lastName)
-   {
-      this.lastName = lastName;
+      this.username = username;
    }
 }

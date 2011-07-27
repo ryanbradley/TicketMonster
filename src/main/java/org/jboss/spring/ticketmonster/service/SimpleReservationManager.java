@@ -34,7 +34,7 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	public SimpleReservationManager() {
 		user = new User();
-		user.setFirstName("sbryzak");
+		user.setUsername("sbryzak");
 	}
 
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
