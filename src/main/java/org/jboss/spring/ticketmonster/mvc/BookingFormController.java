@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
-import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;

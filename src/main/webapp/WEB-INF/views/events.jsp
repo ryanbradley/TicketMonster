@@ -3,7 +3,7 @@
 	<div class="sectionHeader"><fmt:message key="events.heading"/></div>
 	<div class="sectionContent">
 		<p><fmt:message key="events.greeting"/><p/>
-		<table border="0">
+		<table>
 			<c:forEach items="${events}" var="event">
 				<tr>
 					<td>

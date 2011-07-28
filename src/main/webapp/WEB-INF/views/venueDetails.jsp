@@ -36,7 +36,7 @@
 		<c:out value="${venue.name}"/><br>
 		<c:out value="${venue.address}"/>
 		<p>${venue.description.active.content}<p/>
-			<table border="0">
+			<table>
 				<c:forEach items="${events}" var="event">
 					<tr>
 						<td>
