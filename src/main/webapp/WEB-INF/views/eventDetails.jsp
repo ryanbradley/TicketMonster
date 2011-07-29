@@ -21,7 +21,7 @@
         }
 
         function refreshTimes(venueId, eventId) {
-            baseUrl = '<c:url value="/shows.htm?"/>';
+            baseUrl = '<c:url value="/shows?"/>';
             jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
                 $("select#times").empty();
                 jQuery.each(result, function (index, value) {
@@ -31,7 +31,7 @@
         }
 
 		function getVenueDetails(venueId) {
-            baseUrl = '<c:url value= "/venues/[venueId].htm" />';
+            baseUrl = '<c:url value= "/venues/[venueId]" />';
         	jQuery.getJSON(baseUrl.replace("[venueId]", venueId), function (result) {
 				$("div#venueDetails").empty();
 	            $("div#venueDetails").append(result.address + "<p/>" + result.description.active.content);
@@ -39,7 +39,7 @@
         }
 
 		 function getPriceCategories(eventId, venueId) {
-	            baseUrl = '<c:url value= "/categories.htm?"/>';
+	            baseUrl = '<c:url value= "/categories?"/>';
 	            jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
 	                $("#priceCategories").accordion("destroy");
 	                $("#priceCategories").empty();

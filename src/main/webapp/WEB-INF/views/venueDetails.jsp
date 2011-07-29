@@ -20,7 +20,7 @@
     }
 
     function refreshTimes(venueId, eventId) {
-        baseUrl = '<c:url value="/shows.htm?"/>'
+        baseUrl = '<c:url value="/shows?"/>'
         jQuery.getJSON(baseUrl + "eventId=" + eventId + "&venueId=" + venueId, function (result) {
             $("select#times").empty()
             jQuery.each(result, function (index, value) {
@@ -40,7 +40,7 @@
 				<c:forEach items="${events}" var="event">
 					<tr>
 						<td>
-							<a href="<c:url value="../events/${event.id}.htm"/>">${event.name}</a>
+							<a href="<c:url value="../events/${event.id}"/>">${event.name}</a>
                             <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show Times</a>							
 							<p>${event.description.active.content}<p/>
 						</td>

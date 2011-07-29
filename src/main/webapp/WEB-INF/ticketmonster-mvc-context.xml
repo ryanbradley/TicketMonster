@@ -35,4 +35,10 @@
         <property name="ignoreAcceptHeader" value="true"/>
         <property name="order" value="0"/>
     </bean>
+
+    <!-- All resources must be prefixed with /static (e.g. /static/jquery-1.6.1.min.js )-->
+
+    <mvc:resources mapping="/static/**" location="/" />
+
+    <mvc:default-servlet-handler/>
 </beans>

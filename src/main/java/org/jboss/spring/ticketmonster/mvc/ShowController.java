@@ -27,7 +27,7 @@ public class ShowController {
     @Autowired
     private ShowDao showDao;
 
-    @RequestMapping(value = "/shows.htm", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/shows", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<ShowTime> getShowTimes(Long eventId, Long venueId) {
         logger.info("Retrieving show times for event " + eventId + " at venue " + venueId);
         List<ShowTime> showTimes = showDao.getShowTimes(eventId, venueId);
@@ -35,7 +35,7 @@ public class ShowController {
         return showTimes;
     }
     
-	@RequestMapping(value= "/categories.htm", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value= "/categories", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<PriceCategory> getCategories(Long eventId, Long venueId) {
 		logger.info("Retrieving all price categories for shows with " + eventId + "and " + venueId + ".");
 		List<PriceCategory> categories = showDao.getCategories(eventId, venueId);
