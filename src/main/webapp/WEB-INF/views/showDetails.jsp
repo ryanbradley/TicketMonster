@@ -19,6 +19,17 @@
             while (val.length < digits) val = "0" + val;
             return val;
         }
+
+        function updateAllocation(showId, sectionId, quantity) {
+			baseUrl = '<c:url value="/allocate?"/>';
+			jQuery.getJSON(baseUrl + "showId=" + showId + "&sectionId=" + sectionId + "&quantity=" + quantity, function (result) {
+				if(result == true)
+					$("div#sectionContent").append("Available seats have been allocated.");
+				else
+					$("div#sectionContent").append("Insufficient available seats.");
+			});			        	
+        }
+        
 </script>
 
 <div class="section">
@@ -45,7 +56,8 @@
 				<td><c:out value="${categoryRequest.priceCategory.category.description} - $${categoryRequest.priceCategory.price}"/></td>
 				<td>
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
-						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
+						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}"
+							onchange="updateAllocation(${show.id}, ${categoryStatus.index}, ${status.value})">
 					</spring:bind>
 					
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">

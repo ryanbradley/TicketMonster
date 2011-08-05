@@ -13,6 +13,7 @@ import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
+import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,6 +95,29 @@ public class SimpleReservationManager implements ReservationManager {
 		allocation.setEndSeat(allocation.getQuantity()+1);
 		allocation.setRow(row);
 
+		return allocation;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Allocation updateAllocation(Long showId, Long sectionId, int quantity) {
+		Section section = entityManager.find(Section.class, sectionId);
+		Show show = entityManager.find(Show.class, showId);
+		
+		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section and r.capacity >= :quantity");
+		query.setParameter("quantity", quantity);
+		query.setParameter("section", section);
+		List<SectionRow> rows = query.getResultList();
+		SectionRow row = rows.get(0);
+		
+		Allocation allocation = new Allocation();
+		allocation.setAssigned(new Date());
+		allocation.setStartSeat(1);
+		allocation.setEndSeat(1+quantity);
+		allocation.setShow(show);
+		allocation.setUser(user);
+		allocation.setRow(row);
+		allocation.setQuantity(quantity);
+		
 		return allocation;
 	}
 
