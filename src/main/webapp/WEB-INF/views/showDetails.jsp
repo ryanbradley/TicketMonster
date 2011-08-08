@@ -57,7 +57,7 @@
 				<td>
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
 						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}"
-							onchange="updateAllocation(${show.id}, ${categoryRequest.id}, ${status.value})">
+							onchange="updateAllocation(${show.id}, ${categoryRequest.priceCategoryId}, ${status.value})">
 					</spring:bind>
 					
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
