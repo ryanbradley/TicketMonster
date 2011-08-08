@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
@@ -99,8 +100,9 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Allocation updateAllocation(Long showId, Long sectionId, int quantity) {
-		Section section = entityManager.find(Section.class, sectionId);
+	public Allocation updateAllocation(Long showId, Long priceCategoryId, int quantity) {
+		PriceCategory priceCategory = entityManager.find(PriceCategory.class, priceCategoryId);
+		Section section = entityManager.find(Section.class, priceCategory.getSection().getId());
 		Show show = entityManager.find(Show.class, showId);
 		
 		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section and r.capacity >= :quantity");

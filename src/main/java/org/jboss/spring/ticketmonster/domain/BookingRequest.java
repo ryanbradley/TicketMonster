@@ -40,4 +40,5 @@ public class BookingRequest {
 			categoryRequests.add(new PriceCategoryRequest(priceCategory));
 		}
 	}
+
 }
