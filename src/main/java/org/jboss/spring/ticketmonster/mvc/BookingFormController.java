@@ -12,6 +12,8 @@ import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +31,9 @@ public class BookingFormController {
 	
 	@Autowired
 	private ReservationManager reservationManager;
+	
+	@Autowired
+	private CacheManager cacheManager;
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public String viewShow(@PathVariable("id") Long id, Model model) {
@@ -58,9 +63,13 @@ public class BookingFormController {
 		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(command);
 		logger.info("Retrieve contiguous groups of seats for each section in the populated list of SectionRequest objects");
 		List<Allocation> allocations = reservationManager.reserveSeats(sectionRequests);
-		model.addAttribute(allocations);
 		
 		// Call to a void method which updates the cache based on the list of Allocation objects?
+		ConcurrentMapCache reservationsCache = this.getCache();
+		
+		for(Allocation allocation : allocations) {
+			reservationsCache.put(allocation, allocation.getUser().getId());
+		}
 		
 		// In the future, the view returned should be a payment page.
 		return "showDetails";
@@ -68,11 +77,15 @@ public class BookingFormController {
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
-		Allocation allocation = reservationManager.updateAllocation(showId, priceCategoryId, quantity);
+		Allocation allocation = reservationManager.createAllocation(showId, priceCategoryId, quantity);
 		
 		if(allocation != null)
 			return true;
 		else
 			return false;
+	}
+	
+	public ConcurrentMapCache getCache() {
+		return (ConcurrentMapCache) cacheManager.getCache("reservations");
 	}
 }

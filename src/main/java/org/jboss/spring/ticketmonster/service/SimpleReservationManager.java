@@ -100,7 +100,7 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Allocation updateAllocation(Long showId, Long priceCategoryId, int quantity) {
+	public Allocation createAllocation(Long showId, Long priceCategoryId, int quantity) {
 		PriceCategory priceCategory = entityManager.find(PriceCategory.class, priceCategoryId);
 		Section section = entityManager.find(Section.class, priceCategory.getSection().getId());
 		Show show = entityManager.find(Show.class, showId);
