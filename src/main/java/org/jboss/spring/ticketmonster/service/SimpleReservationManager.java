@@ -120,6 +120,19 @@ public class SimpleReservationManager implements ReservationManager {
 		allocation.setRow(row);
 		allocation.setQuantity(quantity);
 		
+		// Code to update the actual Allocation object in the cache.
+		
+		/*
+		 * for(Allocation a : allocations) {
+		 * 		if(allocation.getRow().getSection() == a.getRow().getSection()) {
+		 * 			a = allocation;
+		 * 		}
+		 * 		else {
+		 * 			allocations.add(allocation);
+		 * 		}
+		 * }
+		 */
+		
 		return allocation;
 	}
 

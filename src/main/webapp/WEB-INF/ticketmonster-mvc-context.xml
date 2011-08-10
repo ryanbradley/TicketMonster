@@ -3,9 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:cache="http://wwww.springframework.org/schema/cache"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd 
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd">
 
 	<context:component-scan base-package="org.jboss.spring.ticketmonster.mvc"/>
 	
@@ -34,6 +37,20 @@
     <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
         <property name="ignoreAcceptHeader" value="true"/>
         <property name="order" value="0"/>
+    </bean>
+    
+    <!-- Cache Manager bean declaration -->
+    
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+    	<property name="caches">
+    		<set>
+ 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="reservations"/>
+    		</set>
+    	</property>
+    </bean>
+    
+    <bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
+        <constructor-arg value="reservations"/>
     </bean>
 
     <!-- All resources must be prefixed with /static (e.g. /static/jquery-1.6.1.min.js )-->

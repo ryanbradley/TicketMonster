@@ -67,8 +67,8 @@ public class BookingFormController {
 	}
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
-	public boolean updateAllocation(Long showId, Long sectionId, int quantity) {
-		Allocation allocation = reservationManager.updateAllocation(showId, sectionId, quantity);
+	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
+		Allocation allocation = reservationManager.updateAllocation(showId, priceCategoryId, quantity);
 		
 		if(allocation != null)
 			return true;
