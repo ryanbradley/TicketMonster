@@ -1,12 +1,16 @@
 package org.jboss.spring.ticketmonster.mvc;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
+import org.jboss.spring.ticketmonster.domain.Reservation;
+import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
@@ -64,12 +68,14 @@ public class BookingFormController {
 		logger.info("Retrieve contiguous groups of seats for each section in the populated list of SectionRequest objects");
 		List<Allocation> allocations = reservationManager.reserveSeats(sectionRequests);
 		
+		Reservation reservation = new Reservation();
+		CacheKey key = new CacheKey(command.getShowId(), allocations.get(0).getUser().getId());
+		reservation.setKey(key);
+		reservation.setAllocations(allocations);
+		
 		// Call to a void method which updates the cache based on the list of Allocation objects?
 		ConcurrentMapCache reservationsCache = this.getCache();
-		
-		for(Allocation allocation : allocations) {
-			reservationsCache.put(allocation, allocation.getUser().getId());
-		}
+		reservationsCache.put(key, reservation);
 		
 		// In the future, the view returned should be a payment page.
 		return "showDetails";
@@ -77,12 +83,27 @@ public class BookingFormController {
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
-		Allocation allocation = reservationManager.createAllocation(showId, priceCategoryId, quantity);
+		ConcurrentMapCache reservationsCache = this.getCache();
+		CacheKey key = new CacheKey(showId, (long)1);
+		Reservation reservation = (Reservation) reservationsCache.get(key);
+		Section section = showDao.getSectionbyPriceCategory(priceCategoryId);
 		
-		if(allocation != null)
-			return true;
-		else
-			return false;
+		for(Allocation allocation : reservation.getAllocations()) {
+			if(section == allocation.getRow().getSection()) {
+				if(allocation.getRow().getCapacity() < quantity) {
+					return false;
+				}
+				else if((allocation.getRow().getCapacity()-allocation.getStartSeat()) <= quantity) {
+					allocation.setAssigned(new Date());
+					allocation.setEndSeat(allocation.getStartSeat()+quantity);
+					allocation.setQuantity(quantity);
+					reservationsCache.put(key, reservation);
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	public ConcurrentMapCache getCache() {

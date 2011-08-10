@@ -11,7 +11,6 @@ import javax.persistence.Entity;
  *
  */
 
-@Entity
 public class Reservation {
 	
 	private List<Allocation> allocations;
