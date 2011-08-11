@@ -11,11 +11,11 @@ public class CacheKey {
 	
 	private Long showId;
 	
-	private Long userId;
+	private Long rowId;
 
-	public CacheKey(Long showId, Long userId) {
+	public CacheKey(Long showId, Long rowId) {
 		this.showId = showId;
-		this.userId = userId;
+		this.rowId = rowId;
 	}
 	
 	public Long getShowId() {
@@ -26,12 +26,12 @@ public class CacheKey {
 		this.showId = showId;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public Long getRowId() {
+		return rowId;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setRowId(Long rowId) {
+		this.rowId = rowId;
 	}
 
 }

@@ -2,6 +2,7 @@ package org.jboss.spring.ticketmonster.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,14 +10,19 @@ import javax.persistence.Query;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
+import org.jboss.spring.ticketmonster.domain.RowAllocation;
+import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -32,8 +38,13 @@ public class SimpleReservationManager implements ReservationManager {
 	@Autowired
 	private EntityManager entityManager;
 	
+	@Autowired
+	private CacheManager cacheManager;
+	
 	// User member is not necessary once full user functionality has been implemented.	
 	private User user;
+	
+	private static final boolean TEMPORARY = false;
 	
 	public SimpleReservationManager() {
 		user = new User();
@@ -88,17 +99,43 @@ public class SimpleReservationManager implements ReservationManager {
 		query.setParameter("section", section);
 		query.setParameter("quantity", sectionRequest.getQuantity());
 		List<SectionRow> rows = query.getResultList();
-		SectionRow row = rows.get(0);
 		
-		Allocation allocation = new Allocation();
-		allocation.setQuantity(sectionRequest.getQuantity());
-		allocation.setAssigned(new Date());
-		allocation.setUser(user);
-		allocation.setStartSeat(1);
-		allocation.setEndSeat(allocation.getQuantity());
-		allocation.setRow(row);
+		Long showId = sectionRequest.getShowId();
+		
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		
+		for(SectionRow row : rows) {
+			CacheKey key = new CacheKey(showId, row.getId());
+			RowAllocation allocated = (RowAllocation) reservationsCache.get(key);
+			LinkedList<SeatBlock> allocatedSeats = allocated.getAllocatedSeats();
+			boolean first = true;
+			
+			SeatBlock secondBlock = new SeatBlock();
+			
+			for(SeatBlock firstBlock : allocatedSeats) {	
+				if(first == true) {
+					first = false;
+					continue;
+				}
+				
+				if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= sectionRequest.getQuantity()) {
+					SeatBlock newBlock = new SeatBlock();
+					newBlock.setStartSeat(secondBlock.getEndSeat()+1);
+					newBlock.setEndSeat(newBlock.getStartSeat()+sectionRequest.getQuantity()-1);
+					newBlock.setKey(key);
+					newBlock.setStatus(TEMPORARY);
+					allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
+					allocated.setAllocatedSeats(allocatedSeats);
+					reservationsCache.put(key, allocated);
+					Allocation allocation = this.populateAllocation(sectionRequest.getQuantity(), newBlock);
+					return allocation;
+				}
+				secondBlock = firstBlock;
+			}
+			
+		}
 
-		return allocation;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,9 +163,55 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 	
 	public Allocation updateAllocation(Allocation allocation, int quantity) {
-		allocation.setQuantity(quantity);
-		allocation.setEndSeat(allocation.getStartSeat()+quantity-1);
+		boolean first = true;
+		
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		CacheKey key = new CacheKey(allocation.getShow().getId(), allocation.getRow().getId());
+		RowAllocation allocated = (RowAllocation) reservationsCache.get(key);
+		LinkedList<SeatBlock> allocatedSeats = allocated.getAllocatedSeats();
+		SeatBlock secondBlock = new SeatBlock();
+		
+		for(SeatBlock firstBlock : allocatedSeats) {	
+			if(first == true) {
+				first = false;
+				continue;
+			}
+			
+			if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= quantity) {
+				SeatBlock newBlock = new SeatBlock();
+				newBlock.setStartSeat(secondBlock.getEndSeat()+1);
+				newBlock.setEndSeat(newBlock.getStartSeat()+quantity-1);
+				newBlock.setKey(key);
+				newBlock.setStatus(TEMPORARY);
+				allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
+				allocated.setAllocatedSeats(allocatedSeats);
+				reservationsCache.put(key, allocated);
+				allocation = this.populateAllocation(quantity, newBlock);
+				return allocation;
+			}
+			secondBlock = firstBlock;
+		}
+		
+		return allocation;
+	}
+	
+	public Allocation populateAllocation(int quantity, SeatBlock block) {
+		Allocation allocation = new Allocation();
 		allocation.setAssigned(new Date());
+		allocation.setEndSeat(block.getEndSeat());
+		allocation.setQuantity(quantity);
+		
+		Long rowId = block.getKey().getRowId();
+		SectionRow row = entityManager.find(SectionRow.class, rowId);
+		allocation.setRow(row);
+		
+		Long showId = block.getKey().getShowId();
+		Show show = entityManager.find(Show.class, showId);
+		allocation.setShow(show);
+		
+		allocation.setStartSeat(block.getStartSeat());
+		allocation.setUser(user);
+		
 		return allocation;
 	}
 

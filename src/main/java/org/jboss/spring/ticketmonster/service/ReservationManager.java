@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 
 /**
@@ -22,6 +23,8 @@ public interface ReservationManager {
 	Allocation findContiguousSeats(SectionRequest sectionRequest);
 
 	Allocation createAllocation(Long showId, Long priceCategoryId, int quantity);
+	
+	Allocation populateAllocation(int quantity, SeatBlock block);
 	
 	Allocation updateAllocation(Allocation allocation, int quantity);
 }

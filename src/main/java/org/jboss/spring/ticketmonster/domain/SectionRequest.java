@@ -11,6 +11,8 @@ public class SectionRequest {
 
 	private Long sectionId;
 	
+	private Long showId;
+
 	private int quantity;
 	
 	public Long getSectionId() {
@@ -19,6 +21,14 @@ public class SectionRequest {
 	
 	public void setSectionId(PriceCategoryRequest one) {
 		this.sectionId = one.getPriceCategory().getSection().getId();
+	}
+	
+	public Long getShowId() {
+		return showId;
+	}
+
+	public void setShowId(Long showId) {
+		this.showId = showId;
 	}
 
 	public int getQuantity() {
