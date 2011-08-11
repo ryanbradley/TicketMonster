@@ -2,8 +2,6 @@ package org.jboss.spring.ticketmonster.domain;
 
 import java.util.List;
 
-import javax.persistence.Entity;
-
 /**
  * Contains a List of Allocation objects for a specific Show/User pair, for caching purposes.
  * 

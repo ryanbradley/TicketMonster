@@ -22,4 +22,6 @@ public interface ReservationManager {
 	Allocation findContiguousSeats(SectionRequest sectionRequest);
 
 	Allocation createAllocation(Long showId, Long priceCategoryId, int quantity);
+	
+	Allocation updateAllocation(Allocation allocation, int quantity);
 }

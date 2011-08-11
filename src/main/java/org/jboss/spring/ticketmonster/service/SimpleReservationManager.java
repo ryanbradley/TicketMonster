@@ -32,11 +32,13 @@ public class SimpleReservationManager implements ReservationManager {
 	@Autowired
 	private EntityManager entityManager;
 	
+	// User member is not necessary once full user functionality has been implemented.	
 	private User user;
 	
 	public SimpleReservationManager() {
 		user = new User();
 		user.setUsername("sbryzak");
+		user.setId((long) 1);
 	}
 
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
@@ -93,7 +95,7 @@ public class SimpleReservationManager implements ReservationManager {
 		allocation.setAssigned(new Date());
 		allocation.setUser(user);
 		allocation.setStartSeat(1);
-		allocation.setEndSeat(allocation.getQuantity()+1);
+		allocation.setEndSeat(allocation.getQuantity());
 		allocation.setRow(row);
 
 		return allocation;
@@ -114,12 +116,19 @@ public class SimpleReservationManager implements ReservationManager {
 		Allocation allocation = new Allocation();
 		allocation.setAssigned(new Date());
 		allocation.setStartSeat(1);
-		allocation.setEndSeat(1+quantity);
+		allocation.setEndSeat(quantity);
 		allocation.setShow(show);
 		allocation.setUser(user);
 		allocation.setRow(row);
 		allocation.setQuantity(quantity);
 		
+		return allocation;
+	}
+	
+	public Allocation updateAllocation(Allocation allocation, int quantity) {
+		allocation.setQuantity(quantity);
+		allocation.setEndSeat(allocation.getStartSeat()+quantity-1);
+		allocation.setAssigned(new Date());
 		return allocation;
 	}
 

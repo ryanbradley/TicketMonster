@@ -1,6 +1,5 @@
 package org.jboss.spring.ticketmonster.mvc;
 
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -73,7 +72,7 @@ public class BookingFormController {
 		reservation.setKey(key);
 		reservation.setAllocations(allocations);
 		
-		// Call to a void method which updates the cache based on the list of Allocation objects?
+		// Put the list of Allocation objects along with the cache look-up key in the cache.
 		ConcurrentMapCache reservationsCache = this.getCache();
 		reservationsCache.put(key, reservation);
 		
@@ -94,9 +93,7 @@ public class BookingFormController {
 					return false;
 				}
 				else if((allocation.getRow().getCapacity()-allocation.getStartSeat()) <= quantity) {
-					allocation.setAssigned(new Date());
-					allocation.setEndSeat(allocation.getStartSeat()+quantity);
-					allocation.setQuantity(quantity);
+					reservationManager.updateAllocation(allocation, quantity);
 					reservationsCache.put(key, reservation);
 					return true;
 				}
