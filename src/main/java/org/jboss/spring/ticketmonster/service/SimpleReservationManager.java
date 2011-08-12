@@ -79,16 +79,11 @@ public class SimpleReservationManager implements ReservationManager {
 		return sectionRequests;
 	}
 	
-	public List<Allocation> reserveSeats(List<SectionRequest> sectionRequests) {
-		List<Allocation> allocations = new ArrayList<Allocation>();
+	public void reserveSeats(List<SectionRequest> sectionRequests) {
 		
 		for(SectionRequest sectionRequest : sectionRequests) {
-			Allocation allocation = new Allocation();
-			allocation = this.findContiguousSeats(sectionRequest);
-			allocations.add(allocation);
+			this.findContiguousSeats(sectionRequest);
 		}
-		
-		return allocations;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -119,11 +114,7 @@ public class SimpleReservationManager implements ReservationManager {
 				}
 				
 				if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= sectionRequest.getQuantity()) {
-					SeatBlock newBlock = new SeatBlock();
-					newBlock.setStartSeat(secondBlock.getEndSeat()+1);
-					newBlock.setEndSeat(newBlock.getStartSeat()+sectionRequest.getQuantity()-1);
-					newBlock.setKey(key);
-					newBlock.setStatus(TEMPORARY);
+					SeatBlock newBlock = this.allocateSeats(firstBlock, sectionRequest.getQuantity(), key);
 					allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
 					allocated.setAllocatedSeats(allocatedSeats);
 					reservationsCache.put(key, allocated);
@@ -136,6 +127,17 @@ public class SimpleReservationManager implements ReservationManager {
 		}
 
 		return null;
+	}
+	
+	public SeatBlock allocateSeats(SeatBlock frontBlock, int quantity, CacheKey key) {
+		SeatBlock block = new SeatBlock();
+		
+		block.setStartSeat(frontBlock.getEndSeat()+1);
+		block.setEndSeat(block.getStartSeat()+quantity-1);
+		block.setKey(key);
+		block.setStatus(TEMPORARY);
+		
+		return block;		
 	}
 
 	@SuppressWarnings("unchecked")

@@ -11,8 +11,18 @@ import java.util.LinkedList;
 
 public class RowAllocation {
 	
+	private int capacity;
+	
 	private LinkedList<SeatBlock> allocatedSeats;
 
+	public int getCapacity() {
+		return capacity;
+	}
+
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
+	
 	public LinkedList<SeatBlock> getAllocatedSeats() {
 		return allocatedSeats;
 	}
