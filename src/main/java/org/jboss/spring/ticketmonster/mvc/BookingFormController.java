@@ -4,19 +4,14 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
-import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
-import org.jboss.spring.ticketmonster.domain.Reservation;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,9 +29,6 @@ public class BookingFormController {
 	
 	@Autowired
 	private ReservationManager reservationManager;
-	
-	@Autowired
-	private CacheManager cacheManager;
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public String viewShow(@PathVariable("id") Long id, Model model) {
@@ -73,29 +65,12 @@ public class BookingFormController {
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
-		ConcurrentMapCache reservationsCache = this.getCache();
+		boolean success = false;
 		Section section = showDao.getSectionbyPriceCategory(priceCategoryId);
 		
-		CacheKey key = new CacheKey(showId, (long)1);
-		Reservation reservation = (Reservation) reservationsCache.get(key);
+		success = reservationManager.updateSeatAllocation(showId, section.getId(), quantity);
 		
-		for(Allocation allocation : reservation.getAllocations()) {
-			if(section == allocation.getRow().getSection()) {
-				if(allocation.getRow().getCapacity() < quantity) {
-					return false;
-				}
-				else if((allocation.getRow().getCapacity()-allocation.getStartSeat()) <= quantity) {
-					reservationManager.updateAllocation(allocation, quantity);
-					reservationsCache.put(key, reservation);
-					return true;
-				}
-			}
-		}
-		
-		return false;
+		return success;
 	}
 	
-	public ConcurrentMapCache getCache() {
-		return (ConcurrentMapCache) cacheManager.getCache("reservations");
-	}
 }
