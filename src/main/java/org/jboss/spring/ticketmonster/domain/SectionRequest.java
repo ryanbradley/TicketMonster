@@ -42,5 +42,13 @@ public class SectionRequest {
 	public void addQuantity(PriceCategoryRequest categoryRequest) {
 		this.quantity += categoryRequest.getQuantity();		
 	}
+
+	public void setSectionId(long sectionId) {
+		this.sectionId = sectionId;		
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 		
 }

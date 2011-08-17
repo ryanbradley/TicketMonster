@@ -82,29 +82,63 @@ public class SimpleReservationManager implements ReservationManager {
 		List<SectionRow> rows = query.getResultList();
 		
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		RowAllocation allocation = new RowAllocation();
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
-			RowAllocation allocated = (RowAllocation) reservationsCache.get(key);
-			LinkedList<SeatBlock> allocatedSeats = allocated.getAllocatedSeats();
-			boolean first = true;
+
+			if(reservationsCache.get(key) != null) {
+				allocation = (RowAllocation) reservationsCache.get(key);
+			}
+			else {
+				allocation.setCapacity(row.getCapacity());
+				allocation.setAllocatedSeats(new LinkedList<SeatBlock>());
+			}
 			
-			SeatBlock secondBlock = new SeatBlock();
+			LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
 			
-			for(SeatBlock firstBlock : allocatedSeats) {	
-				if(first == true) {
-					first = false;
-					continue;
+			// Case for the first seat allocation in a certain row.
+			
+			if(allocatedSeats.isEmpty()) {
+				SeatBlock block = new SeatBlock();
+				block.setStartSeat(1);
+				block.setEndSeat(quantity);
+				block.setStatus(TEMPORARY);
+				block.setKey(key);
+				allocatedSeats.add(block);
+				allocation.setAllocatedSeats(allocatedSeats);
+				reservationsCache.put(key, allocation);
+				return true;
+			}
+			
+			// Case for the second seat allocation in a certain row.
+			
+			if(allocatedSeats.size()==1) {
+				SeatBlock b = allocatedSeats.get(0);
+				if(row.getCapacity()-b.getEndSeat() >= quantity) {
+					SeatBlock allocated = new SeatBlock();
+					allocated.setStartSeat(b.getEndSeat()+1);
+					allocated.setEndSeat(allocated.getStartSeat() + quantity - 1);
+					allocated.setStatus(TEMPORARY);
+					allocated.setKey(key);
+					allocatedSeats.add(allocated);
+					allocation.setAllocatedSeats(allocatedSeats);
+					reservationsCache.put(key, allocation);
 				}
+			}
+			
+			// General case for seat allocation in a certain row.
+			
+			for(SeatBlock firstBlock : allocatedSeats) {
+				SeatBlock secondBlock = allocatedSeats.get(allocatedSeats.indexOf(firstBlock)+1);
 				
 				if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= quantity) {
 					SeatBlock newBlock = this.allocateSeats(firstBlock, quantity, key);
 					allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
-					allocated.setAllocatedSeats(allocatedSeats);
-					reservationsCache.put(key, allocated);
+					allocation.setAllocatedSeats(allocatedSeats);
+					reservationsCache.put(key, allocation);
 					return true;
 				}
-				secondBlock = firstBlock;
 			}
 			
 		}
