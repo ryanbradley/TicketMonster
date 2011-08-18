@@ -74,21 +74,21 @@ public class SimpleReservationManager implements ReservationManager {
 
 	@SuppressWarnings("unchecked")
 	public boolean findContiguousSeats(Long showId, Long sectionId, int quantity) {
-		Section section = entityManager.find(Section.class, sectionId);
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		
+		Section section = entityManager.find(Section.class, sectionId);
 		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section and r.capacity >= :quantity");
 		query.setParameter("section", section);
 		query.setParameter("quantity", quantity);
 		List<SectionRow> rows = query.getResultList();
 		
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		RowAllocation allocation = new RowAllocation();
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
-
+			
 			if(reservationsCache.get(key) != null) {
-				allocation = (RowAllocation) reservationsCache.get(key);
+				allocation = (RowAllocation) reservationsCache.get(key).get();
 			}
 			else {
 				allocation.setCapacity(row.getCapacity());
@@ -114,13 +114,9 @@ public class SimpleReservationManager implements ReservationManager {
 			// Case for the second seat allocation in a certain row.
 			
 			if(allocatedSeats.size()==1) {
-				SeatBlock b = allocatedSeats.get(0);
-				if(row.getCapacity()-b.getEndSeat() >= quantity) {
-					SeatBlock allocated = new SeatBlock();
-					allocated.setStartSeat(b.getEndSeat()+1);
-					allocated.setEndSeat(allocated.getStartSeat() + quantity - 1);
-					allocated.setStatus(TEMPORARY);
-					allocated.setKey(key);
+				SeatBlock frontBlock = allocatedSeats.get(0);
+				if(row.getCapacity()-frontBlock.getEndSeat() >= quantity) {
+					SeatBlock allocated = this.allocateSeats(frontBlock, quantity, key);
 					allocatedSeats.add(allocated);
 					allocation.setAllocatedSeats(allocatedSeats);
 					reservationsCache.put(key, allocation);
@@ -213,8 +209,8 @@ public class SimpleReservationManager implements ReservationManager {
 		 CacheKey key = new CacheKey(showId, rowId);
 		 ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		 
-		 RowAllocation allocated = (RowAllocation) reservationsCache.get(key);
-		 LinkedList<SeatBlock> allocatedSeats = allocated.getAllocatedSeats();
+		 RowAllocation allocation = (RowAllocation) reservationsCache.get(key);
+		 LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
 
 		boolean first = true;
 			
@@ -229,8 +225,8 @@ public class SimpleReservationManager implements ReservationManager {
 			if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= quantity) {
 				SeatBlock newBlock = this.allocateSeats(firstBlock, quantity, key);
 				allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
-				allocated.setAllocatedSeats(allocatedSeats);
-				reservationsCache.put(key, allocated);
+				allocation.setAllocatedSeats(allocatedSeats);
+				reservationsCache.put(key, allocation);
 				return newBlock;
 			}
 			secondBlock = firstBlock;

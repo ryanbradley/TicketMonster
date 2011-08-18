@@ -18,6 +18,37 @@ public class CacheKey {
 		this.rowId = rowId;
 	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((rowId == null) ? 0 : rowId.hashCode());
+		result = prime * result + ((showId == null) ? 0 : showId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CacheKey other = (CacheKey) obj;
+		if (rowId == null) {
+			if (other.rowId != null)
+				return false;
+		} else if (!rowId.equals(other.rowId))
+			return false;
+		if (showId == null) {
+			if (other.showId != null)
+				return false;
+		} else if (!showId.equals(other.showId))
+			return false;
+		return true;
+	}
+	
 	public Long getShowId() {
 		return showId;
 	}

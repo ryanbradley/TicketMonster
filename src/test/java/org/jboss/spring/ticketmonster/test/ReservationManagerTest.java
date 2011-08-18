@@ -76,6 +76,8 @@ public class ReservationManagerTest {
 	@Test
 	public void testFindContiguousSeats() {		
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		Assert.assertNotNull(reservationsCache);
+		Assert.assertEquals("reservations", reservationsCache.getName());
 		
 		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
 		Assert.assertEquals(true, success);
@@ -83,12 +85,14 @@ public class ReservationManagerTest {
 		Assert.assertEquals(true, success);
 		
 		CacheKey key = new CacheKey((long) 3, (long) 1);
+		Assert.assertEquals((long) 3, key.getShowId(), 0);
+		Assert.assertEquals((long) 1, key.getRowId(), 0);
 		
-		RowAllocation allocated = (RowAllocation) reservationsCache.get(key);
-		Assert.assertNotNull(allocated);
+		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
+		Assert.assertNotNull(allocation);
 		
-		SeatBlock firstBlock = allocated.getAllocatedSeats().get(0);
-		SeatBlock secondBlock = allocated.getAllocatedSeats().get(1);
+		SeatBlock firstBlock = allocation.getAllocatedSeats().get(0);
+		SeatBlock secondBlock = allocation.getAllocatedSeats().get(1);
 		
 		Assert.assertEquals(1, firstBlock.getStartSeat());
 		Assert.assertEquals(10, firstBlock.getEndSeat());
