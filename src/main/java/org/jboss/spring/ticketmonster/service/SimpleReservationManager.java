@@ -64,13 +64,6 @@ public class SimpleReservationManager implements ReservationManager {
 		
 		return sectionRequests;
 	}
-	
-	public void reserveSeats(List<SectionRequest> sectionRequests) {
-		
-		for(SectionRequest sectionRequest : sectionRequests) {
-			this.findContiguousSeats(sectionRequest.getShowId(), sectionRequest.getSectionId(), sectionRequest.getQuantity());
-		}
-	}
 
 	@SuppressWarnings("unchecked")
 	public boolean findContiguousSeats(Long showId, Long sectionId, int quantity) {
@@ -113,22 +106,34 @@ public class SimpleReservationManager implements ReservationManager {
 			
 			// Case for the second seat allocation in a certain row.
 			
-			if(allocatedSeats.size()==1) {
+			if(allocatedSeats.size() == 1) {
 				SeatBlock frontBlock = allocatedSeats.get(0);
-				if(row.getCapacity()-frontBlock.getEndSeat() >= quantity) {
+				if(row.getCapacity() - frontBlock.getEndSeat() >= quantity) {
 					SeatBlock allocated = this.allocateSeats(frontBlock, quantity, key);
 					allocatedSeats.add(allocated);
 					allocation.setAllocatedSeats(allocatedSeats);
 					reservationsCache.put(key, allocation);
+					return true;
 				}
 			}
 			
 			// General case for seat allocation in a certain row.
 			
 			for(SeatBlock firstBlock : allocatedSeats) {
+				if(firstBlock == allocatedSeats.getLast()) {
+					if(row.getCapacity() - firstBlock.getEndSeat() >= quantity) {
+						SeatBlock block = this.allocateSeats(firstBlock, quantity, key);
+						allocatedSeats.add(block);
+						allocation.setAllocatedSeats(allocatedSeats);
+						reservationsCache.put(key, allocation);
+						return true;
+					}
+					
+					break;
+				}
 				SeatBlock secondBlock = allocatedSeats.get(allocatedSeats.indexOf(firstBlock)+1);
 				
-				if(firstBlock.getStartSeat()-secondBlock.getEndSeat() <= quantity) {
+				if(firstBlock.getStartSeat() - secondBlock.getEndSeat() >= quantity) {
 					SeatBlock newBlock = this.allocateSeats(firstBlock, quantity, key);
 					allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, newBlock);
 					allocation.setAllocatedSeats(allocatedSeats);

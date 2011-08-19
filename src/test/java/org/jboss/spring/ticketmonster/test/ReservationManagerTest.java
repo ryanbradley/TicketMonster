@@ -15,7 +15,6 @@ import org.jboss.spring.ticketmonster.service.ReservationManager;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,7 +53,7 @@ public class ReservationManagerTest {
 	@Test
 	public void testCreateSectionRequests() {
 		BookingRequest booking = new BookingRequest();
-		booking.setShowId((long)3);
+		booking.setShowId((long) 3);
 		
 		List<PriceCategory> categories = showDao.getCategories((long) 1, (long) 2);
 		List<PriceCategoryRequest> categoryRequests = new ArrayList<PriceCategoryRequest>();
@@ -76,6 +75,7 @@ public class ReservationManagerTest {
 	@Test
 	public void testFindContiguousSeats() {		
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		reservationsCache.clear();
 		Assert.assertNotNull(reservationsCache);
 		Assert.assertEquals("reservations", reservationsCache.getName());
 		
@@ -98,30 +98,5 @@ public class ReservationManagerTest {
 		Assert.assertEquals(10, firstBlock.getEndSeat());
 		Assert.assertEquals(11, secondBlock.getStartSeat());
 		Assert.assertEquals(15, secondBlock.getEndSeat());
-	}
-	
-	@Transactional
-	@Ignore
-	public void testReserveSeats() {
-		BookingRequest booking = new BookingRequest();
-		booking.setShowId((long)1);
-		
-		List<PriceCategory> categories = showDao.getCategories((long) 1, (long) 2);
-		List<PriceCategoryRequest> categoryRequests = new ArrayList<PriceCategoryRequest>();
-		
-		for(PriceCategory category : categories) {
-			PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
-			categoryRequest.setQuantity(10);
-			categoryRequests.add(categoryRequest);
-		}
-		booking.setCategoryRequests(categoryRequests);
-		
-		List<SectionRequest> sectionRequests = new ArrayList<SectionRequest>();
-		sectionRequests = reservationManager.createSectionRequests(booking);
-		Assert.assertEquals(7, sectionRequests.size());
-		
-		//List<Allocation> allocations = new ArrayList<Allocation>();
-		//allocations = reservationManager.reserveSeats(sectionRequests);
-		//Assert.assertEquals(7, allocations.size());
 	}
 }

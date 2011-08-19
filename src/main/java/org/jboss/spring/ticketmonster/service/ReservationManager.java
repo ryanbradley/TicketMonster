@@ -17,8 +17,6 @@ import org.jboss.spring.ticketmonster.domain.SectionRequest;
 public interface ReservationManager {
 	
 	List<SectionRequest> createSectionRequests(BookingRequest booking);
-
-	void reserveSeats(List<SectionRequest> sectionRequests);
 	
 	boolean findContiguousSeats(Long showId, Long sectionId, int quantity);
 	
