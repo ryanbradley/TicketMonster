@@ -41,11 +41,11 @@ public class SeatBlock {
 		this.endSeat = endSeat;
 	}
 
-	public boolean isStatus() {
+	public boolean isPurchased() {
 		return status;
 	}
 
-	public void setStatus(boolean status) {
+	public void setPurchased(boolean status) {
 		this.status = status;
 	}
 	

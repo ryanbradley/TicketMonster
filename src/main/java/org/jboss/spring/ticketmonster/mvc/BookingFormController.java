@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Section;
-import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
@@ -55,9 +54,7 @@ public class BookingFormController {
 	@RequestMapping(method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
 		logger.info("From a provided list of PriceCategoryRequest objects (provided by the BookingRequest object), create SectionRequest objects.");
-		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(command);
 		logger.info("Retrieve contiguous groups of seats for each section in the populated list of SectionRequest objects");
-		reservationManager.reserveSeats(sectionRequests);
 		
 		// In the future, the view returned should be a payment page.
 		return "showDetails";
@@ -66,7 +63,7 @@ public class BookingFormController {
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
-		Section section = showDao.getSectionbyPriceCategory(priceCategoryId);
+		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
 		
 		success = reservationManager.updateSeatAllocation(showId, section.getId(), quantity);
 		

@@ -22,5 +22,7 @@ public interface ShowDao {
 	
 	List<PriceCategory> getCategories(Long eventId, Long venueId);
 	
-	Section getSectionbyPriceCategory(Long categoryId);
+	Section getSectionByPriceCategory(Long categoryId);
+	
+	Long getSectionIdByRowId(Long rowId);
 }

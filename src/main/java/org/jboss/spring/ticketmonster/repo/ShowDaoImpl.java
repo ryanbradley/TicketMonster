@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.jboss.spring.ticketmonster.domain.Event;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Section;
+import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
 import org.jboss.spring.ticketmonster.domain.Venue;
@@ -67,10 +68,15 @@ public class ShowDaoImpl implements ShowDao {
 		return categories;
 	}
 
-	public Section getSectionbyPriceCategory(Long categoryId) {
+	public Section getSectionByPriceCategory(Long categoryId) {
 		PriceCategory category = entityManager.find(PriceCategory.class, categoryId);
 		Section section = category.getSection();
 		return section;
+	}
+	
+	public Long getSectionIdByRowId(Long rowId) {
+		SectionRow row = entityManager.find(SectionRow.class, rowId);
+		return row.getSection().getId();		
 	}
 
 }
