@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Section;
+import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
 
@@ -24,5 +25,9 @@ public interface ShowDao {
 	
 	Section getSectionByPriceCategory(Long categoryId);
 	
+	Section findSection(Long sectionId);
+	
 	Long getSectionIdByRowId(Long rowId);
+	
+	List<SectionRow> getRowsBySection(Section section, int quantity);	
 }

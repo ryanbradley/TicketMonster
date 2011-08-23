@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
@@ -98,5 +99,29 @@ public class ReservationManagerTest {
 		Assert.assertEquals(10, firstBlock.getEndSeat());
 		Assert.assertEquals(11, secondBlock.getStartSeat());
 		Assert.assertEquals(15, secondBlock.getEndSeat());
+	}
+	
+	@Transactional
+	@Test
+	public void testUpdateSeatAllocation() {
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		
+		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
+		Assert.assertEquals(true, success);
+		
+		CacheKey key = new CacheKey((long) 3, (long) 1);
+		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
+		SeatBlock block = allocation.getAllocatedSeats().getFirst();
+		
+		BookingState bookingState = new BookingState();
+		bookingState.addSeatBlock(block);
+		
+		// Need to find a way to pass the BookingState session-scoped object to the updateSeatAllocation() method.
+		reservationManager.updateSeatAllocation((long) 3, (long) 100, 15);
+		allocation = (RowAllocation) reservationsCache.get(key).get();
+		
+		block = allocation.getAllocatedSeats().getFirst();
+		Assert.assertEquals(1, block.getStartSeat());
+		Assert.assertEquals(15, block.getEndSeat());
 	}
 }

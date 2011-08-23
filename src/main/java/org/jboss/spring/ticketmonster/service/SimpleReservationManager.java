@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
@@ -16,6 +13,7 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
+import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
@@ -32,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SimpleReservationManager implements ReservationManager {
 
 	@Autowired
-	private EntityManager entityManager;
+	private ShowDao showDao;
 	
 	@Autowired
 	private CacheManager cacheManager;
@@ -69,15 +67,11 @@ public class SimpleReservationManager implements ReservationManager {
 		return sectionRequests;
 	}
 
-	@SuppressWarnings("unchecked")
 	public boolean findContiguousSeats(Long showId, Long sectionId, int quantity) {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		
-		Section section = entityManager.find(Section.class, sectionId);
-		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section and r.capacity >= :quantity");
-		query.setParameter("section", section);
-		query.setParameter("quantity", quantity);
-		List<SectionRow> rows = query.getResultList();
+		Section section = showDao.findSection(sectionId);
+		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
 		RowAllocation allocation = new RowAllocation();
 		
@@ -169,14 +163,11 @@ public class SimpleReservationManager implements ReservationManager {
 		return block;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public boolean updateSeatAllocation(Long showId, Long sectionId, int quantity) {
 		boolean found = false, success = false;
 		
-		Section section = entityManager.find(Section.class, sectionId);
-		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section");
-		query.setParameter("section", section);
-		List<SectionRow> rows = query.getResultList();
+		Section section = showDao.findSection(sectionId);
+		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());

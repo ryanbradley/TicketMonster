@@ -74,9 +74,23 @@ public class ShowDaoImpl implements ShowDao {
 		return section;
 	}
 	
+	public Section findSection(Long sectionId) {
+		Section section = entityManager.find(Section.class, sectionId);
+		return section;
+	}
+	
 	public Long getSectionIdByRowId(Long rowId) {
 		SectionRow row = entityManager.find(SectionRow.class, rowId);
 		return row.getSection().getId();		
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SectionRow> getRowsBySection(Section section, int quantity) {
+		Query query = entityManager.createQuery("select r from SectionRow r where r.section = :section and r.capacity >= :quantity");
+		query.setParameter("section", section);
+		query.setParameter("quantity", quantity);
+		List<SectionRow> rows = query.getResultList();
+		return rows;
 	}
 
 }
