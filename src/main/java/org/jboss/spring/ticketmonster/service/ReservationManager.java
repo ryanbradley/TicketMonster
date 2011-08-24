@@ -3,6 +3,7 @@ package org.jboss.spring.ticketmonster.service;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
+import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
@@ -15,6 +16,8 @@ import org.jboss.spring.ticketmonster.domain.SectionRequest;
  */
 
 public interface ReservationManager {
+	
+	BookingState getBookingState();
 	
 	List<SectionRequest> createSectionRequests(BookingRequest booking);
 	

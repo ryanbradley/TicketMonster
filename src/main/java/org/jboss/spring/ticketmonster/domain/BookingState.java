@@ -1,5 +1,6 @@
 package org.jboss.spring.ticketmonster.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.repo.ShowDao;
@@ -20,6 +21,11 @@ public class BookingState {
 	private User user;
 	
 	private List<SeatBlock> allocated;
+	
+	public BookingState() {
+		this.allocated = new ArrayList<SeatBlock>();
+		this.user = new User();
+	}
 
 	public User getUser() {
 		return user;

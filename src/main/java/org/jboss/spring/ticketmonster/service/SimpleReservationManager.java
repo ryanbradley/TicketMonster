@@ -40,6 +40,10 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	private static final boolean TEMPORARY = false;
 
+	public BookingState getBookingState() {
+		return bookingState;
+	}
+
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
 		
 		boolean found = false;
@@ -194,8 +198,13 @@ public class SimpleReservationManager implements ReservationManager {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		
 		CacheKey key = new CacheKey(showId, rowId);
-		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
-		LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
+		RowAllocation allocation = new RowAllocation();
+		LinkedList<SeatBlock> allocatedSeats = new LinkedList<SeatBlock>();
+		
+		if(reservationsCache.get(key) != null) {
+			allocation = (RowAllocation) reservationsCache.get(key).get();
+			allocatedSeats = allocation.getAllocatedSeats();
+		}
 		
 		for(SeatBlock block : allocatedSeats) {
 			if(bookingState.getAllocated().contains(block)) {

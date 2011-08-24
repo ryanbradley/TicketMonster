@@ -36,11 +36,6 @@
 		<constructor-arg value="reservations"/>
 	</bean>
 	
-	<bean id="bookingState" class="org.jboss.spring.ticketmonster.domain.BookingState" scope="session">
-		<!-- This next element affects the proxying of the surrounding bean. -->
-		<aop:scoped-proxy/>
-	</bean>
-	
 	<tx:annotation-driven />
 
 </beans>

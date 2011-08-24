@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
-import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
@@ -16,6 +15,7 @@ import org.jboss.spring.ticketmonster.service.ReservationManager;
 
 import junit.framework.Assert;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,7 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
-"classpath:META-INF/spring/ticketmonster-business-context.xml"})
+"classpath:META-INF/spring/ticketmonster-business-context.xml",
+"classpath:/META-INF/test-bookingState.xml"})
 @TransactionConfiguration(defaultRollback=true)
 public class ReservationManagerTest {
 
@@ -73,7 +74,7 @@ public class ReservationManagerTest {
 	}
 	
 	@Transactional
-	@Test
+	@Ignore
 	public void testFindContiguousSeats() {		
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		reservationsCache.clear();
@@ -91,6 +92,7 @@ public class ReservationManagerTest {
 		
 		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
 		Assert.assertNotNull(allocation);
+		Assert.assertEquals(2, allocation.getAllocatedSeats().size());
 		
 		SeatBlock firstBlock = allocation.getAllocatedSeats().get(0);
 		SeatBlock secondBlock = allocation.getAllocatedSeats().get(1);
@@ -104,24 +106,19 @@ public class ReservationManagerTest {
 	@Transactional
 	@Test
 	public void testUpdateSeatAllocation() {
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
-		
 		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
 		Assert.assertEquals(true, success);
+		Assert.assertEquals(1, reservationManager.getBookingState().getAllocated().get(0).getStartSeat());
+		Assert.assertEquals(10, reservationManager.getBookingState().getAllocated().get(0).getEndSeat());
+		Assert.assertEquals(1, reservationManager.getBookingState().getAllocated().size());
 		
-		CacheKey key = new CacheKey((long) 3, (long) 1);
-		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
-		SeatBlock block = allocation.getAllocatedSeats().getFirst();
+		success = reservationManager.updateSeatAllocation((long) 3, (long) 100, 15);
+		Assert.assertEquals(1, reservationManager.getBookingState().getAllocated().size());
+		Assert.assertEquals(1, reservationManager.getBookingState().getAllocated().get(0).getStartSeat());
+		Assert.assertEquals(15, reservationManager.getBookingState().getAllocated().get(0).getEndSeat());
+		Assert.assertEquals((long) 1, reservationManager.getBookingState().getAllocated().get(0).getKey().getRowId(), 0);
 		
-		BookingState bookingState = new BookingState();
-		bookingState.addSeatBlock(block);
-		
-		// Need to find a way to pass the BookingState session-scoped object to the updateSeatAllocation() method.
-		reservationManager.updateSeatAllocation((long) 3, (long) 100, 15);
-		allocation = (RowAllocation) reservationsCache.get(key).get();
-		
-		block = allocation.getAllocatedSeats().getFirst();
-		Assert.assertEquals(1, block.getStartSeat());
-		Assert.assertEquals(15, block.getEndSeat());
+		success = reservationManager.findContiguousSeats((long) 3, (long) 100, 50);
+		Assert.assertEquals((long) 2, reservationManager.getBookingState().getAllocated().get(1).getKey().getRowId(), 0);
 	}
 }
