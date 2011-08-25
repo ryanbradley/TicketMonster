@@ -53,10 +53,7 @@ public class BookingFormController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
-		logger.info("From a provided list of PriceCategoryRequest objects (provided by the BookingRequest object), create SectionRequest objects.");
-		logger.info("Retrieve contiguous groups of seats for each section in the populated list of SectionRequest objects");
-		
-		// In the future, the view returned should be a payment page.
+		// Call to a method which marks off allocated seats as purchased perhaps?
 		return "showDetails";
 	}
 	
@@ -64,7 +61,6 @@ public class BookingFormController {
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
 		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
-		
 		success = reservationManager.updateSeatAllocation(showId, section.getId(), quantity);
 		
 		return success;

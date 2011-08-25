@@ -120,5 +120,7 @@ public class ReservationManagerTest {
 		
 		success = reservationManager.findContiguousSeats((long) 3, (long) 100, 50);
 		Assert.assertEquals((long) 2, reservationManager.getBookingState().getAllocated().get(1).getKey().getRowId(), 0);
+		Assert.assertEquals(1, reservationManager.getBookingState().getAllocated().get(1).getStartSeat());
+		Assert.assertEquals(50, reservationManager.getBookingState().getAllocated().get(1).getEndSeat());
 	}
 }

@@ -28,4 +28,6 @@ public interface ReservationManager {
 	boolean updateSeatAllocation(Long showId, Long sectionId, int quantity);
 	
 	SeatBlock update(Long showId, Long rowId, int quantity);
+	
+	void removeSeatAllocation(Long showId, Long rowId);
 }

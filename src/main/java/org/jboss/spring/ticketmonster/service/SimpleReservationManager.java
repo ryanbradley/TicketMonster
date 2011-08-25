@@ -177,6 +177,11 @@ public class SimpleReservationManager implements ReservationManager {
 			CacheKey key = new CacheKey(showId, row.getId());
 			found = bookingState.allocationExists(key);
 			if(found == true) {
+				if(quantity == 0) {
+					this.removeSeatAllocation(showId, row.getId());
+					return true;
+				}
+				
 				SeatBlock block = this.update(showId, row.getId(), quantity);
 				if(block != null) {
 					success = true;
@@ -235,6 +240,29 @@ public class SimpleReservationManager implements ReservationManager {
 		}
 		
 		return null;
+	}
+	
+	public void removeSeatAllocation(Long showId, Long rowId)	{
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		CacheKey key = new CacheKey(showId, rowId);
+		
+		if(reservationsCache.get(key) == null) {
+			return;
+		}
+		
+		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
+		LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
+		
+		for(SeatBlock block : allocatedSeats) {
+			if(this.bookingState.getAllocated().contains(block)) {
+				allocatedSeats.remove(block);
+				allocation.setAllocatedSeats(allocatedSeats);
+				reservationsCache.put(key, allocation);
+				return;
+			}
+		}
+		
+		return;
 	}
 
 }
