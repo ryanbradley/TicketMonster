@@ -173,6 +173,10 @@ public class SimpleReservationManager implements ReservationManager {
 		Section section = showDao.findSection(sectionId);
 		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
+		if(quantity < 0) {
+			return success;
+		}
+		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
 			found = bookingState.allocationExists(key);
