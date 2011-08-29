@@ -12,9 +12,12 @@
 	
 	<http use-expressions="true">
 		<intercept-url pattern="/bookings/**" access="hasRole('ROLE_USER')"/>
+		<intercept-url pattern="/events**" access="permitAll"/>
 		<intercept-url pattern="/events/**" access="permitAll"/>
+		<intercept-url pattern="/venues**" access="permitAll"/>
 		<intercept-url pattern="/venues/**" access="permitAll"/>
-		<intercept-url pattern="/categories/**" access="permitAll"/>
+		<intercept-url pattern="/shows/**" access="permitAll"/>
+		<intercept-url pattern="/categories**" access="permitAll"/>
 		<intercept-url pattern="/**" access="denyAll"/>
 		<form-login/>
 		<logout/>
@@ -24,7 +27,7 @@
 	
 	<authentication-manager>
 		<authentication-provider>
-			<password-encoder ref="encoder"/>
+		<!-- <password-encoder ref="encoder"/> -->
 			<user-service>
 				<user name="rbradley" password="ticketmonster" authorities="ROLE_USER, ROLE_ADMIN"/>
 				<user name="sbryzak" password="original" authorities="ROLE_USER, ROLE_ADMIN"/>

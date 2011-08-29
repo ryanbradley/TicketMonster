@@ -1,0 +1,8 @@
+Username/Password Combinations for TicketMonster
+
+The following username/password combinations can be used to login to the TicketMonster web application.  'rbradley' and 'sbryzak' have both user and administrator priveleges whereas 'mbg' only has user priveleges.
+
+Username	Password
+rbradley	ticketmonster
+sbryzak		original
+mbg		marius
