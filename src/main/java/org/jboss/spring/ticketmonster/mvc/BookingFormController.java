@@ -2,8 +2,6 @@ package org.jboss.spring.ticketmonster.mvc;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.Section;
@@ -21,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/bookings")
 public class BookingFormController {
 	
-	protected final Log logger = LogFactory.getLog(getClass());
-	
 	@Autowired
 	private ShowDao showDao;
 	
@@ -37,17 +33,14 @@ public class BookingFormController {
 		Long eventId = show.getEvent().getId();
 		Long venueId = show.getVenue().getId();
 		
-		logger.info("Retrieving all PriceCategory objects for the Show specified by the id parameter");
 		List<PriceCategory> categories = showDao.getCategories(eventId, venueId);
 		model.addAttribute("categories", categories);
 		
-		logger.info("Create a new BookingRequest object, set the Show id and PriceCategory list, and initialize the list PriceCategoryRequest objects");
 		BookingRequest bookingRequest = new BookingRequest();
 		bookingRequest.setShowId(id);
 		bookingRequest.initializeRequest(categories);
 		model.addAttribute("bookingRequest", bookingRequest);
 		
-		logger.info("Return a web view displaying all the details for that Show.");
 		return "showDetails";		
 	}
 	

@@ -1,7 +1,5 @@
 package org.jboss.spring.ticketmonster.mvc;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
@@ -22,14 +20,11 @@ import java.util.List;
 @Controller
 public class ShowController {
 
-    protected final Log logger = LogFactory.getLog(getClass());
-
     @Autowired
     private ShowDao showDao;
 
     @RequestMapping(value = "/shows", method = RequestMethod.GET, produces = "application/json")
     public @ResponseBody List<ShowTime> getShowTimes(Long eventId, Long venueId) {
-        logger.info("Retrieving show times for event " + eventId + " at venue " + venueId);
         List<ShowTime> showTimes = showDao.getShowTimes(eventId, venueId);
         
         return showTimes;
@@ -37,7 +32,6 @@ public class ShowController {
     
 	@RequestMapping(value= "/categories", method = RequestMethod.GET, produces = "application/json")
 	public @ResponseBody List<PriceCategory> getCategories(Long eventId, Long venueId) {
-		logger.info("Retrieving all price categories for shows with " + eventId + "and " + venueId + ".");
 		List<PriceCategory> categories = showDao.getCategories(eventId, venueId);
 		return categories;
 	}    

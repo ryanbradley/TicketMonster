@@ -7,6 +7,8 @@ import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Interface containing methods to reserve seating that has been allocated.
@@ -15,6 +17,8 @@ import org.jboss.spring.ticketmonster.domain.SectionRequest;
  *
  */
 
+@PreAuthorize("hasRole('ROLE_USER')")
+@Transactional
 public interface ReservationManager {
 	
 	BookingState getBookingState();

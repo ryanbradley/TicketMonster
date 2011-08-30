@@ -12,7 +12,6 @@ import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.Venue;
 import org.jboss.spring.ticketmonster.repo.EventDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the EventDao interface.
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 
-@Transactional
 public class EventDaoImpl implements EventDao {
 
 	@Autowired

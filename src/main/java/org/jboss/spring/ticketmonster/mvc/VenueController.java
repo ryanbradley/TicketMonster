@@ -2,8 +2,6 @@ package org.jboss.spring.ticketmonster.mvc;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Event;
 import org.jboss.spring.ticketmonster.domain.Venue;
 import org.jboss.spring.ticketmonster.repo.VenueDao;
@@ -28,26 +26,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/venues")
 public class VenueController {
 	
-	protected final Log logger = LogFactory.getLog(getClass());
-	
 	@Autowired
 	private VenueDao venueDao;
 	
 	@RequestMapping(method=RequestMethod.GET)
 	public @ModelAttribute("venues")
 	List<Venue> displayVenues() {
-		logger.info("Searching the database for all venues where an event is being hosted.");
 		List<Venue> venues = venueDao.getVenues();
-		logger.info("Returning all venues currently stored in the database.");
 		return venues;
 	}
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces = {"text/html", "application/xhtml+xml"})
 	public String viewVenue(@PathVariable("id") Long id, Model model) {
-		logger.info("Retrieving the venue specified by the ID token in the url: " + id.toString() + ".");
 		Venue venue = venueDao.getVenue(id);
 		model.addAttribute("venue", venue);
-		logger.info("Retrieving the events playing at the  venue with ID token of " + id.toString() + ".");
 		List<Event> events = venueDao.getEvents(venue);
 		model.addAttribute("events", events);
 		return "venueDetails";
@@ -55,10 +47,7 @@ public class VenueController {
 	
 	@RequestMapping(value="/{id}", method=RequestMethod.GET, produces = "application/json")
 	public @ResponseBody Venue viewVenueDetails(@PathVariable("id") Long id) {
-		logger.info("Retrieving the venue specified by the ID token in the url: " + id.toString() + ".");
 		Venue venue = venueDao.getVenue(id);
 		return venue;
 	}
-	
-
 }
