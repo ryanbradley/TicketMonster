@@ -20,7 +20,7 @@
 		<intercept-url pattern="/categories**" access="permitAll"/>
 		<intercept-url pattern="/**" access="denyAll"/>
 		<form-login/>
-		<logout/>
+		<logout logout-success-url="/events"/>
 	</http>
 	
 	<beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/>
