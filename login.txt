@@ -5,4 +5,4 @@ The following username/password combinations can be used to login to the TicketM
 Username	Password
 rbradley	ticketmonster
 sbryzak		original
-mbg		marius
+mbg			marius
