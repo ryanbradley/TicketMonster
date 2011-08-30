@@ -1,4 +1,5 @@
 <%@ include file="/WEB-INF/views/include.jsp"%>
+
 <div class="section">
 	<div class="sectionHeader"><fmt:message key="events.heading"/></div>
 	<div class="sectionContent">
