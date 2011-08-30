@@ -17,6 +17,7 @@ import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 
 @Transactional
+@PreAuthorize("hasRole('ROLE_USER')")
 public class SimpleReservationManager implements ReservationManager {
 
 	@Autowired
