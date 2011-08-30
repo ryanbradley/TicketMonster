@@ -38,7 +38,7 @@
 	
 	<tx:annotation-driven />
 	
-	<aop:aspectj-autoproxy />
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
 	
 	<bean id="logInformation" class="org.jboss.spring.ticketmonster.domain.LogInformation"/>
 

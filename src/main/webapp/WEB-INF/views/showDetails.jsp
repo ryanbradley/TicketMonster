@@ -67,7 +67,7 @@
 			</tr>
 		</c:forEach>
 		</table>
-		<input type="submit" value="Execute">	
+		<input type="submit" value="Submit">	
 	</div>
 </div>
 

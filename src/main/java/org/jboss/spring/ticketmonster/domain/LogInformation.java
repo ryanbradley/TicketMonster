@@ -20,12 +20,12 @@ import org.aspectj.lang.annotation.Pointcut;
 public class LogInformation {
 	
 	protected final Log logger = LogFactory.getLog(getClass()); 
-			
+	
 	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.displayEvents(javax.servlet.http.HttpServletRequest)) && args(request)")
 	public void displayEvents(HttpServletRequest request) {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(Long)) && args(id)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(java.lang.Long)) && args(id)")
 	public void viewEvent(Long id) {
 	}
 	
@@ -107,7 +107,7 @@ public class LogInformation {
 		return;
 	}
 
-	@AfterReturning("viewEvent(id)")
+	@AfterReturning(value="viewEvent(id)", argNames = "id")
 	public void singleEventDetails(Long id) {
 		logger.info("Returning event information for the event with an ID token of " + id + ".");
 		logger.info("Returning all venues where the shows of the event with an ID token of " + id + " is being held.");
@@ -118,7 +118,7 @@ public class LogInformation {
 		logger.info("Returning information for all venues which are hosting events listed on TicketMonster.");
 	}
 	
-	@Before("viewVenue(id)")
+	@Before(value="viewVenue(id)", argNames="id")
 	public void viewVenueDetails(Long id) {
 		logger.info("Returning venue information for the venue specified by the ID token " + id + ".");
 	}
@@ -133,17 +133,17 @@ public class LogInformation {
 		logger.info("Retrieving all price categories for show.");
 	}
 
-	@Before("show(id)")
+	@Before(value="show(id)", argNames="id")
 	public void viewShow(Long id) {
 		logger.info("Displaying all relevant details, including event, venue, time, and price categories for the show with ID token " + id);
 	}
 
-	@AfterReturning("allocated(showId, sectionId, quantity)")
+	@AfterReturning(value="allocated(showId, sectionId, quantity)", argNames="showId, sectionId, quantity")
 	public void allocatedSeats(Long showId, Long sectionId, int quantity) {
 		logger.info("Allocated a section of " + quantity + " contiguous seats in Section " + sectionId + " for the show " + showId + ".");
 	}
 	
-	@AfterReturning("updated(showId, sectionId, quantity)")
+	@AfterReturning(value="updated(showId, sectionId, quantity)", argNames="showId, sectionId, quantity")
 	public void updatedAllocation(Long showId, Long sectionId, int quantity) {
 		logger.info("Updated allocation for show " + showId + " in Section " + sectionId + "to be for " + quantity + " seats.");
 	}
