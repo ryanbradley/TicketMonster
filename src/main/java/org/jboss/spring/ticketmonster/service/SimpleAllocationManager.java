@@ -37,7 +37,7 @@ public class SimpleAllocationManager implements AllocationManager {
 	
 	private static final boolean PURCHASED = true;
 	
-	public List<Allocation> finalizeReservations(LinkedList<SeatBlock> reservations) {
+	public List<Allocation> finalizeReservations(List<SeatBlock> reservations) {
 		List<Allocation> allocations = new ArrayList<Allocation>();
 		
 		for(SeatBlock block : reservations) {

@@ -1,6 +1,5 @@
 package org.jboss.spring.ticketmonster.service;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
@@ -15,7 +14,7 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 
 public interface AllocationManager {
 
-	List<Allocation> finalizeReservations(LinkedList<SeatBlock> reservations);
+	List<Allocation> finalizeReservations(List<SeatBlock> reservations);
 	
 	Allocation createAllocation(SeatBlock block);
 	
