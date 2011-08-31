@@ -9,11 +9,11 @@ import java.util.LinkedList;
  *
  */
 
-public class RowAllocation {
+public class RowReservation {
 	
 	private int capacity;
 	
-	private LinkedList<SeatBlock> allocatedSeats;
+	private LinkedList<SeatBlock> reservedSeats;
 
 	public int getCapacity() {
 		return capacity;
@@ -23,12 +23,12 @@ public class RowAllocation {
 		this.capacity = capacity;
 	}
 	
-	public LinkedList<SeatBlock> getAllocatedSeats() {
-		return allocatedSeats;
+	public LinkedList<SeatBlock> getReservedSeats() {
+		return reservedSeats;
 	}
 
-	public void setAllocatedSeats(LinkedList<SeatBlock> allocatedSeats) {
-		this.allocatedSeats = allocatedSeats;
+	public void setReservedSeats(LinkedList<SeatBlock> reservedSeats) {
+		this.reservedSeats = reservedSeats;
 	}
 
 }

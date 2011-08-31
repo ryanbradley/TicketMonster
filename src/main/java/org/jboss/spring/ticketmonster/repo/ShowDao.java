@@ -29,7 +29,10 @@ public interface ShowDao {
 	
 	Section findSection(Long sectionId);
 	
+	SectionRow findSectionRow(Long rowId);
+	
 	Long getSectionIdByRowId(Long rowId);
 	
-	List<SectionRow> getRowsBySection(Section section, int quantity);	
+	List<SectionRow> getRowsBySection(Section section, int quantity);
+
 }

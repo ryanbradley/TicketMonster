@@ -24,6 +24,8 @@
 	
 	<bean id="reservationManager" class="org.jboss.spring.ticketmonster.service.SimpleReservationManager"/>
 	
+	<bean id="allocationManager" class="org.jboss.spring.ticketmonster.service.SimpleAllocationManager"/>
+	
 	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>

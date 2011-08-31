@@ -54,7 +54,7 @@ public class BookingFormController {
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
 		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
-		success = reservationManager.updateSeatAllocation(showId, section.getId(), quantity);
+		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
 		
 		return success;
 	}

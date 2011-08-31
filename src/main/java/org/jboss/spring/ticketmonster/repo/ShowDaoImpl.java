@@ -77,6 +77,11 @@ public class ShowDaoImpl implements ShowDao {
 		return section;
 	}
 	
+	public SectionRow findSectionRow(Long rowId) {
+		SectionRow row = entityManager.find(SectionRow.class, rowId);
+		return row;
+	}
+	
 	public Long getSectionIdByRowId(Long rowId) {
 		SectionRow row = entityManager.find(SectionRow.class, rowId);
 		return row.getSection().getId();		

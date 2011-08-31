@@ -8,7 +8,7 @@ import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
-import org.jboss.spring.ticketmonster.domain.RowAllocation;
+import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
@@ -40,6 +40,10 @@ public class SimpleReservationManager implements ReservationManager {
 
 	public BookingState getBookingState() {
 		return bookingState;
+	}
+	
+	public void setBookingState(BookingState bookingState) {
+		this.bookingState = bookingState;
 	}
 
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
@@ -75,76 +79,76 @@ public class SimpleReservationManager implements ReservationManager {
 		Section section = showDao.findSection(sectionId);
 		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
-		RowAllocation allocation = new RowAllocation();
+		RowReservation reservation = new RowReservation();
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
 			
 			if(reservationsCache.get(key) != null) {
-				allocation = (RowAllocation) reservationsCache.get(key).get();
+				reservation = (RowReservation) reservationsCache.get(key).get();
 			}
 			else {
-				allocation.setCapacity(row.getCapacity());
-				allocation.setAllocatedSeats(new LinkedList<SeatBlock>());
+				reservation.setCapacity(row.getCapacity());
+				reservation.setReservedSeats(new LinkedList<SeatBlock>());
 			}
 			
-			LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
+			LinkedList<SeatBlock> reservedSeats = reservation.getReservedSeats();
 			
-			// Case for the first seat allocation in a certain row.
+			// Case for the first seat reservation in a certain row.
 			
-			if(allocatedSeats.isEmpty()) {
+			if(reservedSeats.isEmpty()) {
 				SeatBlock block = new SeatBlock();
 				block.setStartSeat(1);
 				block.setEndSeat(quantity);
 				block.setPurchased(TEMPORARY);
 				block.setKey(key);
-				allocatedSeats.add(block);
+				reservedSeats.add(block);
 				bookingState.addSeatBlock(block);
-				allocation.setAllocatedSeats(allocatedSeats);
-				reservationsCache.put(key, allocation);
+				reservation.setReservedSeats(reservedSeats);
+				reservationsCache.put(key, reservation);
 				return true;
 			}
 			
-			// Case for the second seat allocation in a certain row.
+			// Case for the second seat reservation in a certain row.
 			
-			if(allocatedSeats.size() == 1) {
-				SeatBlock frontBlock = allocatedSeats.get(0);
+			if(reservedSeats.size() == 1) {
+				SeatBlock frontBlock = reservedSeats.get(0);
 				if(row.getCapacity() - frontBlock.getEndSeat() >= quantity) {
-					SeatBlock block = this.allocateSeats(frontBlock, quantity, key);
-					allocatedSeats.add(block);
+					SeatBlock block = this.reserveSeats(frontBlock, quantity, key);
+					reservedSeats.add(block);
 					bookingState.addSeatBlock(block);
-					allocation.setAllocatedSeats(allocatedSeats);
-					reservationsCache.put(key, allocation);
+					reservation.setReservedSeats(reservedSeats);
+					reservationsCache.put(key, reservation);
 					return true;
 				}
 			}
 			
-			// General case for seat allocation in a certain row.
+			// General case for seat reservation in a certain row.
 			
-			for(SeatBlock firstBlock : allocatedSeats) {
+			for(SeatBlock firstBlock : reservedSeats) {
 				
 				// Check if the block is the last block in the list.
 				
-				if(firstBlock == allocatedSeats.getLast()) {
+				if(firstBlock == reservedSeats.getLast()) {
 					if(row.getCapacity() - firstBlock.getEndSeat() >= quantity) {
-						SeatBlock block = this.allocateSeats(firstBlock, quantity, key);
-						allocatedSeats.add(block);
+						SeatBlock block = this.reserveSeats(firstBlock, quantity, key);
+						reservedSeats.add(block);
 						bookingState.addSeatBlock(block);
-						allocation.setAllocatedSeats(allocatedSeats);
-						reservationsCache.put(key, allocation);
+						reservation.setReservedSeats(reservedSeats);
+						reservationsCache.put(key, reservation);
 						return true;
 					}
 					
 					break;
 				}
-				SeatBlock secondBlock = allocatedSeats.get(allocatedSeats.indexOf(firstBlock)+1);
+				SeatBlock secondBlock = reservedSeats.get(reservedSeats.indexOf(firstBlock)+1);
 				
 				if(firstBlock.getStartSeat() - secondBlock.getEndSeat() >= quantity) {
-					SeatBlock block = this.allocateSeats(firstBlock, quantity, key);
-					allocatedSeats.add(allocatedSeats.indexOf(secondBlock)+1, block);
+					SeatBlock block = this.reserveSeats(firstBlock, quantity, key);
+					reservedSeats.add(reservedSeats.indexOf(secondBlock)+1, block);
 					bookingState.addSeatBlock(block);
-					allocation.setAllocatedSeats(allocatedSeats);
-					reservationsCache.put(key, allocation);
+					reservation.setReservedSeats(reservedSeats);
+					reservationsCache.put(key, reservation);
 					return true;
 				}
 			}
@@ -154,7 +158,7 @@ public class SimpleReservationManager implements ReservationManager {
 		return false;
 	}
 	
-	public SeatBlock allocateSeats(SeatBlock frontBlock, int quantity, CacheKey key) {
+	public SeatBlock reserveSeats(SeatBlock frontBlock, int quantity, CacheKey key) {
 		SeatBlock block = new SeatBlock();
 		
 		block.setStartSeat(frontBlock.getEndSeat()+1);
@@ -165,7 +169,7 @@ public class SimpleReservationManager implements ReservationManager {
 		return block;
 	}
 	
-	public boolean updateSeatAllocation(Long showId, Long sectionId, int quantity) {
+	public boolean updateSeatReservation(Long showId, Long sectionId, int quantity) {
 		boolean found = false, success = false;
 		
 		Section section = showDao.findSection(sectionId);
@@ -177,10 +181,10 @@ public class SimpleReservationManager implements ReservationManager {
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
-			found = bookingState.allocationExists(key);
+			found = bookingState.reservationExists(key);
 			if(found == true) {
 				if(quantity == 0) {
-					this.removeSeatAllocation(showId, row.getId());
+					this.removeSeatReservation(showId, row.getId());
 					return true;
 				}
 				
@@ -205,21 +209,21 @@ public class SimpleReservationManager implements ReservationManager {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		
 		CacheKey key = new CacheKey(showId, rowId);
-		RowAllocation allocation = new RowAllocation();
-		LinkedList<SeatBlock> allocatedSeats = new LinkedList<SeatBlock>();
+		RowReservation reservation = new RowReservation();
+		LinkedList<SeatBlock> reservedSeats = new LinkedList<SeatBlock>();
 		
 		if(reservationsCache.get(key) != null) {
-			allocation = (RowAllocation) reservationsCache.get(key).get();
-			allocatedSeats = allocation.getAllocatedSeats();
+			reservation = (RowReservation) reservationsCache.get(key).get();
+			reservedSeats = reservation.getReservedSeats();
 		}
 		
-		for(SeatBlock block : allocatedSeats) {
-			if(bookingState.getAllocated().contains(block)) {
-				if(allocatedSeats.getLast() == block) {
-					if((block.getStartSeat()+quantity-1) <= allocation.getCapacity()) {
+		for(SeatBlock block : reservedSeats) {
+			if(bookingState.getReserved().contains(block)) {
+				if(reservedSeats.getLast() == block) {
+					if((block.getStartSeat()+quantity-1) <= reservation.getCapacity()) {
 						block.setEndSeat(block.getStartSeat()+quantity-1);
-						allocation.setAllocatedSeats(allocatedSeats);
-						reservationsCache.put(key, allocation);
+						reservation.setReservedSeats(reservedSeats);
+						reservationsCache.put(key, reservation);
 						return block;
 					}
 					else {
@@ -227,11 +231,11 @@ public class SimpleReservationManager implements ReservationManager {
 					}
 				}
 				else {
-					SeatBlock nextBlock = allocatedSeats.get(allocatedSeats.indexOf(block)+1);
+					SeatBlock nextBlock = reservedSeats.get(reservedSeats.indexOf(block)+1);
 					if((nextBlock.getStartSeat()-block.getStartSeat()) <= quantity) {
 						block.setEndSeat(block.getStartSeat()+quantity-1);
-						allocation.setAllocatedSeats(allocatedSeats);
-						reservationsCache.put(key, allocation);
+						reservation.setReservedSeats(reservedSeats);
+						reservationsCache.put(key, reservation);
 						return block;
 					}
 					else {
@@ -244,7 +248,7 @@ public class SimpleReservationManager implements ReservationManager {
 		return null;
 	}
 	
-	public void removeSeatAllocation(Long showId, Long rowId)	{
+	public void removeSeatReservation(Long showId, Long rowId)	{
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		CacheKey key = new CacheKey(showId, rowId);
 		
@@ -252,14 +256,14 @@ public class SimpleReservationManager implements ReservationManager {
 			return;
 		}
 		
-		RowAllocation allocation = (RowAllocation) reservationsCache.get(key).get();
-		LinkedList<SeatBlock> allocatedSeats = allocation.getAllocatedSeats();
+		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();
+		LinkedList<SeatBlock> reservedSeats = reservation.getReservedSeats();
 		
-		for(SeatBlock block : allocatedSeats) {
-			if(this.bookingState.getAllocated().contains(block)) {
-				allocatedSeats.remove(block);
-				allocation.setAllocatedSeats(allocatedSeats);
-				reservationsCache.put(key, allocation);
+		for(SeatBlock block : reservedSeats) {
+			if(this.bookingState.getReserved().contains(block)) {
+				reservedSeats.remove(block);
+				reservation.setReservedSeats(reservedSeats);
+				reservationsCache.put(key, reservation);
 				return;
 			}
 		}

@@ -20,10 +20,10 @@ public class BookingState {
 	
 	private User user;
 	
-	private List<SeatBlock> allocated;
+	private List<SeatBlock> reserved;
 	
 	public BookingState() {
-		this.allocated = new ArrayList<SeatBlock>();
+		this.reserved = new ArrayList<SeatBlock>();
 		this.user = new User();
 	}
 
@@ -35,22 +35,22 @@ public class BookingState {
 		this.user = user;
 	}
 
-	public List<SeatBlock> getAllocated() {
-		return allocated;
+	public List<SeatBlock> getReserved() {
+		return reserved;
 	}
 
-	public void setAllocated(List<SeatBlock> allocated) {
-		this.allocated = allocated;
+	public void setReserved(List<SeatBlock> reserved) {
+		this.reserved = reserved;
 	}
 	
 	public void addSeatBlock(SeatBlock block) {
-		this.allocated.add(block);
+		this.reserved.add(block);
 	}
 
-	public boolean allocationExists(CacheKey key) {
+	public boolean reservationExists(CacheKey key) {
 		boolean found = false;
 		
-		for(SeatBlock block : allocated) {
+		for(SeatBlock block : reserved) {
 			if(block.getKey().getShowId() == key.getShowId()) {
 				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == showDao.getSectionIdByRowId(key.getRowId())) {
 					found = true;

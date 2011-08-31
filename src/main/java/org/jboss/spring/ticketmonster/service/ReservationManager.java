@@ -23,15 +23,17 @@ public interface ReservationManager {
 	
 	BookingState getBookingState();
 	
+	void setBookingState(BookingState bookingState);
+	
 	List<SectionRequest> createSectionRequests(BookingRequest booking);
 	
 	boolean findContiguousSeats(Long showId, Long sectionId, int quantity);
 	
-	SeatBlock allocateSeats(SeatBlock frontBlock, int quantity, CacheKey key);
+	SeatBlock reserveSeats(SeatBlock frontBlock, int quantity, CacheKey key);
 	
-	boolean updateSeatAllocation(Long showId, Long sectionId, int quantity);
+	boolean updateSeatReservation(Long showId, Long sectionId, int quantity);
 	
 	SeatBlock update(Long showId, Long rowId, int quantity);
 	
-	void removeSeatAllocation(Long showId, Long rowId);
+	void removeSeatReservation(Long showId, Long rowId);
 }
