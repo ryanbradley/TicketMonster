@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
@@ -16,7 +15,7 @@ import org.aspectj.lang.annotation.Pointcut;
  *
  */
 
-@Aspect
+//@Aspect
 public class LogInformation {
 	
 	protected final Log logger = LogFactory.getLog(getClass()); 
@@ -25,7 +24,7 @@ public class LogInformation {
 	public void displayEvents(HttpServletRequest request) {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(java.lang.Long)) && args(id)")
+	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(Long)) && args(id)", argNames="id")
 	public void viewEvent(Long id) {
 	}
 	
@@ -33,7 +32,7 @@ public class LogInformation {
 	public void displayVenues() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.VenueController.viewVenue(Long)) && args(id)")
+	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.VenueController.viewVenue(Long)) && args(id)", argNames="id")
 	public void viewVenue(Long id) {
 	}
 	
@@ -45,15 +44,15 @@ public class LogInformation {
 	public void categories() {
 	}
 
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.BookingFormController.viewShow(Long)) && args(id)")
+	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.BookingFormController.viewShow(Long)) && args(id)", argNames="id")
 	public void show(Long id) {
 	}
 
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.ReservationManager.findContiguousSeats(Long, Long, int)) && args(showId, sectionId, quantity)")
+	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.service.ReservationManager.findContiguousSeats(Long, Long, int)) && args(showId, sectionId, quantity)", argNames="showId, sectionId, quantity")
 	public void allocated(Long showId, Long sectionId, int quantity) {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.ReservationManager.updateSeatAllocation(Long, Long, int)) && args(showId, sectionId, quantity)")
+	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.service.ReservationManager.updateSeatAllocation(Long, Long, int)) && args(showId, sectionId, quantity)", argNames= "showId, sectionId, quantity")
 	public void updated(Long showId, Long sectionId, int quantity) {
 	}
 	
