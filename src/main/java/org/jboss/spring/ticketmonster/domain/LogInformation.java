@@ -21,19 +21,19 @@ public class LogInformation {
 	protected final Log logger = LogFactory.getLog(getClass()); 
 	
 	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.displayEvents(javax.servlet.http.HttpServletRequest)) && args(request)")
-	public void displayEvents(HttpServletRequest request) {
+	public void events(HttpServletRequest request) {
 	}
 	
 	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(Long)) && args(id)", argNames="id")
-	public void viewEvent(Long id) {
+	public void event(Long id) {
 	}
 	
 	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.VenueController.displayVenues(..))")
-	public void displayVenues() {
+	public void venues() {
 	}
 	
 	@Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.VenueController.viewVenue(Long)) && args(id)", argNames="id")
-	public void viewVenue(Long id) {
+	public void venue(Long id) {
 	}
 	
 	@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.ShowController.getShowTimes(..))")
@@ -56,8 +56,20 @@ public class LogInformation {
 	public void updated(Long showId, Long sectionId, int quantity) {
 	}
 	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.createAllocation(..)")
+	public void allocation() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistChanges(..)")
+	public void persist() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.finalizeReservations(..)")
+	public void finalize() {
+	}
+	
 	@AfterReturning("displayEvents(request)")
-	public void eventDetails(HttpServletRequest request) {
+	public void displayEvents(HttpServletRequest request) {
 		String majorString, categoryString, fromDate, untilDate;
 		
 		majorString = request.getParameter("major");
@@ -107,18 +119,18 @@ public class LogInformation {
 	}
 
 	@AfterReturning(value="viewEvent(id)", argNames = "id")
-	public void singleEventDetails(Long id) {
+	public void eventDetails(Long id) {
 		logger.info("Returning event information for the event with an ID token of " + id + ".");
 		logger.info("Returning all venues where the shows of the event with an ID token of " + id + " is being held.");
 	}
 
 	@Before("displayVenues()")
-	public void displayVenueDetails() {
+	public void displayVenues() {
 		logger.info("Returning information for all venues which are hosting events listed on TicketMonster.");
 	}
 	
 	@Before(value="viewVenue(id)", argNames="id")
-	public void viewVenueDetails(Long id) {
+	public void venueDetails(Long id) {
 		logger.info("Returning venue information for the venue specified by the ID token " + id + ".");
 	}
 
@@ -147,4 +159,19 @@ public class LogInformation {
 		logger.info("Updated allocation for show " + showId + " in Section " + sectionId + "to be for " + quantity + " seats.");
 	}
 
+	@AfterReturning("allocation()")
+	public void createAllocation() {
+		logger.info("Created an Allocation object from a reservation in the cache, i.e. a SeatBlock object.");
+	}
+	
+	@AfterReturning("persist()")
+	public void persistChanges() {
+		logger.info("Persisted SeatBlock reservation to the database as purchased instead of allocated.");
+	}
+
+	@Before("finalize()")
+	public void finalizeReservations() {
+		logger.info("Creating Allocation objects and persisting reservations as 'purchased' to the database.");
+	}
+	
 }
