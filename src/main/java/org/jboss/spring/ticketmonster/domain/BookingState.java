@@ -3,7 +3,10 @@ package org.jboss.spring.ticketmonster.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
+
 import org.jboss.spring.ticketmonster.repo.ShowDao;
+import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -14,9 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 
 public class BookingState {
-	
+
 	@Autowired
 	private ShowDao showDao;
+	
+	@Autowired
+	private ReservationManager reservationManager;
 	
 	private User user;
 	
@@ -58,5 +64,17 @@ public class BookingState {
 		}
 		
 		return false;
+	}
+	
+	@PreDestroy
+	public void cleanup() {
+		
+		for(SeatBlock block : this.getReserved()) {
+			Long showId = block.getKey().getShowId();
+			Long rowId = block.getKey().getRowId();
+			reservationManager.removeSeatReservation(showId, rowId);
+		}
+		
+		return;
 	}
 }

@@ -60,8 +60,5 @@
     <mvc:resources mapping="/static/**" location="/" />
 
     <mvc:default-servlet-handler/>
-    
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
-    
-    <bean id="logInformation" class="org.jboss.spring.ticketmonster.domain.LogInformation"/>
+
 </beans>
