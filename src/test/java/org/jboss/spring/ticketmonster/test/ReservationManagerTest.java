@@ -15,7 +15,6 @@ import org.jboss.spring.ticketmonster.service.ReservationManager;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -102,23 +101,27 @@ public class ReservationManagerTest {
 		Assert.assertEquals(15, secondBlock.getEndSeat());
 	}
 	
-	@Ignore
+	@Test
 	public void testUpdateSeatAllocation() {
-		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
-		Assert.assertEquals(true, success);
+		// First test the current state of the BookingState object.
+		Assert.assertEquals(2, reservationManager.getBookingState().getReserved().size());
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(0).getStartSeat());
 		Assert.assertEquals(10, reservationManager.getBookingState().getReserved().get(0).getEndSeat());
-		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().size());
+		Assert.assertEquals(11, reservationManager.getBookingState().getReserved().get(1).getStartSeat());
+		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(1).getEndSeat());
+		Assert.assertEquals(true, reservationManager.getBookingState().getReserved().get(0).getKey().equals(reservationManager.getBookingState().getReserved().get(1).getKey()));
 		
-		success = reservationManager.updateSeatReservation((long) 3, (long) 100, 15);
-		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().size());
-		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(0).getStartSeat());
-		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(0).getEndSeat());
-		Assert.assertEquals((long) 1, reservationManager.getBookingState().getReserved().get(0).getKey().getRowId(), 0);
+		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 101, 10);
+		Assert.assertEquals(true, success);
+		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());		
+		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
+		Assert.assertEquals(10, reservationManager.getBookingState().getReserved().get(2).getEndSeat());
 		
-		success = reservationManager.findContiguousSeats((long) 3, (long) 100, 50);
-		Assert.assertEquals((long) 2, reservationManager.getBookingState().getReserved().get(1).getKey().getRowId(), 0);
-		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(1).getStartSeat());
-		Assert.assertEquals(50, reservationManager.getBookingState().getReserved().get(1).getEndSeat());
+		success = reservationManager.updateSeatReservation((long) 3, (long) 101, 15);
+		Assert.assertEquals(true, success);
+		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
+		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
+		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(2).getEndSeat());
+		Assert.assertEquals((long) 51, reservationManager.getBookingState().getReserved().get(2).getKey().getRowId(), 0);
 	}
 }

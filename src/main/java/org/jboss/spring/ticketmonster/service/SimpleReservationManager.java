@@ -176,7 +176,7 @@ public class SimpleReservationManager implements ReservationManager {
 		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
 		if(quantity < 0) {
-			return success;
+			return false;
 		}
 		
 		for(SectionRow row : rows) {
@@ -190,10 +190,10 @@ public class SimpleReservationManager implements ReservationManager {
 				
 				SeatBlock block = this.update(showId, row.getId(), quantity);
 				if(block != null) {
-					success = true;
+					return true;
 				}
 				else {
-					success = false;
+					return false;
 				}
 			}
 		}

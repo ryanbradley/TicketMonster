@@ -48,16 +48,15 @@ public class BookingState {
 	}
 
 	public boolean reservationExists(CacheKey key) {
-		boolean found = false;
 		
 		for(SeatBlock block : reserved) {
 			if(block.getKey().getShowId() == key.getShowId()) {
 				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == showDao.getSectionIdByRowId(key.getRowId())) {
-					found = true;
+					return true;
 				}
 			}
 		}
 		
-		return found;
+		return false;
 	}
 }
