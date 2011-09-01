@@ -2,13 +2,12 @@ package org.jboss.spring.ticketmonster.mvc;
 
 import java.util.List;
 
-import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
+import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
-import org.jboss.spring.ticketmonster.service.AllocationManager;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,9 +25,6 @@ public class BookingFormController {
 	
 	@Autowired
 	private ReservationManager reservationManager;
-	
-	@Autowired
-	private AllocationManager allocationManager;
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public String viewShow(@PathVariable("id") Long id, Model model) {
@@ -51,7 +47,6 @@ public class BookingFormController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
-		List<Allocation> allocations = allocationManager.finalizeReservations(reservationManager.getBookingState().getReserved());
 		return "showDetails";
 	}
 	
@@ -60,6 +55,9 @@ public class BookingFormController {
 		boolean success = false;
 		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
 		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
+		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
+		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
+		reservationManager.getBookingState().addCategoryRequest(categoryRequest);
 		
 		return success;
 	}

@@ -82,6 +82,11 @@ public class ShowDaoImpl implements ShowDao {
 		return row;
 	}
 	
+	public PriceCategory findPriceCategory(Long categoryId) {
+		PriceCategory category = entityManager.find(PriceCategory.class, categoryId);
+		return category;
+	}
+	
 	public Long getSectionIdByRowId(Long rowId) {
 		SectionRow row = entityManager.find(SectionRow.class, rowId);
 		return row.getSection().getId();		

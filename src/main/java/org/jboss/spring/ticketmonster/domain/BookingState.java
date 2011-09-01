@@ -28,8 +28,11 @@ public class BookingState {
 	
 	private List<SeatBlock> reserved;
 	
+	private List<PriceCategoryRequest> categoryRequests;
+	
 	public BookingState() {
 		this.reserved = new ArrayList<SeatBlock>();
+		this.setCategoryRequests(new ArrayList<PriceCategoryRequest>());
 		this.user = new User();
 	}
 
@@ -49,6 +52,14 @@ public class BookingState {
 		this.reserved = reserved;
 	}
 	
+	public List<PriceCategoryRequest> getCategoryRequests() {
+		return categoryRequests;
+	}
+
+	public void setCategoryRequests(List<PriceCategoryRequest> categoryRequests) {
+		this.categoryRequests = categoryRequests;
+	}
+
 	public void addSeatBlock(SeatBlock block) {
 		this.reserved.add(block);
 	}
@@ -66,6 +77,17 @@ public class BookingState {
 		return false;
 	}
 	
+	public void addCategoryRequest(PriceCategoryRequest categoryRequest) {
+		
+		for(PriceCategoryRequest priceCategoryRequest : categoryRequests) {
+			if(priceCategoryRequest.getPriceCategoryId() == categoryRequest.getPriceCategoryId()) {
+				priceCategoryRequest = categoryRequest;	
+			}
+			else
+				this.categoryRequests.add(categoryRequest);
+		}
+	}
+	
 	@PreDestroy
 	public void cleanup() {
 		
@@ -73,6 +95,7 @@ public class BookingState {
 			Long showId = block.getKey().getShowId();
 			Long rowId = block.getKey().getRowId();
 			reservationManager.removeSeatReservation(showId, rowId);
+			this.categoryRequests.clear();
 		}
 		
 		return;

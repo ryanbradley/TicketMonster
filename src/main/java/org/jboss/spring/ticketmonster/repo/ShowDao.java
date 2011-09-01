@@ -31,6 +31,8 @@ public interface ShowDao {
 	
 	SectionRow findSectionRow(Long rowId);
 	
+	PriceCategory findPriceCategory(Long categoryId);
+	
 	Long getSectionIdByRowId(Long rowId);
 	
 	List<SectionRow> getRowsBySection(Section section, int quantity);
