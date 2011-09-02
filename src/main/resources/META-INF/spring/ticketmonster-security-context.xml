@@ -18,6 +18,7 @@
 		<intercept-url pattern="/venues/**" access="permitAll"/>
 		<intercept-url pattern="/shows/**" access="permitAll"/>
 		<intercept-url pattern="/categories**" access="permitAll"/>
+		<intercept-url pattern="/" access="permitAll"/>
 		<intercept-url pattern="/**" access="denyAll"/>
 		<form-login/>
 		<logout logout-success-url="/events"/>
