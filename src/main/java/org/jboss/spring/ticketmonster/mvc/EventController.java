@@ -84,5 +84,10 @@ public class EventController {
 		model.addAttribute("venues", venues);
 		return "eventDetails";
 	}
+	
+	@RequestMapping(value="/{id)", method=RequestMethod.POST)
+	public String onSubmit(Long showId) {
+		return "showDetails";
+	}
 
 }

@@ -63,6 +63,11 @@
 	                $("#priceCategories").accordion();
 	            });
 
+	        function startBooking() {
+				var id = $('select.times option:selected').val();
+				window.location = "/bookings/" + id;
+		   	}
+
 	        }
 
 </script>
@@ -85,7 +90,8 @@
             <h3>Show Times</h3>
             <select id="times"></select>
             <p/>
-            <br><br><br><br>
+            <input type="submit" value="Book Tickets" onclick=startBooking()>
+            <br><br><br>
             <div class="sectionContent" id="priceCategories"></div>
 	</div>
 </div>
@@ -100,7 +106,7 @@ $("select#venues").change(function () {
     });
 }).change();
 
-	$(function() {
-		$( "#accordion" ).accordion();
-	});
+$(function() {
+	$( "#accordion" ).accordion();
+});
 </script>

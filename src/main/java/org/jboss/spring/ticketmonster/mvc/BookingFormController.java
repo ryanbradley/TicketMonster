@@ -45,7 +45,7 @@ public class BookingFormController {
 		return "showDetails";		
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value="/{id}", method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
 		return "showDetails";
 	}
