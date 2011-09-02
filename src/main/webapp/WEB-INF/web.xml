@@ -51,6 +51,7 @@
   </session-config>
   
   <welcome-file-list>
+  	<welcome-file>index.jsp</welcome-file>
   	<welcome-file>events.jsp</welcome-file>
   	<welcome-file>eventDetails.jsp</welcome-file>
   	<welcome-file>venues.jsp</welcome-file>
