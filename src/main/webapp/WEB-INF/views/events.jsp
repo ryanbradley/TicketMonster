@@ -12,7 +12,20 @@
 						<p>${event.description.active.content}<p/><br>
 					</td>
 				</tr>
+				<tr>
+					<td>
+						<input type="submit" value="View Event" onclick='viewEvent(${event.id})'/>
+					</td>
+				</tr>
 			</c:forEach>
 		</table>
 	</div>
 </div>
+
+<script type="text/javascript">
+
+	function viewEvent(id) {
+		window.location = '<c:url value="/events/"/>' + id;		
+	}
+
+</script>
