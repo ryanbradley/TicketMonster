@@ -3,6 +3,7 @@ package org.jboss.spring.ticketmonster.service;
 import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
+import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 
 /**
@@ -19,5 +20,7 @@ public interface AllocationManager {
 	Allocation createAllocation(SeatBlock block);
 	
 	void persistChanges(SeatBlock block);
+	
+	Double calculateTotal(List<PriceCategoryRequest> categoryRequests);
 	
 }

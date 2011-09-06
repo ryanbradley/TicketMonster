@@ -8,6 +8,7 @@ import java.util.List;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
+import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
@@ -83,6 +84,16 @@ public class SimpleAllocationManager implements AllocationManager {
 		
 		reservation.setReservedSeats(reservedSeats);
 		reservationsCache.put(key, reservation);
+	}
+	
+	public Double calculateTotal(List<PriceCategoryRequest> categoryRequests) {
+		Double total = 0.00;
+		
+		for(PriceCategoryRequest categoryRequest : categoryRequests) {
+			total += (categoryRequest.getPriceCategory().getPrice())*(categoryRequest.getQuantity());
+		}
+		
+		return total;
 	}
 	
 }

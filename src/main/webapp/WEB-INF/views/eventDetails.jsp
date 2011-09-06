@@ -64,7 +64,6 @@
 	            });
 	        }
 
-
 		function startBooking() {
 			var id = $('select#times option:selected').val();
 			window.location = '<c:url value="/bookings/"/>' + id;
