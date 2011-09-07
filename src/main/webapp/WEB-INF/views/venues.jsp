@@ -8,7 +8,7 @@
                 <tr>
                     <td>
                         <p>
-                                <a href="<c:url value="/events/${venue.id}"/>">${venue.name}</a><br>
+                                <a href="<c:url value="/venues/${venue.id}"/>">${venue.name}</a><br>
                                 <c:out value="${venue.address}"/><br>
                                 ${venue.description.active.content}<br><br>
                                 

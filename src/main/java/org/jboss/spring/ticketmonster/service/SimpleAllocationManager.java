@@ -36,6 +36,10 @@ public class SimpleAllocationManager implements AllocationManager {
 	@Autowired
 	private BookingState bookingState;
 	
+	public BookingState getBookingState() {
+		return bookingState;
+	}
+
 	private static final boolean PURCHASED = true;
 	
 	public List<Allocation> finalizeReservations(List<SeatBlock> reservations) {

@@ -23,5 +23,9 @@
     <definition name="showDetails" extends="standard">
     	<put-attribute name="body" value="/WEB-INF/views/showDetails.jsp"/>
     </definition>
+    
+    <definition name="checkout" extends="standard">
+    	<put-attribute name="body" value="/WEB-INF/views/checkout.jsp"/>
+    </definition>
 
 </tiles-definitions>

@@ -24,10 +24,14 @@
 			baseUrl = '<c:url value="/allocate?"/>';
 			jQuery.getJSON(baseUrl + "showId=" + showId + "&priceCategoryId=" + priceCategoryId + "&quantity=" + quantity, function (result) {
 				if(result == true)
-					$("div#sectionContent").append("Available seats have been allocated.");
+					$("div#priceCategories").append("Available seats have been allocated.");
 				else
-					$("div#sectionContent").append("Insufficient available seats.");
-			});			        	
+					$("div#priceCategories").append("Insufficient available seats.");
+			});
+        }
+
+        function checkOut() {
+			window.location = '<c:url value="/checkout"/>';
         }
         
 </script>
@@ -67,7 +71,7 @@
 			</tr>
 		</c:forEach>
 		</table>
-		<input type="submit" value="Check Out">	
+		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
 </div>
 

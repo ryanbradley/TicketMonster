@@ -58,6 +58,7 @@
   	<welcome-file>venueDetails.jsp</welcome-file>
   	<welcome-file>include.jsp</welcome-file>
   	<welcome-file>showDetails.jsp</welcome-file>
+  	<welcome-file>checkout.jsp</welcome-file>
   </welcome-file-list>
 
    <persistence-context-ref>

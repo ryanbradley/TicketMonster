@@ -21,7 +21,7 @@
         <div id="header">
 
             <div class="headerTitle">
-                <a href="<c:url value="/events"/>"><img src="<c:url value="/static/style/ticket.png"/>"/></a>
+                <a href="<c:url value="/"/>"><img src="<c:url value="/static/style/ticket.png"/>"/></a>
             </div>
 
             <div class="headerSearch">

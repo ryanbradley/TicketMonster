@@ -45,10 +45,10 @@ public class BookingFormController {
 		return "showDetails";		
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.POST)
+	/*@RequestMapping(value="/{id}", method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
-		return "showDetails";
-	}
+		return "checkout";
+	}*/
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
