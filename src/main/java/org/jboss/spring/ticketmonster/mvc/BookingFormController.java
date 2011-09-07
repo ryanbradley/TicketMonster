@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/bookings")
@@ -45,13 +46,13 @@ public class BookingFormController {
 		return "showDetails";		
 	}
 	
-	/*@RequestMapping(value="/{id}", method=RequestMethod.POST)
+	@RequestMapping(value="/{id}", method=RequestMethod.POST)
 	public String onSubmit(BookingRequest command, Model model) {
 		return "checkout";
-	}*/
+	}
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
-	public boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
+	public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
 		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
 		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
