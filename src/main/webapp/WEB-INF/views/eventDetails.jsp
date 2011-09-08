@@ -97,7 +97,7 @@
 
 <script type="text/javascript">
 $("select#venues").change(function () {
-	$("select#venues option:selected ").each(function() {
+	$("select#venues option:selected").each(function() {
         refreshTimes($(this).val(), <c:out value="${event.id}"/>);
         getVenueDetails($(this).val());
         getPriceCategories(<c:out value="${event.id}"/>, $(this).val());

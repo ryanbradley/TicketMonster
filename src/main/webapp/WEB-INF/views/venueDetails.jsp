@@ -32,10 +32,17 @@
 
 <div class="section">
 	<div class="sectionHeader"><fmt:message key="venue.heading"></fmt:message></div>
-	<div class="sectionContent" onload="refreshTimes(${venue.id}, ${event.id})">
+	<div class="sectionContent">
 		<c:out value="${venue.name}"/><br>
 		<c:out value="${venue.address}"/>
 		<p>${venue.description.active.content}<p/>
+		<h3>Events</h3>
+		<p/>
+		<select id="events">
+			<c:forEach items="${events}" var="event">
+				<option value='${event.id}'>${event.name}</option>
+			</c:forEach>
+		</select>
 			<table>
 				<c:forEach items="${events}" var="event">
 					<tr>
@@ -64,16 +71,20 @@
 </div>
 
 <script type="text/javascript">
-	function viewEvent(id) {
+	function viewEvent (id) {
 		window.location = '<c:url value="/events/"/>' + id;
 	}
 
-	function startBooking() {
+	function startBooking () {
 		var id = $('select#times option:selected').val();
 		window.location = '<c:url value="/bookings/"/>' +id;
 	}
 </script>
 
 <script type="text/javascript">
-	refreshTimes(${venue.id}, ${event.id});
+$("select#events").change(function () {
+	$("select#events option:selected").each(function() {
+        refreshTimes(<c:out value="${venue.id}"/>, $(this).val());
+    });
+}).change();
 </script>
