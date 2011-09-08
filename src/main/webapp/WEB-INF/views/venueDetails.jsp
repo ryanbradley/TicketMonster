@@ -32,17 +32,25 @@
 
 <div class="section">
 	<div class="sectionHeader"><fmt:message key="venue.heading"></fmt:message></div>
-	<div class="sectionContent">
+	<div class="sectionContent" onload="refreshTimes(${venue.id}, ${event.id})">
 		<c:out value="${venue.name}"/><br>
 		<c:out value="${venue.address}"/>
 		<p>${venue.description.active.content}<p/>
 			<table>
 				<c:forEach items="${events}" var="event">
 					<tr>
-						<td>
-							<a href="<c:url value="../events/${event.id}"/>">${event.name}</a>
-                            <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show Times</a>							
+						<td>					
 							<p>${event.description.active.content}<p/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="submit" value="View Event" onclick='viewEvent(${event.id})'>
+						</td>
+					</tr>
+					<tr>
+						<td>
+                            <a href="#" onclick="refreshTimes(${venue.id}, ${event.id});">Show Times</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -52,3 +60,13 @@
             <select id="times"></select>
 	</div>
 </div>
+
+<script type="text/javascript">
+	function viewEvent(id) {
+		window.location = '<c:url value="/events/"/>' + id;		
+	}
+</script>
+
+<script type="text/javascript">
+	refreshTimes(${venue.id}, ${event.id});
+</script>

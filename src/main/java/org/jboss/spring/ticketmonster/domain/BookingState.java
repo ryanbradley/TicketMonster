@@ -26,6 +26,8 @@ public class BookingState {
 	
 	private User user;
 	
+	private List<Allocation> allocations;
+	
 	private List<SeatBlock> reserved;
 	
 	private List<PriceCategoryRequest> categoryRequests;
@@ -42,6 +44,14 @@ public class BookingState {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public List<Allocation> getAllocations() {
+		return allocations;
+	}
+
+	public void setAllocations(List<Allocation> allocations) {
+		this.allocations = allocations;
 	}
 
 	public List<SeatBlock> getReserved() {
@@ -66,9 +76,12 @@ public class BookingState {
 
 	public boolean reservationExists(CacheKey key) {
 		
+		Long showId = key.getShowId();
+		Long sectionId = showDao.getSectionIdByRowId(key.getRowId());
+		
 		for(SeatBlock block : reserved) {
-			if(block.getKey().getShowId() == key.getShowId()) {
-				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == showDao.getSectionIdByRowId(key.getRowId())) {
+			if(block.getKey().getShowId() == showId) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == sectionId) {
 					return true;
 				}
 			}
@@ -98,6 +111,11 @@ public class BookingState {
 			this.categoryRequests.clear();
 		}
 		
+		return;
+	}
+	
+	public void addAllocation(Allocation allocation) {
+		this.allocations.add(allocation);
 		return;
 	}
 }

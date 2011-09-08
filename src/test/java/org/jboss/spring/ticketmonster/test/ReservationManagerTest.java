@@ -103,7 +103,9 @@ public class ReservationManagerTest {
 	
 	@Test
 	public void testUpdateSeatAllocation() {
+		
 		// First test the current state of the BookingState object.
+		
 		Assert.assertEquals(2, reservationManager.getBookingState().getReserved().size());
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(0).getStartSeat());
 		Assert.assertEquals(10, reservationManager.getBookingState().getReserved().get(0).getEndSeat());
@@ -117,11 +119,26 @@ public class ReservationManagerTest {
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
 		Assert.assertEquals(10, reservationManager.getBookingState().getReserved().get(2).getEndSeat());
 		
+		// Test updateSeatReservation() method when a reservation already exists in the current session.
+		
+		CacheKey key = new CacheKey((long) 3, (long) 51);
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(key));
 		success = reservationManager.updateSeatReservation((long) 3, (long) 101, 15);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
 		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(2).getEndSeat());
 		Assert.assertEquals((long) 51, reservationManager.getBookingState().getReserved().get(2).getKey().getRowId(), 0);
+		
+		// Test updateSeatReservation() method when a reservation does not already exist.
+		
+		key = new CacheKey((long) 3, (long) 101);
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(key));
+		success = reservationManager.updateSeatReservation((long) 3, (long) 102, 15);
+		Assert.assertEquals(true, success);
+		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());
+		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(3).getStartSeat());
+		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(3).getEndSeat());
+		Assert.assertEquals((long) 101, reservationManager.getBookingState().getReserved().get(3).getKey().getRowId(), 0);
 	}
 }

@@ -48,6 +48,7 @@ public class SimpleAllocationManager implements AllocationManager {
 		for(SeatBlock block : reservations) {
 			Allocation allocation = this.createAllocation(block);
 			allocations.add(allocation);
+			bookingState.addAllocation(allocation);
 			persistChanges(block);
 		}		
 		
