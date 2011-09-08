@@ -58,12 +58,19 @@
 			<p/>
 			<h3>Show Times</h3>
             <select id="times"></select>
+            <p/>
+            <input type="submit" value="Book Tickets" onclick='startBooking()'>
 	</div>
 </div>
 
 <script type="text/javascript">
 	function viewEvent(id) {
-		window.location = '<c:url value="/events/"/>' + id;		
+		window.location = '<c:url value="/events/"/>' + id;
+	}
+
+	function startBooking() {
+		var id = $('select#times option:selected').val();
+		window.location = '<c:url value="/bookings/"/>' +id;
 	}
 </script>
 
