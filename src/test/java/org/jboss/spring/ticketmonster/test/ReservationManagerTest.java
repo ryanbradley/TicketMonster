@@ -141,4 +141,23 @@ public class ReservationManagerTest {
 		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(3).getEndSeat());
 		Assert.assertEquals((long) 101, reservationManager.getBookingState().getReserved().get(3).getKey().getRowId(), 0);
 	}
+
+	@Test
+	public void testRemoveSeatReservation() {
+		
+		// Test removeSeatReservation() method within the updateSeatReservation() method when removing a reservation.
+		
+		boolean success = reservationManager.updateSeatReservation((long) 3, (long) 102, 0);
+		Assert.assertEquals(true, success);
+		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
+		CacheKey key = new CacheKey((long) 3, (long) 101);
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(key));
+		
+		// Test removeSeatReservation() method on its own.
+		
+		reservationManager.removeSeatReservation((long) 3, (long) 51);
+		key = new CacheKey((long) 3, (long) 51);
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(key));
+		Assert.assertEquals(2, reservationManager.getBookingState().getReserved().size());
+	}
 }
