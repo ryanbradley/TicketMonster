@@ -180,15 +180,24 @@ public class SimpleReservationManager implements ReservationManager {
 			return false;
 		}
 		
-		for(SectionRow row : rows) {
-			CacheKey key = new CacheKey(showId, row.getId());
-			found = bookingState.reservationExists(key);
-			if(found == true) {
-				if(quantity == 0) {
+		if(quantity == 0) {
+			for(SectionRow row : rows) {
+				CacheKey key = new CacheKey(showId, row.getId());
+				found = bookingState.reservationExists(key);
+				if(found == true) {
 					this.removeSeatReservation(showId, row.getId());
 					return true;
 				}
-				
+				else {
+					return true;
+				}
+			}
+		}
+		
+		for(SectionRow row : rows) {
+			CacheKey key = new CacheKey(showId, row.getId());
+			found = bookingState.reservationExists(key);
+			if(found == true) {			
 				SeatBlock block = this.update(showId, row.getId(), quantity);
 				if(block != null) {
 					return true;
@@ -263,6 +272,7 @@ public class SimpleReservationManager implements ReservationManager {
 		for(SeatBlock block : reservedSeats) {
 			if(this.bookingState.getReserved().contains(block)) {
 				reservedSeats.remove(block);
+				this.bookingState.removeReservation(block);
 				reservation.setReservedSeats(reservedSeats);
 				reservationsCache.put(key, reservation);
 				return;
@@ -274,7 +284,6 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	public void updateCategoryRequest(Long showId, Long priceCategoryId, int quantity) {
 		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
-		
 		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(quantity);
 		this.getBookingState().addCategoryRequest(categoryRequest);

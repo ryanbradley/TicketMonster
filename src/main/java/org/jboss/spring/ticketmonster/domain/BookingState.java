@@ -91,6 +91,11 @@ public class BookingState {
 		return false;
 	}
 	
+	public void removeReservation(SeatBlock block) {
+		this.reserved.remove(block);
+		return;
+	}
+	
 	public void addCategoryRequest(PriceCategoryRequest categoryRequest) {
 		
 		for(PriceCategoryRequest priceCategoryRequest : categoryRequests) {
