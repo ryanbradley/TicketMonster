@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
@@ -14,10 +16,12 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
+import org.jboss.spring.ticketmonster.domain.User;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Implementation of the ReservationManager interface. 
@@ -38,6 +42,8 @@ public class SimpleReservationManager implements ReservationManager {
 	private BookingState bookingState;
 	
 	private static final boolean TEMPORARY = false;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	public BookingState getBookingState() {
 		return bookingState;
@@ -50,6 +56,11 @@ public class SimpleReservationManager implements ReservationManager {
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
 		
 		boolean found = false;
+		
+		User user = new User();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		user.setUsername(username);
+		bookingState.setUser(user);
 		
 		List<PriceCategoryRequest> categoryRequests = booking.getCategoryRequests();
 		List<SectionRequest> sectionRequests = new ArrayList<SectionRequest>();
@@ -179,25 +190,28 @@ public class SimpleReservationManager implements ReservationManager {
 		if(quantity < 0) {
 			return false;
 		}
-		
+			
 		if(quantity == 0) {
+			logger.info("Found an allocation with quantity 0.");
 			for(SectionRow row : rows) {
+				logger.info("There are " + bookingState.getReserved().size() + " reservations for the current session.");
 				CacheKey key = new CacheKey(showId, row.getId());
 				found = bookingState.reservationExists(key);
 				if(found == true) {
+					logger.info("Removing reservation in row " + row.getId() + ".");
 					this.removeSeatReservation(showId, row.getId());
 					return true;
 				}
-				else {
-					return true;
-				}
+			}
+			if(found == false) {
+				return true;
 			}
 		}
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
 			found = bookingState.reservationExists(key);
-			if(found == true) {			
+			if(found == true) {				
 				SeatBlock block = this.update(showId, row.getId(), quantity);
 				if(block != null) {
 					return true;
@@ -217,6 +231,7 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	public SeatBlock update(Long showId, Long rowId, int quantity) {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		logger.info("Updating the seats of an already reserved block.");
 		
 		CacheKey key = new CacheKey(showId, rowId);
 		RowReservation reservation = new RowReservation();
@@ -259,10 +274,12 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 	
 	public void removeSeatReservation(Long showId, Long rowId)	{
+		logger.info("Entering removeSeatReservation() method");
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		CacheKey key = new CacheKey(showId, rowId);
 		
 		if(reservationsCache.get(key) == null) {
+			logger.info("Did not find a reservation in " + rowId +".");
 			return;
 		}
 		
@@ -271,10 +288,12 @@ public class SimpleReservationManager implements ReservationManager {
 		
 		for(SeatBlock block : reservedSeats) {
 			if(this.bookingState.getReserved().contains(block)) {
+				logger.info("Found a reservation in " + rowId + ", reservation will be removed.");
 				reservedSeats.remove(block);
 				this.bookingState.removeReservation(block);
 				reservation.setReservedSeats(reservedSeats);
 				reservationsCache.put(key, reservation);
+				logger.info("Reservation should be removed, and cache should be updated appropriately.");
 				return;
 			}
 		}
