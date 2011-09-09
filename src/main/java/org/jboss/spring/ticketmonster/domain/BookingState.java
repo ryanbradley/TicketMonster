@@ -95,11 +95,13 @@ public class BookingState {
 		
 		for(PriceCategoryRequest priceCategoryRequest : categoryRequests) {
 			if(priceCategoryRequest.getPriceCategoryId() == categoryRequest.getPriceCategoryId()) {
-				priceCategoryRequest = categoryRequest;	
+				priceCategoryRequest = categoryRequest;
+				return;
 			}
-			else
-				this.categoryRequests.add(categoryRequest);
 		}
+		
+		this.categoryRequests.add(categoryRequest);
+		return;
 	}
 	
 	@PreDestroy
@@ -110,6 +112,7 @@ public class BookingState {
 			Long rowId = block.getKey().getRowId();
 			reservationManager.removeSeatReservation(showId, rowId);
 			this.categoryRequests.clear();
+			this.reserved.clear();
 		}
 		
 		return;
