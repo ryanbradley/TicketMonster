@@ -7,7 +7,7 @@
 		
 		<c:forEach items="${allocations}" var="allocation">
 			<c:if test="${allocation.quantity > 0}"/>
-				<p/>Allocation: ${allocation.quantity} seats in Row ${allocation.row.name}, Section ${allocation.row.section.name}.
+				<p/>Allocation: ${allocation.quantity} seats in Row ${allocation.row.name}, Section ${allocation.row.section.name}.  Allocated seats are from ${allocation.startSeat} to ${allocation.endSeat}.
 		</c:forEach>
 	</div>
 </div>
