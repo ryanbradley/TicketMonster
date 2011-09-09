@@ -1,13 +1,17 @@
 package org.jboss.spring.ticketmonster.test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
+import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
+import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.AllocationManager;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.junit.Test;
@@ -37,6 +41,9 @@ public class AllocationManagerTest {
 	
 	@Autowired
 	private CacheManager cacheManager;
+	
+	@Autowired
+	private ShowDao showDao;
 	
 	@Autowired
 	private ReservationManager reservationManager;
@@ -84,27 +91,49 @@ public class AllocationManagerTest {
 		reservationManager.findContiguousSeats((long) 3, (long) 102, 50);
 		
 		List<Allocation> allocations = allocationManager.finalizeReservations(reservationManager.getBookingState().getReserved());
-		Assert.assertEquals(3, allocations.size());
-		Assert.assertEquals(10, allocations.get(0).getQuantity());
-		Assert.assertEquals(1, allocations.get(0).getStartSeat());
-		Assert.assertEquals(10, allocations.get(0).getEndSeat());
-		Assert.assertEquals(3, allocations.get(0).getShow().getId(), 0);
-		Assert.assertEquals(1, allocations.get(0).getRow().getId(), 0);
-		Assert.assertEquals(25, allocations.get(1).getQuantity());
-		Assert.assertEquals(1, allocations.get(1).getStartSeat());
-		Assert.assertEquals(25, allocations.get(1).getEndSeat());
+		Assert.assertEquals(4, allocations.size());
+		Assert.assertEquals(10, allocations.get(1).getQuantity());
+		Assert.assertEquals(11, allocations.get(1).getStartSeat());
+		Assert.assertEquals(20, allocations.get(1).getEndSeat());
 		Assert.assertEquals(3, allocations.get(1).getShow().getId(), 0);
-		Assert.assertEquals(51, allocations.get(1).getRow().getId(), 0);
-		Assert.assertEquals(50, allocations.get(2).getQuantity());
+		Assert.assertEquals(1, allocations.get(1).getRow().getId(), 0);
+		Assert.assertEquals(25, allocations.get(2).getQuantity());
 		Assert.assertEquals(1, allocations.get(2).getStartSeat());
-		Assert.assertEquals(50, allocations.get(2).getEndSeat());
+		Assert.assertEquals(25, allocations.get(2).getEndSeat());
 		Assert.assertEquals(3, allocations.get(2).getShow().getId(), 0);
-		Assert.assertEquals(101, allocations.get(2).getRow().getId(), 0);
+		Assert.assertEquals(51, allocations.get(2).getRow().getId(), 0);
+		Assert.assertEquals(50, allocations.get(3).getQuantity());
+		Assert.assertEquals(1, allocations.get(3).getStartSeat());
+		Assert.assertEquals(50, allocations.get(3).getEndSeat());
+		Assert.assertEquals(3, allocations.get(3).getShow().getId(), 0);
+		Assert.assertEquals(101, allocations.get(3).getRow().getId(), 0);
 	}
 	
 	@Test
 	public void testCalculateTotal() {
+		List<PriceCategoryRequest> categoryRequests = new ArrayList<PriceCategoryRequest>();
+		Long categoryId = (long) 1;
 		
+		PriceCategory category = showDao.findPriceCategory(categoryId);
+		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
+		categoryRequest.setQuantity(10);
+		categoryRequests.add(categoryRequest);
+		
+		categoryId = (long) 2;
+		category = showDao.findPriceCategory(categoryId);
+		categoryRequest = new PriceCategoryRequest(category);
+		categoryRequest.setQuantity(10);
+		categoryRequests.add(categoryRequest);
+		
+		
+		categoryId = (long) 3;
+		category = showDao.findPriceCategory(categoryId);
+		categoryRequest = new PriceCategoryRequest(category);
+		categoryRequest.setQuantity(10);
+		categoryRequests.add(categoryRequest);
+		
+		Double total = allocationManager.calculateTotal(categoryRequests);
+		Assert.assertEquals(5332.5, total, 0);
 	}
 	
 }

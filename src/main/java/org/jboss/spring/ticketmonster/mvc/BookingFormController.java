@@ -65,9 +65,14 @@ public class BookingFormController {
 		boolean success = false;
 		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
 		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
+		
 		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
 		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
-		reservationManager.getBookingState().addCategoryRequest(categoryRequest);
+		categoryRequest.setQuantity(quantity);
+		
+		if(success == true) {
+			reservationManager.getBookingState().addCategoryRequest(categoryRequest);
+		}
 		
 		return success;
 	}

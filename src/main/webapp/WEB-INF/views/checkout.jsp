@@ -6,7 +6,8 @@
 		Checking out of TicketMonster after purchasing $${total} in tickets.
 		
 		<c:forEach items="${allocations}" var="allocation">
-			<p/>Allocation: ${allocation.quantity} seats in Row ${allocation.row.name}, Section ${allocation.row.section.name}.
+			<c:if test="${allocation.quantity > 0}"/>
+				<p/>Allocation: ${allocation.quantity} seats in Row ${allocation.row.name}, Section ${allocation.row.section.name}.
 		</c:forEach>
 	</div>
 </div>

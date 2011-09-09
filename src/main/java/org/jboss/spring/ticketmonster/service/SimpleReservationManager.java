@@ -7,6 +7,7 @@ import java.util.List;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
+import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
@@ -268,6 +269,15 @@ public class SimpleReservationManager implements ReservationManager {
 			}
 		}
 		
+		return;
+	}
+	
+	public void updateCategoryRequest(Long showId, Long priceCategoryId, int quantity) {
+		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
+		
+		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
+		categoryRequest.setQuantity(quantity);
+		this.getBookingState().addCategoryRequest(categoryRequest);
 		return;
 	}
 
