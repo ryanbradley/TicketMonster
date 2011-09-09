@@ -34,6 +34,7 @@ public class BookingState {
 	
 	public BookingState() {
 		this.reserved = new ArrayList<SeatBlock>();
+		this.allocations = new ArrayList<Allocation>();
 		this.setCategoryRequests(new ArrayList<PriceCategoryRequest>());
 		this.user = new User();
 	}
@@ -115,7 +116,10 @@ public class BookingState {
 	}
 	
 	public void addAllocation(Allocation allocation) {
-		this.allocations.add(allocation);
+		if(allocation != null) {
+			this.allocations.add(allocation);
+		}
+	
 		return;
 	}
 }

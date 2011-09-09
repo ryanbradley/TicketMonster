@@ -47,6 +47,7 @@
 			${show.venue.address}
 			${show.venue.description.active.content}</p>
 	</div>
+	<form action='<c:url value="/bookings/submit"/>' method="post">
 	<div class="sectionContent" id="priceCategories">
 		<table>
 		<c:forEach items="${bookingRequest.categoryRequests}" var="categoryRequest" varStatus="categoryStatus">
@@ -73,6 +74,7 @@
 		</table>
 		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
+	</form>
 </div>
 
 <script type="text/javascript">

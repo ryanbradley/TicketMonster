@@ -102,4 +102,9 @@ public class AllocationManagerTest {
 		Assert.assertEquals(101, allocations.get(2).getRow().getId(), 0);
 	}
 	
+	@Test
+	public void testCalculateTotal() {
+		
+	}
+	
 }

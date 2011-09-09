@@ -8,6 +8,7 @@ import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
+import org.jboss.spring.ticketmonster.service.AllocationManager;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,9 @@ public class BookingFormController {
 	
 	@Autowired
 	private ShowDao showDao;
+	
+	@Autowired
+	private AllocationManager allocationManager;
 	
 	@Autowired
 	private ReservationManager reservationManager;
@@ -46,8 +50,13 @@ public class BookingFormController {
 		return "showDetails";		
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.POST)
-	public String onSubmit(BookingRequest command, Model model) {
+	@RequestMapping(value="/submit", method=RequestMethod.POST)
+	public String onSubmit(Model model) {
+		allocationManager.finalizeReservations(allocationManager.getBookingState().getReserved());
+		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
+		Double total = allocationManager.calculateTotal(allocationManager.getBookingState().getCategoryRequests());
+		model.addAttribute("total", total);
+		
 		return "checkout";
 	}
 	
