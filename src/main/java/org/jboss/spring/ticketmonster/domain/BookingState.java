@@ -75,20 +75,18 @@ public class BookingState {
 		this.reserved.add(block);
 	}
 
-	public boolean reservationExists(CacheKey key) {
+	public Long reservationExists(Long showId, Long sectionId) {
 		
-		Long showId = key.getShowId();
-		Long sectionId = showDao.getSectionIdByRowId(key.getRowId());
-		
-		for(SeatBlock block : reserved) {
+		for(SeatBlock block : this.reserved) {
 			if(block.getKey().getShowId() == showId) {
 				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == sectionId) {
-					return true;
+					Long rowId = block.getKey().getRowId();
+					return rowId;
 				}
 			}
 		}
 		
-		return false;
+		return (long) 0;
 	}
 	
 	public void removeReservation(SeatBlock block) {
@@ -116,9 +114,10 @@ public class BookingState {
 			Long showId = block.getKey().getShowId();
 			Long rowId = block.getKey().getRowId();
 			reservationManager.removeSeatReservation(showId, rowId);
-			this.categoryRequests.clear();
-			this.reserved.clear();
 		}
+		
+		this.categoryRequests.clear();
+		this.reserved.clear();
 		
 		return;
 	}

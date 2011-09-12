@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
-"classpath:META-INF/spring/ticketmonster-business-context.xml"})
+"classpath:/META-INF/spring/ticketmonster-business-context.xml",
+"classpath:/META-INF/test-bookingState.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback=true)
 public class ShowDaoTest {
@@ -111,6 +112,13 @@ public class ShowDaoTest {
 		Assert.assertEquals(112.5, category.getPrice(),0);
 		category = categories.get(13);
 		Assert.assertEquals(122.5, category.getPrice(),0);
+	}
+	
+	@Test
+	public void testGetSectionIdByRowId() {
+		Long rowId = (long) 101;
+		Long sectionId = showDao.getSectionIdByRowId(rowId);
+		Assert.assertEquals((long) 102, sectionId, 0);
 	}
 	
 }

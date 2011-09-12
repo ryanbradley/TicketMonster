@@ -182,50 +182,38 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 	
 	public boolean updateSeatReservation(Long showId, Long sectionId, int quantity) {
-		boolean found = false, success = false;
-		
-		Section section = showDao.findSection(sectionId);
-		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
-		
+		boolean success = false;
+				
 		if(quantity < 0) {
 			return false;
 		}
 			
 		if(quantity == 0) {
 			logger.info("Found an allocation with quantity 0.");
-			for(SectionRow row : rows) {
-				logger.info("There are " + bookingState.getReserved().size() + " reservations for the current session.");
-				CacheKey key = new CacheKey(showId, row.getId());
-				found = bookingState.reservationExists(key);
-				if(found == true) {
-					logger.info("Removing reservation in row " + row.getId() + ".");
-					this.removeSeatReservation(showId, row.getId());
-					return true;
-				}
+			logger.info("There are " + bookingState.getReserved().size() + " reservations for the current session.");
+			Long rowId = bookingState.reservationExists(showId, sectionId);
+			if(rowId != 0) {
+				logger.info("Removing reservation in row " + rowId + ".");
+				this.removeSeatReservation(showId, rowId);
+				return true;
 			}
-			if(found == false) {
+			if(rowId == 0) {
 				return true;
 			}
 		}
 		
-		for(SectionRow row : rows) {
-			CacheKey key = new CacheKey(showId, row.getId());
-			found = bookingState.reservationExists(key);
-			if(found == true) {				
-				SeatBlock block = this.update(showId, row.getId(), quantity);
-				if(block != null) {
-					return true;
-				}
-				else {
-					return false;
-				}
+		Long rowId = bookingState.reservationExists(showId, sectionId);
+		if(rowId > 0) {				
+			SeatBlock block = this.update(showId, rowId, quantity);
+			if(block != null) {
+				return true;
+			}
+			else {
+				return false;
 			}
 		}
 		
-		if(found == false) {
-			success = this.findContiguousSeats(showId, sectionId, quantity);
-		}
-		
+		success = this.findContiguousSeats(showId, sectionId, quantity);
 		return success;
 	}
 	
