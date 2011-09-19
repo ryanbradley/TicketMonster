@@ -59,7 +59,7 @@ public class ReservationManagerTest {
 		BookingRequest booking = new BookingRequest();
 		booking.setShowId((long) 3);
 		
-		List<PriceCategory> categories = showDao.getCategories((long) 1, (long) 2);
+		List<PriceCategory> categories = showDao.getCategories(1l, 2l);
 		List<PriceCategoryRequest> categoryRequests = new ArrayList<PriceCategoryRequest>();
 		
 		for(PriceCategory category : categories) {
@@ -82,14 +82,14 @@ public class ReservationManagerTest {
 		Assert.assertNotNull(reservationsCache);
 		Assert.assertEquals("reservations", reservationsCache.getName());
 		
-		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
+		boolean success = reservationManager.findContiguousSeats(3l, 100l, 10);
 		Assert.assertEquals(true, success);
-		success = reservationManager.findContiguousSeats((long) 3, (long) 100, 5);
+		success = reservationManager.findContiguousSeats(3l, 100l, 5);
 		Assert.assertEquals(true, success);
 		
-		CacheKey key = new CacheKey((long) 3, (long) 1);
-		Assert.assertEquals((long) 3, key.getShowId(), 0);
-		Assert.assertEquals((long) 1, key.getRowId(), 0);
+		CacheKey key = new CacheKey(3l, 1l);
+		Assert.assertEquals(3l, key.getShowId(), 0);
+		Assert.assertEquals(1l, key.getRowId(), 0);
 		
 		RowReservation allocation = (RowReservation) reservationsCache.get(key).get();
 		Assert.assertNotNull(allocation);
@@ -116,7 +116,7 @@ public class ReservationManagerTest {
 		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(1).getEndSeat());
 		Assert.assertEquals(true, reservationManager.getBookingState().getReserved().get(0).getKey().equals(reservationManager.getBookingState().getReserved().get(1).getKey()));
 		
-		boolean success = reservationManager.findContiguousSeats((long) 3, (long) 101, 10);
+		boolean success = reservationManager.findContiguousSeats(3l, 101l, 10);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());		
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
@@ -125,7 +125,7 @@ public class ReservationManagerTest {
 		// Test updateSeatReservation() method when a reservation already exists in the current session.
 
 		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 101));
-		success = reservationManager.updateSeatReservation((long) 3, (long) 101, 15);
+		success = reservationManager.updateSeatReservation(3l, 101l, 15);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(2).getStartSeat());
@@ -134,13 +134,13 @@ public class ReservationManagerTest {
 		
 		// Test updateSeatReservation() method when a reservation does not already exist.
 		
-		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists((long) 3, (long) 102));
-		success = reservationManager.updateSeatReservation((long) 3, (long) 102, 15);
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(3l, 102l));
+		success = reservationManager.updateSeatReservation(3l, 102l, 15);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());
 		Assert.assertEquals(1, reservationManager.getBookingState().getReserved().get(3).getStartSeat());
 		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(3).getEndSeat());
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 102));
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));
 	}
 
 	@Test
@@ -148,30 +148,30 @@ public class ReservationManagerTest {
 		// Test reservationExists() method of the BookingState class.
 		
 		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 100));
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 101));
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 102));
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 100l));
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 101l));
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));
 	}
 	
 	@Test
 	public void testRemoveSeatReservation() {	
 		// Test removeSeatReservation() method within the updateSeatReservation() method when removing a reservation.
 
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 102));
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));
 		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());		
-		boolean success = reservationManager.updateSeatReservation((long) 3, (long) 102, 0);
+		boolean success = reservationManager.updateSeatReservation(3l, 102l, 0);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
-		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists((long) 3, (long) 102));
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(3l, 102l));
 		
 		// Test removeSeatReservation() method on its own.
 		
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 101));
-		reservationManager.removeSeatReservation((long) 3, (long) 101);
+		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 101l));
+		reservationManager.removeSeatReservation(3l, 101l);
 		Assert.assertEquals(2, reservationManager.getBookingState().getReserved().size());
-		reservationManager.updateSeatReservation((long) 3, (long) 100, 0);
+		reservationManager.updateSeatReservation(3l, 100l, 0);
 		Assert.assertEquals(true, success);
-		reservationManager.updateSeatReservation((long) 3, (long) 100, 0);
+		reservationManager.updateSeatReservation(3l, 100l, 0);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(true, reservationManager.getBookingState().getReserved().isEmpty());
 	}

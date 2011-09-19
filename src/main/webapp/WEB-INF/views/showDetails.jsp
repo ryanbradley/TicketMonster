@@ -48,10 +48,6 @@
 			${show.venue.description.active.content}</p>
 	</div>
 	<form action='<c:url value="/bookings/submit"/>' method="post">
-<!-- 	<spring:bind path="bookingRequest">
-		<input name='<c:out type="hidden" value="${bookingRequest}"/>' id="bookingRequest">
-	</spring:bind>
--->
 	<div class="sectionContent" id="priceCategories">
 		<table>
 		<c:forEach items="${bookingRequest.categoryRequests}" var="categoryRequest" varStatus="categoryStatus">
@@ -64,7 +60,6 @@
 			<tr>
 				<td><c:out value="${categoryRequest.priceCategory.category.description} - $${categoryRequest.priceCategory.price}"/></td>
 				<td>
-					<div class="sectionContent" id="priceCategory_${categoryRequest.priceCategoryId}">
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
 						<input name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}"
 							onchange='updateAllocation(${show.id}, ${bookingRequest})'>
@@ -73,7 +68,6 @@
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
 						<input type="hidden" name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}">
 					</spring:bind>
-					</div>
 				</td>
 			</tr>
 		</c:forEach>

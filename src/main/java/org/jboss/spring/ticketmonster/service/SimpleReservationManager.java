@@ -281,7 +281,7 @@ public class SimpleReservationManager implements ReservationManager {
 		logger.info("Entering removeSeatReservation() method");
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		
-		Long rowId = (long) 0;
+		Long rowId = 0l;
 		
 		for(SeatBlock block : bookingState.getReserved()) {
 			if(block.getKey().getShowId().intValue() == showId.intValue()) {
