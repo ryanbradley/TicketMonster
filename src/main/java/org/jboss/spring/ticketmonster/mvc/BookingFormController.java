@@ -63,13 +63,13 @@ public class BookingFormController {
 	
 	@RequestMapping(value = "/allocate", method=RequestMethod.POST, produces = "application/json")
 	public @ResponseBody boolean updateReservations(Long showId, BookingRequest bookingRequest) {
-		boolean success = false, found = false;
+		boolean success = false;
 		
 		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(bookingRequest);
 		List<PriceCategoryRequest> priceCategoryRequests = bookingRequest.getCategoryRequests();
 		
 		for(SectionRequest sectionRequest : sectionRequests) {
-			if(sectionRequest.getQuantity() < 0) {
+/*			if(sectionRequest.getQuantity() < 0) {
 				continue;
 			}
 			
@@ -93,6 +93,8 @@ public class BookingFormController {
 					success = reservationManager.findContiguousSeats(showId, sectionRequest.getSectionId(), sectionRequest.getQuantity());
 				}
 			}
+*/			
+			success = reservationManager.updateSeatReservation(sectionRequest.getShowId(), sectionRequest.getSectionId(), sectionRequest.getQuantity());
 			
 			for(PriceCategoryRequest priceCategoryRequest : priceCategoryRequests) {
 				if((priceCategoryRequest.getPriceCategory().getSection().getId() == sectionRequest.getSectionId()) && success == true) {

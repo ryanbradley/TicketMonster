@@ -48,19 +48,15 @@ public class SimpleReservationManager implements ReservationManager {
 	public BookingState getBookingState() {
 		return bookingState;
 	}
-	
-	public void setBookingState(BookingState bookingState) {
-		this.bookingState = bookingState;
-	}
 
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
 		
 		boolean found = false;
 		
-/*		User user = new User();
+		User user = new User();
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		user.setUsername(username);
-		bookingState.setUser(user);*/
+		bookingState.setUser(user);
 		
 		List<PriceCategoryRequest> categoryRequests = booking.getCategoryRequests();
 		List<SectionRequest> sectionRequests = new ArrayList<SectionRequest>();
@@ -198,7 +194,6 @@ public class SimpleReservationManager implements ReservationManager {
 					}
 				}
 			}*/
-			
 			found = bookingState.reservationExists(showId, sectionId);
 			
 			if(found == true) {
@@ -212,6 +207,9 @@ public class SimpleReservationManager implements ReservationManager {
 		}
 		
 		else {
+
+			// Search for a reservation in the requested section in the current user's session.
+
 			for(SeatBlock block : bookingState.getReserved()) {
 				if(showId == block.getKey().getShowId()) {
 					Long desiredSectionId = showDao.getSectionIdByRowId(block.getKey().getRowId());
@@ -227,6 +225,8 @@ public class SimpleReservationManager implements ReservationManager {
 				}
 			}
 		
+		// No reservation for the requested section and show is currently in the cache of reservations.
+
 		success = this.findContiguousSeats(showId, sectionId, quantity);
 		return success;
 		}

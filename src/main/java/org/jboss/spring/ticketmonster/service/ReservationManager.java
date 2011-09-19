@@ -23,8 +23,6 @@ public interface ReservationManager {
 	
 	BookingState getBookingState();
 	
-	void setBookingState(BookingState bookingState);
-	
 	List<SectionRequest> createSectionRequests(BookingRequest booking);
 	
 	boolean findContiguousSeats(Long showId, Long sectionId, int quantity);
