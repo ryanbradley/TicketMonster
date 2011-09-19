@@ -5,7 +5,7 @@ import java.util.List;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
-import org.jboss.spring.ticketmonster.domain.Section;
+import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.AllocationManager;
@@ -55,23 +55,50 @@ public class BookingFormController {
 		allocationManager.finalizeReservations(allocationManager.getBookingState().getReserved());
 		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
 		Double total = allocationManager.calculateTotal(allocationManager.getBookingState().getCategoryRequests());
+		model.addAttribute("user", allocationManager.getBookingState().getUser());		
 		model.addAttribute("total", total);
 		
 		return "checkout";
 	}
 	
-	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
-	public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
-		boolean success = false;
-		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
-		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
+	@RequestMapping(value = "/allocate", method=RequestMethod.POST, produces = "application/json")
+	public @ResponseBody boolean updateReservations(Long showId, BookingRequest bookingRequest) {
+		boolean success = false, found = false;
 		
-		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
-		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
-		categoryRequest.setQuantity(quantity);
+		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(bookingRequest);
+		List<PriceCategoryRequest> priceCategoryRequests = bookingRequest.getCategoryRequests();
 		
-		if(success == true) {
-			reservationManager.getBookingState().addCategoryRequest(categoryRequest);
+		for(SectionRequest sectionRequest : sectionRequests) {
+			if(sectionRequest.getQuantity() < 0) {
+				continue;
+			}
+			
+			else if(sectionRequest.getQuantity() == 0) {
+				found = reservationManager.getBookingState().reservationExists(showId, sectionRequest.getSectionId());
+				if(found == true) {
+					reservationManager.removeSeatReservation(showId, sectionRequest.getSectionId());
+					success = true;
+				}
+				else {
+					success = true;
+				}
+			}
+			
+			else {
+				found = reservationManager.getBookingState().reservationExists(showId, sectionRequest.getSectionId());
+				if(found == true) {
+					success = reservationManager.updateSeatReservation(showId, sectionRequest.getSectionId(), sectionRequest.getQuantity());
+				}
+				else {
+					success = reservationManager.findContiguousSeats(showId, sectionRequest.getSectionId(), sectionRequest.getQuantity());
+				}
+			}
+			
+			for(PriceCategoryRequest priceCategoryRequest : priceCategoryRequests) {
+				if((priceCategoryRequest.getPriceCategory().getSection().getId() == sectionRequest.getSectionId()) && success == true) {
+					reservationManager.getBookingState().addCategoryRequest(priceCategoryRequest);
+				}
+			}
 		}
 		
 		return success;

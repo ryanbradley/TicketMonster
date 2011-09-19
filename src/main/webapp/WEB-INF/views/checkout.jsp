@@ -3,7 +3,7 @@
 <div class="section">
 	<div class="sectionHeader">Check Out</div>
 	<div class="sectionContent" id="checkOut">
-		Checking out of TicketMonster after purchasing $${total} in tickets.
+		User ${user.username} is checking out of TicketMonster after purchasing $${total} in tickets.
 		
 		<c:forEach items="${allocations}" var="allocation">
 			<c:if test="${allocation.quantity > 0}"/>

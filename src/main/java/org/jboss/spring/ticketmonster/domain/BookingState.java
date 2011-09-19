@@ -75,18 +75,17 @@ public class BookingState {
 		this.reserved.add(block);
 	}
 
-	public Long reservationExists(Long showId, Long sectionId) {
+	public boolean reservationExists(Long showId, Long sectionId) {
 		
 		for(SeatBlock block : this.reserved) {
-			if(block.getKey().getShowId() == showId) {
-				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == sectionId) {
-					Long rowId = block.getKey().getRowId();
-					return rowId;
+			if(block.getKey().getShowId().intValue() == showId.intValue()) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()).intValue() == sectionId.intValue()) {
+					return true;
 				}
 			}
 		}
 		
-		return (long) 0;
+		return false;
 	}
 	
 	public void removeReservation(SeatBlock block) {

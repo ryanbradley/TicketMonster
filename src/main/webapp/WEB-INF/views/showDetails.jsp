@@ -20,13 +20,13 @@
             return val;
         }
 
-        function updateAllocation(showId, priceCategoryId, quantity) {
+        function updateAllocation(showId, bookingRequest) {
 			baseUrl = '<c:url value="/bookings/allocate?"/>';
-			jQuery.getJSON(baseUrl + "showId=" + showId + "&priceCategoryId=" + priceCategoryId + "&quantity=" + quantity, function (result) {
+			jQuery.getJSON(baseUrl + "showId=" + showId + "&" + "bookingRequest=" + bookingRequest, function (result) {
 				if(result == true)
-					$("div#priceCategories").append("Available seats have been allocated.");
+					$("div#priceCategories").text("Available seats have been allocated.");
 				else
-					$("div#priceCategories").append("Insufficient available seats.");
+					$("div#priceCategories").text("Insufficient available seats.");
 			});
         }
 
@@ -48,6 +48,10 @@
 			${show.venue.description.active.content}</p>
 	</div>
 	<form action='<c:url value="/bookings/submit"/>' method="post">
+<!-- 	<spring:bind path="bookingRequest">
+		<input name='<c:out type="hidden" value="${bookingRequest}"/>' id="bookingRequest">
+	</spring:bind>
+-->
 	<div class="sectionContent" id="priceCategories">
 		<table>
 		<c:forEach items="${bookingRequest.categoryRequests}" var="categoryRequest" varStatus="categoryStatus">
@@ -60,21 +64,25 @@
 			<tr>
 				<td><c:out value="${categoryRequest.priceCategory.category.description} - $${categoryRequest.priceCategory.price}"/></td>
 				<td>
+					<div class="sectionContent" id="priceCategory_${categoryRequest.priceCategoryId}">
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
-						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}"
-							onchange='updateAllocation(${show.id}, ${categoryRequest.priceCategoryId}, this.value)'>
+						<input name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}"
+							onchange='updateAllocation(${show.id}, ${bookingRequest})'>
 					</spring:bind>
 					
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
-						<input type="hidden" name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
+						<input type="hidden" name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}">
 					</spring:bind>
+					</div>
 				</td>
 			</tr>
 		</c:forEach>
 		</table>
+	</div>
+	</form>	
+	<div class="sectionContent" id="checkout">
 		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
-	</form>
 </div>
 
 <script type="text/javascript">
