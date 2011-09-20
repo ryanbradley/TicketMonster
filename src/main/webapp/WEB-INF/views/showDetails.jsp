@@ -20,13 +20,13 @@
             return val;
         }
 
-        function updateAllocation(showId, bookingRequest) {
+        function updateReservation(showId, priceCategoryId, quantity) {
 			baseUrl = '<c:url value="/bookings/allocate?"/>';
-			jQuery.getJSON(baseUrl + "showId=" + showId + "&" + "bookingRequest=" + bookingRequest, function (result) {
+			jQuery.getJSON(baseUrl + "showId=" + showId + "&priceCategoryId=" + priceCategoryId + "&quantity=" + quantity, function (result) {
 				if(result == true)
-					$("div#priceCategories").text("Available seats have been allocated.");
+					$("div#priceCategory_"+priceCategoryId).text("Available seats have been allocated.");
 				else
-					$("div#priceCategories").text("Insufficient available seats.");
+					$("div#priceCategory_"+priceCategoryId).text("Insufficient available seats.");
 			});
         }
 
@@ -62,7 +62,8 @@
 				<td>
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
 						<input name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}"
-							onchange='updateAllocation(${show.id}, ${bookingRequest})'>
+							onchange='updateReservation(${show.id}, ${categoryRequest.priceCategoryId}, this.value)'>
+							<div class="sectionContent" id="priceCategory_${categoryRequest.priceCategoryId}"></div>
 					</spring:bind>
 					
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
@@ -73,10 +74,12 @@
 		</c:forEach>
 		</table>
 	</div>
-	</form>	
+	</form>
+<!--<form action='<c:url value="/checkout"/>' method="post"> -->
 	<div class="sectionContent" id="checkout">
 		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
+<!--</form> -->
 </div>
 
 <script type="text/javascript">

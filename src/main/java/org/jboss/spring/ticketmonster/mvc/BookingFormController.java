@@ -5,7 +5,6 @@ import java.util.List;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
-import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.AllocationManager;
@@ -53,23 +52,41 @@ public class BookingFormController {
 	@RequestMapping(value="/submit", method=RequestMethod.POST)
 	public String onSubmit(Model model) {
 		allocationManager.finalizeReservations(allocationManager.getBookingState().getReserved());
+
 		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
 		Double total = allocationManager.calculateTotal(allocationManager.getBookingState().getCategoryRequests());
 		model.addAttribute("user", allocationManager.getBookingState().getUser());		
 		model.addAttribute("total", total);
+		reservationManager.getBookingState().clear();
 		
 		return "checkout";
 	}
 	
-	@RequestMapping(value = "/allocate", method=RequestMethod.POST, produces = "application/json")
-	public @ResponseBody boolean updateReservations(Long showId, BookingRequest bookingRequest) {
+	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
+	public @ResponseBody boolean updateReservation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
+		int sectionQuantity = 0;
+
+		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
+		Long sectionId = category.getSection().getId();
+
+		/*
+		 * Should add a testReservation method before I commit the change to the PriceCategoryRequest object.
+		 */		
+
+		List<PriceCategoryRequest> categoryRequests = reservationManager.getBookingState().getCategoryRequests();
+		reservationManager.updateCategoryRequest(showId, priceCategoryId, quantity);
+		for(PriceCategoryRequest categoryRequest : categoryRequests) {
+			if(categoryRequest.getPriceCategory().getSection().getId().intValue() == sectionId.intValue()) {
+				sectionQuantity += categoryRequest.getQuantity();
+			}
+		}
 		
-		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(bookingRequest);
+/*		List<SectionRequest> sectionRequests = reservationManager.createSectionRequests(bookingRequest);
 		List<PriceCategoryRequest> priceCategoryRequests = bookingRequest.getCategoryRequests();
 		
 		for(SectionRequest sectionRequest : sectionRequests) {
-/*			if(sectionRequest.getQuantity() < 0) {
+			if(sectionRequest.getQuantity() < 0) {
 				continue;
 			}
 			
@@ -94,14 +111,14 @@ public class BookingFormController {
 				}
 			}
 */			
-			success = reservationManager.updateSeatReservation(sectionRequest.getShowId(), sectionRequest.getSectionId(), sectionRequest.getQuantity());
+		success = reservationManager.updateSeatReservation(showId, sectionId, sectionQuantity);
 			
-			for(PriceCategoryRequest priceCategoryRequest : priceCategoryRequests) {
+/*			for(PriceCategoryRequest priceCategoryRequest : priceCategoryRequests) {
 				if((priceCategoryRequest.getPriceCategory().getSection().getId() == sectionRequest.getSectionId()) && success == true) {
 					reservationManager.getBookingState().addCategoryRequest(priceCategoryRequest);
 				}
 			}
-		}
+		}*/
 		
 		return success;
 	}

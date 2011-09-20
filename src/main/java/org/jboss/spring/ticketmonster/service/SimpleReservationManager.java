@@ -41,7 +41,7 @@ public class SimpleReservationManager implements ReservationManager {
 	@Autowired
 	private BookingState bookingState;
 	
-	private static final boolean TEMPORARY = false;
+	private static final boolean RESERVED = false;
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -108,7 +108,7 @@ public class SimpleReservationManager implements ReservationManager {
 				SeatBlock block = new SeatBlock();
 				block.setStartSeat(1);
 				block.setEndSeat(quantity);
-				block.setPurchased(TEMPORARY);
+				block.setPurchased(RESERVED);
 				block.setKey(key);
 				reservedSeats.add(block);
 				bookingState.addSeatBlock(block);
@@ -172,7 +172,7 @@ public class SimpleReservationManager implements ReservationManager {
 		block.setStartSeat(frontBlock.getEndSeat()+1);
 		block.setEndSeat(block.getStartSeat()+quantity-1);
 		block.setKey(key);
-		block.setPurchased(TEMPORARY);
+		block.setPurchased(RESERVED);
 		
 		return block;
 	}

@@ -106,6 +106,11 @@ public class BookingState {
 		return;
 	}
 	
+	public void clear() {
+		this.reserved.clear();
+		this.categoryRequests.clear();
+	}
+	
 	@PreDestroy
 	public void cleanup() {
 		
