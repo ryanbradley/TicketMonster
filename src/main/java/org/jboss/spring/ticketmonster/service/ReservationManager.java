@@ -34,5 +34,7 @@ public interface ReservationManager {
 	SeatBlock update(Long showId, Long rowId, int quantity);
 	
 	void removeSeatReservation(Long showId, Long sectionId);
+	
+	boolean checkAvailability(Long showId, Long sectionId, int quantity);
 
 }

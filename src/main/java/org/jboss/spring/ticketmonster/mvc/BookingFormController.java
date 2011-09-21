@@ -6,10 +6,11 @@ import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.Show;
+import org.jboss.spring.ticketmonster.domain.User;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
-import org.jboss.spring.ticketmonster.service.AllocationManager;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,6 @@ public class BookingFormController {
 	
 	@Autowired
 	private ShowDao showDao;
-	
-	@Autowired
-	private AllocationManager allocationManager;
 	
 	@Autowired
 	private ReservationManager reservationManager;
@@ -51,10 +49,10 @@ public class BookingFormController {
 	
 	@RequestMapping(value="/submit", method=RequestMethod.POST)
 	public String onSubmit(Model model) {
-		allocationManager.finalizeReservations(allocationManager.getBookingState().getReserved());
-		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
-		Double total = allocationManager.calculateTotal(allocationManager.getBookingState().getCategoryRequests());
-		model.addAttribute("total", total);
+		User user = new User();
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		user.setUsername(username);
+		reservationManager.getBookingState().setUser(user);
 		
 		return "checkout";
 	}
@@ -64,9 +62,9 @@ public class BookingFormController {
 		boolean success = false;
 		int sectionQuantity = 0;
 		
-		reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);
-		
 		Long sectionId = showDao.findPriceCategory(priceCategoryId).getSection().getId();
+		int previousQuantity = reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);			
+		
 		for(PriceCategoryRequest categoryRequest : reservationManager.getBookingState().getCategoryRequests()) {
 			if(categoryRequest.getPriceCategory().getSection().getId().equals(sectionId)) {
 				sectionQuantity += categoryRequest.getQuantity();
@@ -75,11 +73,8 @@ public class BookingFormController {
 		
 		success = reservationManager.updateSeatReservation(showId, sectionId, sectionQuantity);
 		
-		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
-		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
-		categoryRequest.setQuantity(quantity);
-		
-		if(success == true) {
+		if(success == false) {
+			reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, previousQuantity);
 		}
 		
 		return success;

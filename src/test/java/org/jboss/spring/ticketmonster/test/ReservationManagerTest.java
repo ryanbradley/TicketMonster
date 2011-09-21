@@ -15,7 +15,6 @@ import org.jboss.spring.ticketmonster.service.ReservationManager;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,14 +50,11 @@ public class ReservationManagerTest {
 	
 	@Autowired
 	private CacheManager cacheManager;
+
 	
-<<<<<<< .merge_file_R9wmPX
 	// testCreateSectionRequests() must be ignored as binding of User object to BookingState object will cause a NullPointerException in test.
-=======
-	// createSectionRequests() method cannot be tested without commenting out code that binds username to the BookingState User member.
->>>>>>> .merge_file_b478XW
 	
-	@Ignore
+	@Test
 	public void testCreateSectionRequests() {
 		BookingRequest booking = new BookingRequest();
 		booking.setShowId((long) 3);
@@ -127,13 +123,7 @@ public class ReservationManagerTest {
 		Assert.assertEquals(10, reservationManager.getBookingState().getReserved().get(2).getEndSeat());
 		
 		// Test updateSeatReservation() method when a reservation already exists in the current session.
-<<<<<<< .merge_file_R9wmPX
-		
 		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 101l));
-=======
-
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists((long) 3, (long) 101));
->>>>>>> .merge_file_b478XW
 		success = reservationManager.updateSeatReservation(3l, 101l, 15);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
@@ -151,14 +141,6 @@ public class ReservationManagerTest {
 		Assert.assertEquals(15, reservationManager.getBookingState().getReserved().get(3).getEndSeat());
 		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));
 	}
-	
-	@Test
-	public void testReservationExists()  {
-		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 100l));
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 101l));
-		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));		
-	}
 
 	@Test
 	public void testReservationExists() {
@@ -173,13 +155,9 @@ public class ReservationManagerTest {
 	@Test
 	public void testRemoveSeatReservation() {	
 		// Test removeSeatReservation() method within the updateSeatReservation() method when removing a reservation.
-<<<<<<< .merge_file_R9wmPX
-		
-=======
 
 		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 102l));
 		Assert.assertEquals(4, reservationManager.getBookingState().getReserved().size());		
->>>>>>> .merge_file_b478XW
 		boolean success = reservationManager.updateSeatReservation(3l, 102l, 0);
 		Assert.assertEquals(true, success);
 		Assert.assertEquals(3, reservationManager.getBookingState().getReserved().size());
@@ -187,13 +165,9 @@ public class ReservationManagerTest {
 		
 		// Test removeSeatReservation() method on its own.
 		
-<<<<<<< .merge_file_R9wmPX
-		reservationManager.removeSeatReservation(3l, 101l);
-		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(3l, 101l));
-=======
 		Assert.assertEquals(true, reservationManager.getBookingState().reservationExists(3l, 101l));
 		reservationManager.removeSeatReservation(3l, 101l);
->>>>>>> .merge_file_b478XW
+		Assert.assertEquals(false, reservationManager.getBookingState().reservationExists(3l, 101l));
 		Assert.assertEquals(2, reservationManager.getBookingState().getReserved().size());
 		reservationManager.updateSeatReservation(3l, 100l, 0);
 		Assert.assertEquals(true, success);

@@ -93,12 +93,13 @@ public class BookingState {
 		return;
 	}
 	
-	public void updateCategoryRequests(Long priceCategoryId, int quantity) {
+	public int updateCategoryRequests(Long priceCategoryId, int quantity) {
 		
 		for(PriceCategoryRequest categoryRequest : categoryRequests) {
 			if(categoryRequest.getPriceCategoryId().equals(priceCategoryId)) {
+				int previousQuantity = categoryRequest.getQuantity();
 				categoryRequest.setQuantity(quantity);
-				return;
+				return previousQuantity;
 			}
 		}
 		
@@ -107,7 +108,7 @@ public class BookingState {
 		priceCategoryRequest.setQuantity(quantity);
 		this.categoryRequests.add(priceCategoryRequest);
 		
-		return;
+		return 0;
 	}
 	
 	public void clear() {

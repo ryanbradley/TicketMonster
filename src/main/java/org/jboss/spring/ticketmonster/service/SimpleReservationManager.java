@@ -15,12 +15,10 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
-import org.jboss.spring.ticketmonster.domain.User;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Implementation of the ReservationManager interface. 
@@ -51,11 +49,6 @@ public class SimpleReservationManager implements ReservationManager {
 	public List<SectionRequest> createSectionRequests(BookingRequest booking) {
 		
 		boolean found = false;
-		
-		User user = new User();
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		user.setUsername(username);
-		bookingState.setUser(user);
 		
 		List<PriceCategoryRequest> categoryRequests = booking.getCategoryRequests();
 		List<SectionRequest> sectionRequests = new ArrayList<SectionRequest>();
@@ -308,6 +301,67 @@ public class SimpleReservationManager implements ReservationManager {
 		}
 		
 		return;
+	}
+	
+	public boolean checkAvailability(Long showId, Long sectionId, int quantity) {
+		boolean available = false;
+		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
+		
+		Long rowId = 0l;
+		
+		for(SeatBlock block : this.bookingState.getReserved()) {
+			if(block.getKey().getShowId().equals(showId)) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()).equals(sectionId)) {
+					rowId = block.getKey().getRowId();
+				}
+			}
+		}
+		
+		if(rowId == 0l) {
+			Section section = showDao.findSection(sectionId);
+			List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
+			available = !rows.isEmpty();
+			return available;
+		}
+		
+		CacheKey key = new CacheKey(showId, rowId);
+		RowReservation reservation = new RowReservation();
+		LinkedList<SeatBlock> reservedSeats = new LinkedList<SeatBlock>();
+		
+		if(reservationsCache.get(key) != null) {
+			reservation = (RowReservation) reservationsCache.get(key).get();
+			reservedSeats = reservation.getReservedSeats();
+		}
+		
+		for(SeatBlock block : reservedSeats) {
+			if(bookingState.getReserved().contains(block)) {
+				if(reservedSeats.getLast() == block) {
+					if((block.getStartSeat()+quantity-1) <= reservation.getCapacity()) {
+						block.setEndSeat(block.getStartSeat()+quantity-1);
+						reservation.setReservedSeats(reservedSeats);
+						reservationsCache.put(key, reservation);
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					SeatBlock nextBlock = reservedSeats.get(reservedSeats.indexOf(block)+1);
+					if((nextBlock.getStartSeat()-block.getStartSeat()) <= quantity) {
+						block.setEndSeat(block.getStartSeat()+quantity-1);
+						reservation.setReservedSeats(reservedSeats);
+						reservationsCache.put(key, reservation);
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 }
