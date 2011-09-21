@@ -5,7 +5,6 @@ import java.util.List;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
-import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.AllocationManager;
@@ -63,16 +62,24 @@ public class BookingFormController {
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
+		int sectionQuantity = 0;
+		
+		reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);
 		
 		Long sectionId = showDao.findPriceCategory(priceCategoryId).getSection().getId();
-		success = reservationManager.updateSeatReservation(showId, sectionId, quantity);
+		for(PriceCategoryRequest categoryRequest : reservationManager.getBookingState().getCategoryRequests()) {
+			if(categoryRequest.getPriceCategory().getSection().getId().equals(sectionId)) {
+				sectionQuantity += categoryRequest.getQuantity();
+			}
+		}
+		
+		success = reservationManager.updateSeatReservation(showId, sectionId, sectionQuantity);
 		
 		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
 		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(quantity);
 		
 		if(success == true) {
-			reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);
 		}
 		
 		return success;
