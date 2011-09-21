@@ -110,6 +110,11 @@ public class BookingState {
 		return;
 	}
 	
+	public void clear() {
+		this.reserved.clear();
+		this.categoryRequests.clear();
+	}
+	
 	@PreDestroy
 	public void cleanup() {
 		
@@ -117,9 +122,10 @@ public class BookingState {
 			Long showId = block.getKey().getShowId();
 			Long rowId = block.getKey().getRowId();
 			reservationManager.removeSeatReservation(showId, rowId);
-			this.categoryRequests.clear();
-			this.reserved.clear();
 		}
+		
+		this.categoryRequests.clear();
+		this.reserved.clear();
 		
 		return;
 	}

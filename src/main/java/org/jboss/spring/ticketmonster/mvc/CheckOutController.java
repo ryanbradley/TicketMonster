@@ -17,9 +17,11 @@ public class CheckOutController {
 	@RequestMapping(method=RequestMethod.GET)
 	public String checkOut(Model model) {
 		Double total = allocationManager.calculateTotal(allocationManager.getBookingState().getCategoryRequests());
+		allocationManager.finalizeReservations(allocationManager.getBookingState().getReserved());
 		model.addAttribute("total", total);
 		model.addAttribute("user", allocationManager.getBookingState().getUser());
 		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
+		allocationManager.getBookingState().clear();
 		
 		return "checkout";
 	}

@@ -43,7 +43,7 @@ public class SectionRequest {
 		this.quantity += categoryRequest.getQuantity();		
 	}
 
-	public void setSectionId(long sectionId) {
+	public void setSectionId(Long sectionId) {
 		this.sectionId = sectionId;		
 	}
 

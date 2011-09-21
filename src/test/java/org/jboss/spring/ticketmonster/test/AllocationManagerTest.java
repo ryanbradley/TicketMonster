@@ -56,7 +56,7 @@ public class AllocationManagerTest {
 		SeatBlock block = new SeatBlock();
 		block.setStartSeat(1);
 		block.setEndSeat(10);
-		CacheKey key = new CacheKey((long) 3, (long) 1);
+		CacheKey key = new CacheKey(3l, 1l);
 		block.setKey(key);
 		
 		Allocation allocation = allocationManager.createAllocation(block);
@@ -70,8 +70,8 @@ public class AllocationManagerTest {
 	@Test
 	public void testPersistChanges() {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache)	cacheManager.getCache("reservations");
-		reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
-		CacheKey key = new CacheKey((long) 3, (long) 1);
+		reservationManager.findContiguousSeats(3l, 100l, 10);
+		CacheKey key = new CacheKey(3l, 1l);
 		
 		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();
 		SeatBlock block = reservation.getReservedSeats().getFirst();
@@ -86,9 +86,9 @@ public class AllocationManagerTest {
 	
 	@Test
 	public void testFinalizeReservations() {
-		reservationManager.findContiguousSeats((long) 3, (long) 100, 10);
-		reservationManager.findContiguousSeats((long) 3, (long) 101, 25);
-		reservationManager.findContiguousSeats((long) 3, (long) 102, 50);
+		reservationManager.findContiguousSeats(3l, 100l, 10);
+		reservationManager.findContiguousSeats(3l, 101l, 25);
+		reservationManager.findContiguousSeats(3l, 102l, 50);
 		
 		List<Allocation> allocations = allocationManager.finalizeReservations(reservationManager.getBookingState().getReserved());
 		Assert.assertEquals(4, allocations.size());
@@ -112,21 +112,21 @@ public class AllocationManagerTest {
 	@Test
 	public void testCalculateTotal() {
 		List<PriceCategoryRequest> categoryRequests = new ArrayList<PriceCategoryRequest>();
-		Long categoryId = (long) 1;
+		Long categoryId = 1l;
 		
 		PriceCategory category = showDao.findPriceCategory(categoryId);
 		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(10);
 		categoryRequests.add(categoryRequest);
 		
-		categoryId = (long) 2;
+		categoryId = 2l;
 		category = showDao.findPriceCategory(categoryId);
 		categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(10);
 		categoryRequests.add(categoryRequest);
 		
 		
-		categoryId = (long) 3;
+		categoryId = 3l;
 		category = showDao.findPriceCategory(categoryId);
 		categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(10);

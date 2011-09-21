@@ -20,7 +20,7 @@
             return val;
         }
 
-        function updateAllocation(showId, priceCategoryId, quantity) {
+        function updateReservation(showId, priceCategoryId, quantity) {
 			baseUrl = '<c:url value="/bookings/allocate?"/>';
 			jQuery.getJSON(baseUrl + "showId=" + showId + "&priceCategoryId=" + priceCategoryId + "&quantity=" + quantity, function (result) {
 				if(result == true)
@@ -61,23 +61,27 @@
 				<td><c:out value="${categoryRequest.priceCategory.category.description} - $${categoryRequest.priceCategory.price}"/></td>
 				<td>
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].quantity">
-						<input name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}"
-							onchange='updateAllocation(${show.id}, ${categoryRequest.priceCategoryId}, this.value)'>
+						<input name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}"
+							onchange='updateReservation(${show.id}, ${categoryRequest.priceCategoryId}, this.value)'>
+							<div class="sectionContent" id="priceCategory_${categoryRequest.priceCategoryId}"></div>
 					</spring:bind>
 					
 					<spring:bind path="bookingRequest.categoryRequests[${categoryStatus.index}].priceCategoryId">
-						<input type="hidden" name="<c:out value="${status.expression}"/>" id="${status.expression}" value="${status.value}">
-					</spring:bind>
-					<div class="sectionContent" id="priceCategory_${categoryRequest.priceCategoryId}"></div>						
+						<input type="hidden" name='<c:out value="${status.expression}"/>' id="${status.expression}" value="${status.value}">
+					</spring:bind>						
 				</td>		
 			</tr>
 		</c:forEach>
 		</table>
-		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
 	</form>
+<!--<form action='<c:url value="/checkout"/>' method="post"> -->
+	<div class="sectionContent" id="checkout">
+		<input type="submit" value="Check Out" onclick='checkOut()'>	
+	</div>
+<!--</form> -->
 </div>
 
 <script type="text/javascript">
-	$("div#showDate").append(prettyDate(new Date(<c:out value="${show.showDate.time}"/>)));
+	$("div#showDate").text(prettyDate(new Date(<c:out value="${show.showDate.time}"/>)));
 </script>

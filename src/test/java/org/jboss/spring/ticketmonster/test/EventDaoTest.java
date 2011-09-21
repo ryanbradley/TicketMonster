@@ -28,7 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
-"classpath:META-INF/spring/ticketmonster-business-context.xml"})
+"classpath:/META-INF/spring/ticketmonster-business-context.xml",
+"classpath:/META-INF/test-bookingState.xml"})
 @TransactionConfiguration(defaultRollback=true)
 public class EventDaoTest {
 	
@@ -46,8 +47,8 @@ public class EventDaoTest {
 	@Transactional
 	@Test
 	public void testGetEventsById() {
-		Event e1 = eventDao.getEvent((long)1);
-		Event e2 = eventDao.getEvent((long)2);
+		Event e1 = eventDao.getEvent(1l);
+		Event e2 = eventDao.getEvent(2l);
 		Assert.assertEquals("Rock Concert of the Decade", e1.getName());
 		Assert.assertEquals("Shane's Sock Puppets", e2.getName());
 		return;
@@ -66,9 +67,9 @@ public class EventDaoTest {
 	@Transactional
 	@Test
 	public void testSearchCategory() {
-		List<Event> events = eventDao.searchCategory((long)1);
+		List<Event> events = eventDao.searchCategory(1l);
 		Assert.assertEquals("Rock Concert of the Decade", events.get(0).getName());
-		events = eventDao.searchCategory((long)2);
+		events = eventDao.searchCategory(2l);
 		Assert.assertEquals("Shane's Sock Puppets", events.get(0).getName());
 		return;
 	}
@@ -133,7 +134,7 @@ public class EventDaoTest {
 	@Transactional
 	@Test
 	public void testGetVenues() {
-		Event event = eventDao.getEvent((long)1);
+		Event event = eventDao.getEvent(1l);
 		List<Venue> venues = eventDao.getVenues(event);
 		Assert.assertEquals(2, venues.size());
 		Assert.assertEquals("City Central Concert Hall", venues.get(0).getName());

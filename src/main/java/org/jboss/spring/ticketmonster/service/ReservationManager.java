@@ -23,8 +23,6 @@ public interface ReservationManager {
 	
 	BookingState getBookingState();
 	
-	void setBookingState(BookingState bookingState);
-	
 	List<SectionRequest> createSectionRequests(BookingRequest booking);
 	
 	boolean findContiguousSeats(Long showId, Long sectionId, int quantity);
@@ -35,6 +33,6 @@ public interface ReservationManager {
 	
 	SeatBlock update(Long showId, Long rowId, int quantity);
 	
-	void removeSeatReservation(Long showId, Long rowId);
-	
+	void removeSeatReservation(Long showId, Long sectionId);
+
 }

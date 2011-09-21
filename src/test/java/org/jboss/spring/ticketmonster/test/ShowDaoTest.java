@@ -22,7 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-context.xml",
-"classpath:META-INF/spring/ticketmonster-business-context.xml"})
+"classpath:/META-INF/spring/ticketmonster-business-context.xml",
+"classpath:/META-INF/test-bookingState.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback=true)
 public class ShowDaoTest {
@@ -34,8 +35,8 @@ public class ShowDaoTest {
 	
 	@Test
 	public void testGetEvent() {
-		Show s1 = showDao.getShow((long)1);
-		Show s2 = showDao.getShow((long)3);
+		Show s1 = showDao.getShow(1l);
+		Show s2 = showDao.getShow(3l);
 		
 		Assert.assertEquals("City Central Concert Hall", s1.getVenue().getName());
 		Assert.assertEquals("Rock Concert of the Decade", s1.getEvent().getName());
@@ -48,7 +49,7 @@ public class ShowDaoTest {
 	public void testGetShowTimes() throws ParseException {
 		List<ShowTime> showTimes = new ArrayList<ShowTime>();
 		
-		showTimes = showDao.getShowTimes((long)1, (long)1);
+		showTimes = showDao.getShowTimes(1l, 1l);
 		
 		Date firstShowExpected = formatter.parse("Sat Jan 01 19:00:00 EST 2011");
 		Date secondShowExpected = formatter.parse("Sun Jan 02 19:00:00 EST 2011");
@@ -61,7 +62,7 @@ public class ShowDaoTest {
 		Date secondShow = showTimes.get(1).getDate();
 		Assert.assertEquals(secondShowExpected, secondShow);
 		
-		showTimes = showDao.getShowTimes((long)1, (long)2);
+		showTimes = showDao.getShowTimes(1l, 2l);
 		Date thirdShow = showTimes.get(0).getDate();
 		Assert.assertEquals(thirdShowExpected, thirdShow);
 		Date fourthShow = showTimes.get(1).getDate();
@@ -70,7 +71,7 @@ public class ShowDaoTest {
 	
 	@Test
 	public void testGetCategories() {
-		List<PriceCategory> categories = showDao.getCategories((long)1, (long)1);
+		List<PriceCategory> categories = showDao.getCategories(1l, 1l);
 		
 		PriceCategory category = categories.get(0);
 		Assert.assertEquals(219.50, category.getPrice(), 0);
@@ -81,7 +82,7 @@ public class ShowDaoTest {
 		category = categories.get(3);
 		Assert.assertEquals(149.50, category.getPrice(), 0);
 		
-		categories = showDao.getCategories((long)1, (long)2);
+		categories = showDao.getCategories(1l, 2l);
 		
 		category = categories.get(0);
 		Assert.assertEquals(157.50, category.getPrice(),0);
@@ -111,6 +112,13 @@ public class ShowDaoTest {
 		Assert.assertEquals(112.5, category.getPrice(),0);
 		category = categories.get(13);
 		Assert.assertEquals(122.5, category.getPrice(),0);
+	}
+	
+	@Test
+	public void testGetSectionIdByRowId() {
+		Long rowId = 101l;
+		Long sectionId = showDao.getSectionIdByRowId(rowId);
+		Assert.assertEquals(102l, sectionId, 0);
 	}
 	
 }
