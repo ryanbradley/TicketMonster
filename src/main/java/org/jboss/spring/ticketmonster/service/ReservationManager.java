@@ -37,5 +37,4 @@ public interface ReservationManager {
 	
 	void removeSeatReservation(Long showId, Long rowId);
 	
-	void updateCategoryRequest(Long showId, Long priceCategoryId, int quantity);
 }

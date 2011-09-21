@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
-import org.jboss.spring.ticketmonster.domain.PriceCategory;
 import org.jboss.spring.ticketmonster.domain.PriceCategoryRequest;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
@@ -183,55 +182,55 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	public boolean updateSeatReservation(Long showId, Long sectionId, int quantity) {
 		boolean found = false, success = false;
-		
-		Section section = showDao.findSection(sectionId);
-		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
+		found = this.bookingState.reservationExists(showId, sectionId);
 		
 		if(quantity < 0) {
 			return false;
 		}
 			
-		if(quantity == 0) {
-			logger.info("Found an allocation with quantity 0.");
-			for(SectionRow row : rows) {
-				logger.info("There are " + bookingState.getReserved().size() + " reservations for the current session.");
-				CacheKey key = new CacheKey(showId, row.getId());
-				found = bookingState.reservationExists(key);
-				if(found == true) {
-					logger.info("Removing reservation in row " + row.getId() + ".");
-					this.removeSeatReservation(showId, row.getId());
-					return true;
-				}
+		else if(quantity == 0) {
+			if(found == true) {
+				this.removeSeatReservation(showId, sectionId);
+				return true;
 			}
-			if(found == false) {
+			else if(found == false) {
 				return true;
 			}
 		}
 		
-		for(SectionRow row : rows) {
-			CacheKey key = new CacheKey(showId, row.getId());
-			found = bookingState.reservationExists(key);
-			if(found == true) {				
-				SeatBlock block = this.update(showId, row.getId(), quantity);
-				if(block != null) {
-					return true;
-				}
-				else {
-					return false;
-				}
+		else if(quantity > 0 && found == true) {
+			SeatBlock block = this.update(showId, sectionId, quantity);
+			if(block != null) {
+				return true;
+			}
+			else {
+				return false;
 			}
 		}
 		
-		if(found == false) {
+		else if(found == false) {
 			success = this.findContiguousSeats(showId, sectionId, quantity);
 		}
 		
 		return success;
 	}
 	
-	public SeatBlock update(Long showId, Long rowId, int quantity) {
+	public SeatBlock update(Long showId, Long sectionId, int quantity) {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
-		logger.info("Updating the seats of an already reserved block.");
+		
+		Long rowId = 0l;
+		
+		for(SeatBlock block : this.bookingState.getReserved()) {
+			if(block.getKey().getShowId().equals(showId)) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()).equals(sectionId)) {
+					rowId = block.getKey().getRowId();
+				}
+			}
+		}
+		
+		if(rowId == 0l) {
+			return null;
+		}
 		
 		CacheKey key = new CacheKey(showId, rowId);
 		RowReservation reservation = new RowReservation();
@@ -273,27 +272,35 @@ public class SimpleReservationManager implements ReservationManager {
 		return null;
 	}
 	
-	public void removeSeatReservation(Long showId, Long rowId)	{
-		logger.info("Entering removeSeatReservation() method");
+	public void removeSeatReservation(Long showId, Long sectionId)	{
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
-		CacheKey key = new CacheKey(showId, rowId);
 		
-		if(reservationsCache.get(key) == null) {
-			logger.info("Did not find a reservation in " + rowId +".");
+		Long rowId = 0l;
+		
+		for(SeatBlock block : this.bookingState.getReserved()) {
+			if(block.getKey().getShowId().equals(showId)) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()).equals(sectionId)) {
+					rowId = block.getKey().getRowId();
+				}
+			}
+		}
+		
+		if(rowId == 0l) {
+		// In this case, no reservation was found in the booking state to be removed.			
 			return;
 		}
 		
+		CacheKey key = new CacheKey(showId, rowId);
+				
 		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();
 		LinkedList<SeatBlock> reservedSeats = reservation.getReservedSeats();
 		
 		for(SeatBlock block : reservedSeats) {
 			if(this.bookingState.getReserved().contains(block)) {
-				logger.info("Found a reservation in " + rowId + ", reservation will be removed.");
 				reservedSeats.remove(block);
 				this.bookingState.removeReservation(block);
 				reservation.setReservedSeats(reservedSeats);
 				reservationsCache.put(key, reservation);
-				logger.info("Reservation should be removed, and cache should be updated appropriately.");
 				return;
 			}
 		}
@@ -301,12 +308,4 @@ public class SimpleReservationManager implements ReservationManager {
 		return;
 	}
 	
-	public void updateCategoryRequest(Long showId, Long priceCategoryId, int quantity) {
-		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
-		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
-		categoryRequest.setQuantity(quantity);
-		this.getBookingState().addCategoryRequest(categoryRequest);
-		return;
-	}
-
 }

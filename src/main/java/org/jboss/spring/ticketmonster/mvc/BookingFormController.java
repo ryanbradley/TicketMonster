@@ -63,15 +63,16 @@ public class BookingFormController {
 	@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
 	public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
 		boolean success = false;
-		Section section = showDao.getSectionByPriceCategory(priceCategoryId);
-		success = reservationManager.updateSeatReservation(showId, section.getId(), quantity);
+		
+		Long sectionId = showDao.findPriceCategory(priceCategoryId).getSection().getId();
+		success = reservationManager.updateSeatReservation(showId, sectionId, quantity);
 		
 		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
 		PriceCategoryRequest categoryRequest = new PriceCategoryRequest(category);
 		categoryRequest.setQuantity(quantity);
 		
 		if(success == true) {
-			reservationManager.getBookingState().addCategoryRequest(categoryRequest);
+			reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);
 		}
 		
 		return success;

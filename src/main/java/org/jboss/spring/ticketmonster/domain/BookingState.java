@@ -35,7 +35,7 @@ public class BookingState {
 	public BookingState() {
 		this.reserved = new ArrayList<SeatBlock>();
 		this.allocations = new ArrayList<Allocation>();
-		this.setCategoryRequests(new ArrayList<PriceCategoryRequest>());
+		this.categoryRequests = new ArrayList<PriceCategoryRequest>();
 		this.user = new User();
 	}
 
@@ -75,14 +75,11 @@ public class BookingState {
 		this.reserved.add(block);
 	}
 
-	public boolean reservationExists(CacheKey key) {
-		
-		Long showId = key.getShowId();
-		Long sectionId = showDao.getSectionIdByRowId(key.getRowId());
+	public boolean reservationExists(Long showId, Long sectionId) {
 		
 		for(SeatBlock block : reserved) {
-			if(block.getKey().getShowId() == showId) {
-				if(showDao.getSectionIdByRowId(block.getKey().getRowId()) == sectionId) {
+			if(block.getKey().getShowId().equals(showId)) {
+				if(showDao.getSectionIdByRowId(block.getKey().getRowId()).equals(sectionId)) {
 					return true;
 				}
 			}
@@ -96,16 +93,20 @@ public class BookingState {
 		return;
 	}
 	
-	public void addCategoryRequest(PriceCategoryRequest categoryRequest) {
+	public void updateCategoryRequests(Long priceCategoryId, int quantity) {
 		
-		for(PriceCategoryRequest priceCategoryRequest : categoryRequests) {
-			if(priceCategoryRequest.getPriceCategoryId() == categoryRequest.getPriceCategoryId()) {
-				priceCategoryRequest = categoryRequest;
+		for(PriceCategoryRequest categoryRequest : categoryRequests) {
+			if(categoryRequest.getPriceCategoryId().equals(priceCategoryId)) {
+				categoryRequest.setQuantity(quantity);
 				return;
 			}
 		}
 		
-		this.categoryRequests.add(categoryRequest);
+		PriceCategory category = showDao.findPriceCategory(priceCategoryId);
+		PriceCategoryRequest priceCategoryRequest = new PriceCategoryRequest(category);
+		priceCategoryRequest.setQuantity(quantity);
+		this.categoryRequests.add(priceCategoryRequest);
+		
 		return;
 	}
 	
