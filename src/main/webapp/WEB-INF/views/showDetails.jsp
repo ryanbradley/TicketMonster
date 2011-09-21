@@ -31,7 +31,7 @@
         }
 
         function checkOut() {
-			window.location = '<c:url value="/checkout"/>';
+			window.location = '<c:url value="/bookings/checkout"/>';
         }
         
 </script>
@@ -75,11 +75,11 @@
 		</table>
 	</div>
 	</form>
-<!--<form action='<c:url value="/checkout"/>' method="post"> -->
+<form action='<c:url value="/bookings/checkout"/>' method="post">
 	<div class="sectionContent" id="checkout">
 		<input type="submit" value="Check Out" onclick='checkOut()'>	
 	</div>
-<!--</form> -->
+</form>
 </div>
 
 <script type="text/javascript">
