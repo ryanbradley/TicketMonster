@@ -1,4 +1,6 @@
-insert into User (id, username) values (1, 'sbryzak');
+insert into User (id, username, firstName, lastName) values (1, 'sbryzak', 'Shane', 'Bryzak');
+insert into User (id, username, firstName, lastName) values (2, 'mbg', 'Marius', 'Bogoevici');
+insert into User (id, username, firstName, lastName) values (3, 'rbradley', 'Ryan', 'Bradley');
 
 insert into Document (id) values (50);
 insert into Revision (id, document_id, created, createdBy, modified, modifiedBy, content) values (50, 50, '2010-01-01', 'sbryzak', null, null, 'Set adjacent to Grand Central Square, this magnificent concert hall can seat up to 50000 people');

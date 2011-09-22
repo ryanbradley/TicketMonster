@@ -22,8 +22,10 @@ public interface AllocationManager {
 	
 	Allocation createAllocation(SeatBlock block);
 	
-	void persistChanges(SeatBlock block);
+	void persistToCache(SeatBlock block);
 	
 	Double calculateTotal(List<PriceCategoryRequest> categoryRequests);
+	
+	void persistToDatabase(Allocation allocation);
 	
 }

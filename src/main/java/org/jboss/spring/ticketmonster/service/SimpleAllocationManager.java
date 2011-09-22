@@ -49,7 +49,7 @@ public class SimpleAllocationManager implements AllocationManager {
 			Allocation allocation = this.createAllocation(block);
 			allocations.add(allocation);
 			bookingState.addAllocation(allocation);
-			persistChanges(block);
+			persistToCache(block);
 		}		
 		
 		return allocations;
@@ -73,7 +73,7 @@ public class SimpleAllocationManager implements AllocationManager {
 		return allocation;
 	}
 	
-	public void persistChanges(SeatBlock block) {
+	public void persistToCache(SeatBlock block) {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 		CacheKey key = block.getKey();
 		
@@ -99,6 +99,11 @@ public class SimpleAllocationManager implements AllocationManager {
 		}
 		
 		return total;
+	}
+	
+	public void persistToDatabase(Allocation allocation) {
+				
+		return;
 	}
 	
 }

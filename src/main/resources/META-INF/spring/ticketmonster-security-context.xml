@@ -18,9 +18,7 @@
 		<intercept-url pattern="/venues/**" access="permitAll"/>
 		<intercept-url pattern="/shows/**" access="permitAll"/>
 		<intercept-url pattern="/categories**" access="permitAll"/>
-		<intercept-url pattern="/allocate**" access="hasRole('ROLE_USER')"/>
 		<intercept-url pattern="/index.jsp" access="permitAll"/>
-		<intercept-url pattern="/checkout" access="hasRole('ROLE_USER')"/>
 		<intercept-url pattern="/**" access="denyAll"/>
 		<form-login/>
 		<logout logout-success-url="/"/>

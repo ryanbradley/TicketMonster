@@ -26,21 +26,20 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"classpath:test-context.xml",
 "classpath:/META-INF/spring/ticketmonster-business-context.xml",
 "classpath:/META-INF/test-bookingState.xml"})
+@Transactional
 @TransactionConfiguration(defaultRollback=true)
 public class VenueDaoTest {
 	
 	@Autowired
 	private VenueDao venueDao;
 	
-	@Transactional
 	@Test
 	public void testGetVenues() {
 		List<Venue> venues = venueDao.getVenues();
 		Assert.assertEquals(2, venues.size());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testGetVenueById() {
 		Venue v1 = venueDao.getVenue(1l);
@@ -49,8 +48,7 @@ public class VenueDaoTest {
 		Assert.assertEquals("Sydney Opera House", v2.getName());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testGetEvents() {
 		Venue venue = venueDao.getVenue(1l);

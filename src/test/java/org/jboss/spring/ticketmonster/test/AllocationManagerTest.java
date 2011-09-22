@@ -75,7 +75,7 @@ public class AllocationManagerTest {
 		
 		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();
 		SeatBlock block = reservation.getReservedSeats().getFirst();
-		allocationManager.persistChanges(block);
+		allocationManager.persistToCache(block);
 		
 		reservation = (RowReservation) reservationsCache.get(key).get();
 		block = reservation.getReservedSeats().getFirst();
