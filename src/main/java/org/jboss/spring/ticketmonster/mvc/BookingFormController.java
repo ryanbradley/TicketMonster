@@ -38,7 +38,7 @@ public class BookingFormController {
 	
 	@RequestMapping(value = "/{id}", method=RequestMethod.GET)
 	public String viewShow(@PathVariable("id") Long id, Model model) {
-		Show show = showDao.getShow(id);
+		Show show = showDao.findShow(id);
 		model.addAttribute("show", show);
 		
 		Long eventId = show.getEvent().getId();
@@ -66,6 +66,7 @@ public class BookingFormController {
 		model.addAttribute("total", total);
 		model.addAttribute("user", allocationManager.getBookingState().getUser());
 		model.addAttribute("allocations", allocationManager.getBookingState().getAllocations());
+		allocationManager.persistToDatabase(allocationManager.getBookingState().getAllocations());
 		allocationManager.getBookingState().clear();
 		
 		return "checkout";

@@ -26,6 +26,6 @@ public interface AllocationManager {
 	
 	Double calculateTotal(List<PriceCategoryRequest> categoryRequests);
 	
-	void persistToDatabase(Allocation allocation);
+	void persistToDatabase(List<Allocation> allocations);
 	
 }

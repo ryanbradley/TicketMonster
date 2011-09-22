@@ -13,6 +13,7 @@ import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.domain.Show;
+import org.jboss.spring.ticketmonster.repo.AllocationDao;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -29,6 +30,9 @@ public class SimpleAllocationManager implements AllocationManager {
 
 	@Autowired
 	private ShowDao showDao;
+	
+	@Autowired
+	private AllocationDao allocationDao;
 	
 	@Autowired
 	private CacheManager cacheManager;
@@ -64,7 +68,7 @@ public class SimpleAllocationManager implements AllocationManager {
 		SectionRow row = showDao.findSectionRow(block.getKey().getRowId());
 		allocation.setRow(row);
 		
-		Show show = showDao.getShow(block.getKey().getShowId());
+		Show show = showDao.findShow(block.getKey().getShowId());
 		allocation.setShow(show);
 		
 		allocation.setQuantity(block.getEndSeat()-block.getStartSeat()+1);
@@ -101,8 +105,11 @@ public class SimpleAllocationManager implements AllocationManager {
 		return total;
 	}
 	
-	public void persistToDatabase(Allocation allocation) {
-				
+	public void persistToDatabase(List<Allocation> allocations) {
+
+		for(Allocation allocation : allocations) {
+			allocationDao.persistAllocation(allocation);
+		}
 		return;
 	}
 	

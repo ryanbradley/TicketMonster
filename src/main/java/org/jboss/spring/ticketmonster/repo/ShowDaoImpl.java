@@ -47,7 +47,7 @@ public class ShowDaoImpl implements ShowDao {
 		return showTimes;
 	}
 
-	public Show getShow(Long showId) {
+	public Show findShow(Long showId) {
 		Show show = entityManager.find(Show.class, showId);
 		return show;
 	}

@@ -18,10 +18,11 @@
 	
 	<context:component-scan base-package="org.jboss.spring.ticketmonster.domain"/>
 	
+	<bean id="allocationDao" class="org.jboss.spring.ticketmonster.repo.AllocationDaoImpl"/>
 	<bean id="eventDao" class="org.jboss.spring.ticketmonster.repo.EventDaoImpl"/>
-	<bean id="venueDao" class="org.jboss.spring.ticketmonster.repo.VenueDaoImpl"/>
 	<bean id="showDao" class="org.jboss.spring.ticketmonster.repo.ShowDaoImpl"/>
 	<bean id="userDao" class="org.jboss.spring.ticketmonster.repo.UserDaoImpl"/>
+	<bean id="venueDao" class="org.jboss.spring.ticketmonster.repo.VenueDaoImpl"/>
 	
 	<bean id="reservationManager" class="org.jboss.spring.ticketmonster.service.SimpleReservationManager"/>
 	

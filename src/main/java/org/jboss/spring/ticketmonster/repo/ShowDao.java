@@ -21,7 +21,7 @@ public interface ShowDao {
 
 	List<ShowTime> getShowTimes(Long eventId, Long venueId);
 	
-	Show getShow(Long showId);
+	Show findShow(Long showId);
 	
 	List<PriceCategory> getCategories(Long eventId, Long venueId);
 	

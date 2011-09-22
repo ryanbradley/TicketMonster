@@ -27,7 +27,8 @@ public class EventDaoImpl implements EventDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<Event> getEvents() {
-		List<Event> events = entityManager.createQuery("select e from Event e").getResultList();
+		Query query = entityManager.createQuery("select e from Event e");
+		List<Event> events = query.getResultList();
 		return events;
 	}
 	

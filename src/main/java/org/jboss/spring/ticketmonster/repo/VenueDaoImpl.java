@@ -26,7 +26,8 @@ public class VenueDaoImpl implements VenueDao {
 
 	@SuppressWarnings("unchecked")
 	public List<Venue> getVenues() {
-		List<Venue> venues = entityManager.createQuery("select v from Venue v").getResultList();
+		Query query = entityManager.createQuery("select v from Venue v");
+		List<Venue> venues = query.getResultList();
 		return venues;
 	}
 

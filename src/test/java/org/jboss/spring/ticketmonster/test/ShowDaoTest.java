@@ -35,8 +35,8 @@ public class ShowDaoTest {
 	
 	@Test
 	public void testGetEvent() {
-		Show s1 = showDao.getShow(1l);
-		Show s2 = showDao.getShow(3l);
+		Show s1 = showDao.findShow(1l);
+		Show s2 = showDao.findShow(3l);
 		
 		Assert.assertEquals("City Central Concert Hall", s1.getVenue().getName());
 		Assert.assertEquals("Rock Concert of the Decade", s1.getEvent().getName());
