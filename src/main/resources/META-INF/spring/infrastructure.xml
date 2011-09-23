@@ -13,6 +13,8 @@
 
     <jee:jndi-lookup jndi-name="java:comp/env/persistence/TicketMonster/entityManager" id="entityManager"
                      expected-type="javax.persistence.EntityManager" />
+                     
+	<jee:jndi-lookup jndi-name="java:jboss/datasources/TicketMonsterDS" id="dataSource" expected-type="javax.sql.DataSource"/>
 
     <tx:jta-transaction-manager />
 

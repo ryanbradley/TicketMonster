@@ -29,17 +29,9 @@
 	<authentication-manager>
 		<authentication-provider>
 		<password-encoder ref="encoder"/>
-			<user-service>
-				<user name="rbradley" 
-					password="e5b60370d330faeddb4aef7b34ef2877cebcfaad814e62da7e9d3abe8b3be6146410572b2f21047c"
-					authorities="ROLE_USER, ROLE_ADMIN"/>
-				<user name="sbryzak"
-					password="12bfe8fb06f06eedec67fb43ef6ab8c850a577db73e758c40b5fceff86d9e214c36612e430b23a5e" 
-					authorities="ROLE_USER, ROLE_ADMIN"/>
-				<user name="mbg" 
-					password="eefcbef8c277b21f88d7fa36dc7e33fbf243587de1cac2dcc4edcaa717796e7326980ad18161bd4f" 
-					authorities="ROLE_USER"/>
-			</user-service>
+			<jdbc-user-service data-source-ref="dataSource" 
+				users-by-username-query="select username, password, enabled from User where username = ?"
+				authorities-by-username-query="select username, 'ROLE_USER' from User where username = ?"/>
 		</authentication-provider>
 	</authentication-manager>
 

@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 /**
  * 
  * @author Shane Bryzak
@@ -17,11 +19,13 @@ public class User implements Serializable
    private static final long serialVersionUID = -4501716573185869164L;
    
    private Long id;
-//   private IdentityObject identity;
+// private IdentityObject identity;
    private String username;
    private String firstName;
    private String lastName;
-   
+   private String password;
+   private boolean enabled;
+
    @Id
    @GeneratedValue
    public Long getId()
@@ -59,6 +63,23 @@ public class User implements Serializable
    public void setLastName(String lastName) {
 	   this.lastName = lastName;
    }
+   
+   public boolean isEnabled() {
+	   return enabled;
+   }
+
+   public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+   }
+
+   public String getPassword() {
+	   return password;
+   }
+
+   @PreAuthorize("hasRole('ROLE_ADMIN')")
+   public void setPassword(String password) {
+	   this.password = password;
+   }   
 
 	/*
 	@OneToOne

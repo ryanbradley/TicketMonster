@@ -1,6 +1,6 @@
-insert into User (id, username, firstName, lastName) values (1, 'sbryzak', 'Shane', 'Bryzak');
-insert into User (id, username, firstName, lastName) values (2, 'mbg', 'Marius', 'Bogoevici');
-insert into User (id, username, firstName, lastName) values (3, 'rbradley', 'Ryan', 'Bradley');
+insert into User (id, username, password, enabled, firstName, lastName) values (1, 'sbryzak', '12bfe8fb06f06eedec67fb43ef6ab8c850a577db73e758c40b5fceff86d9e214c36612e430b23a5e', 'true', 'Shane', 'Bryzak');
+insert into User (id, username, password, enabled, firstName, lastName) values (2, 'mbg', 'eefcbef8c277b21f88d7fa36dc7e33fbf243587de1cac2dcc4edcaa717796e7326980ad18161bd4f', 'true', 'Marius', 'Bogoevici');
+insert into User (id, username, password, enabled, firstName, lastName) values (3, 'rbradley', 'e5b60370d330faeddb4aef7b34ef2877cebcfaad814e62da7e9d3abe8b3be6146410572b2f21047c', 'true', 'Ryan', 'Bradley');
 
 insert into Document (id) values (50);
 insert into Revision (id, document_id, created, createdBy, modified, modifiedBy, content) values (50, 50, '2010-01-01', 'sbryzak', null, null, 'Set adjacent to Grand Central Square, this magnificent concert hall can seat up to 50000 people');
