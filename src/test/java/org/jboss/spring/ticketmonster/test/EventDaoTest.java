@@ -30,21 +30,20 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(locations = {"classpath:test-context.xml",
 "classpath:/META-INF/spring/ticketmonster-business-context.xml",
 "classpath:/META-INF/test-bookingState.xml"})
+@Transactional
 @TransactionConfiguration(defaultRollback=true)
 public class EventDaoTest {
 	
 	@Autowired
 	private EventDao eventDao;
 	
-	@Transactional
 	@Test
 	public void testGetEvents() {
 		List<Event> events = eventDao.getEvents();
 		Assert.assertEquals(2, events.size());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testGetEventsById() {
 		Event e1 = eventDao.getEvent(1l);
@@ -53,8 +52,7 @@ public class EventDaoTest {
 		Assert.assertEquals("Shane's Sock Puppets", e2.getName());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testSearchMajor() {
 		List<Event> events = eventDao.searchMajor(true);
@@ -63,8 +61,7 @@ public class EventDaoTest {
 		Assert.assertEquals("Shane's Sock Puppets", events.get(1).getName());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testSearchCategory() {
 		List<Event> events = eventDao.searchCategory(1l);
@@ -74,7 +71,6 @@ public class EventDaoTest {
 		return;
 	}
 
-	@Transactional
 	@Test
 	public void testSearchDateSuccess() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -89,8 +85,7 @@ public class EventDaoTest {
 		Assert.assertEquals("Shane's Sock Puppets", events.get(1).getName());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testSearchDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -111,8 +106,7 @@ public class EventDaoTest {
 		Assert.assertEquals(true, start.before(end));
 		Assert.assertEquals(true, end.after(start));
 	}
-	
-	@Transactional
+
 	@Test
 	public void testSearchDateFail() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -130,8 +124,7 @@ public class EventDaoTest {
 		Assert.assertEquals(true, events.isEmpty());
 		return;
 	}
-	
-	@Transactional
+
 	@Test
 	public void testGetVenues() {
 		Event event = eventDao.getEvent(1l);

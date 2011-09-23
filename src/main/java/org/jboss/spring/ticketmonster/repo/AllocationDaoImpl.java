@@ -13,6 +13,8 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the AllocationDao interface.
@@ -21,6 +23,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
  *
  */
 
+@Transactional
 public class AllocationDaoImpl implements AllocationDao {
 
 	@Autowired
@@ -30,7 +33,8 @@ public class AllocationDaoImpl implements AllocationDao {
 	private CacheManager cacheManager;
 	
 	private static final boolean PURCHASED = true;
-	
+
+	@PreAuthorize("hasRole('ROLE_USER')")	
 	public void persistAllocation(Allocation allocation) {
 		entityManager.persist(allocation);
 
@@ -44,11 +48,12 @@ public class AllocationDaoImpl implements AllocationDao {
 		return allocations;
 	}
 	
-	public void populateCache() {
+	public void populateCache(Long showId, Long rowId) {
 		List<Allocation> allocations = this.getAllocations();
 		
 		for(Allocation allocation : allocations) {
-			this.insertSeatBlock(allocation);
+			if(allocation.getShow().getId().equals(showId) && allocation.getRow().getId().equals(rowId))
+				this.insertSeatBlock(allocation);
 		}
 		
 		return;

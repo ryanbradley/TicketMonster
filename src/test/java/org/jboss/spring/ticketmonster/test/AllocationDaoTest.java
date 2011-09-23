@@ -123,7 +123,7 @@ public class AllocationDaoTest {
 	public void testPopulateCache() {
 		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheManager.getCache("reservations");
 
-		allocationDao.populateCache();
+		allocationDao.populateCache(3l, 1l);
 
 		RowReservation reservation = (RowReservation) reservationsCache.get(new CacheKey(3l, 1l)).get();
 		Assert.assertNotNull(reservation);

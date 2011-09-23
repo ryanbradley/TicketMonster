@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.jboss.spring.ticketmonster.domain.Event;
 import org.jboss.spring.ticketmonster.domain.Venue;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Interface for methods relating to Event story data access.
@@ -14,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 
-@Transactional
 public interface EventDao {
 	
 	public List<Event> getEvents();

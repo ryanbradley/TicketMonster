@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
@@ -60,12 +61,28 @@ public class LogInformation {
 	public void allocation() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistChanges(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToCache(..)")
 	public void persist() {
 	}
 	
 	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.finalizeReservations(..)")
 	public void finalize() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.calculateTotal(..)")
+	public void total() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToDatabase(..)")
+	public void database() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.AllocationDao.populateCache(..)")
+	public void cache() {
+	}
+	
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.UserDao.getByName(String username) && args(username)")
+	public void getUser(String username) {
 	}
 	
 	@AfterReturning("displayEvents(request)")
@@ -174,4 +191,33 @@ public class LogInformation {
 		logger.info("Creating Allocation objects and persisting reservations as 'purchased' to the database.");
 	}
 	
+	@AfterReturning("total()")
+	public void calculatedTotal() {
+		logger.info("Calculated total price of all seats purchased in the current session.");
+	}
+	
+	@AfterReturning("database()")
+	public void persistToDatabase() {
+		logger.info("Persisted all Allocation objects created from the current session's reservations to the database.");
+	}
+	
+	@Before("cache()")
+	public void startup() {
+		logger.info("Populating the reservations cache with previously made allocations that are stored in the database.");
+	}
+	
+	@AfterThrowing("cache()")
+	public void bootstrapFail() {
+		logger.info("Population of the cache with allocations in the database failed.");
+	}
+	
+	@AfterReturning("cache()")
+	public void bootstrap() {
+		logger.info("Successfully populated the cache with Allocation objects from the database.  Already purchased SeatBlocks have been marked as such.");
+	}
+	
+	@AfterReturning("getUser(username)")
+	public void user(String username) {
+		logger.info("Retrieved User object from the database with a 'username' field of " + username + ".");
+	}
 }

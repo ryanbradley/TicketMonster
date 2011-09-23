@@ -5,6 +5,7 @@ import javax.persistence.Query;
 
 import org.jboss.spring.ticketmonster.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the UserDao interface for databases access of User information.
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 
+@Transactional
 public class UserDaoImpl implements UserDao {
 
 	@Autowired

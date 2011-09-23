@@ -6,7 +6,7 @@ insert into Document (id) values (50);
 insert into Revision (id, document_id, created, createdBy, modified, modifiedBy, content) values (50, 50, '2010-01-01', 'sbryzak', null, null, 'Set adjacent to Grand Central Square, this magnificent concert hall can seat up to 50000 people');
 
 insert into Document (id) values (51);
-insert into Revision (id, document_id, created, createdBy, modified, modifiedBy, content) values (51, 51, '2010-01-01', 'sbryzak', null, null, '');
+insert into Revision (id, document_id, created, createdBy, modified, modifiedBy, content) values (51, 51, '2010-01-01', 'sbryzak', null, null, 'This historic multi-venue performing arts centre is located on the Sydney waterfront.');
 
 insert into Venue (id, name, address, description_id) values (1, 'City Central Concert Hall', '123 Main St, Metropolis', 50);
 update Document set revision_id = 50 where id = 50;
@@ -17,7 +17,7 @@ insert into Section (id, name, description, capacity, layout_id) values (2, 'B',
 insert into Section (id, name, description, capacity, layout_id) values (3, 'C', 'Premier silver reserve', 6000, 1);
 insert into Section (id, name, description, capacity, layout_id) values (4, 'D', 'General', 16000, 1);
 
-insert into Venue (id, name, address, description_id) values (2, 'Sydney Opera House', 'Macquarie St Sydney', 51);
+insert into Venue (id, name, address, description_id) values (2, 'Sydney Opera House', '2 Macquarie St Sydney', 51);
 update Document set revision_id = 51 where id = 51;
 
 insert into VenueLayout (id, venue_id, name, capacity) values (2, 2, 'Default Layout', 18000);

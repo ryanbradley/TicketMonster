@@ -15,10 +15,13 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRequest;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
+import org.jboss.spring.ticketmonster.repo.AllocationDao;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the ReservationManager interface. 
@@ -27,7 +30,12 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
  *
  */
 
+@PreAuthorize("hasRole('ROLE_USER')")
+@Transactional
 public class SimpleReservationManager implements ReservationManager {
+
+	@Autowired
+	private AllocationDao allocationDao;
 
 	@Autowired
 	private ShowDao showDao;
@@ -83,6 +91,7 @@ public class SimpleReservationManager implements ReservationManager {
 		
 		for(SectionRow row : rows) {
 			CacheKey key = new CacheKey(showId, row.getId());
+			allocationDao.populateCache(showId, row.getId());
 			
 			if(reservationsCache.get(key) != null) {
 				reservation = (RowReservation) reservationsCache.get(key).get();

@@ -7,7 +7,6 @@ import org.jboss.spring.ticketmonster.domain.Section;
 import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.domain.ShowTime;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Interface for Show-related database access.
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  */
 
-@Transactional
 public interface ShowDao {
 
 	List<ShowTime> getShowTimes(Long eventId, Long venueId);

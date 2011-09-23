@@ -18,6 +18,8 @@ import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the AllocationManager interface.
@@ -26,6 +28,8 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
  *
  */
 
+@PreAuthorize("hasRole('ROLE_USER')")
+@Transactional
 public class SimpleAllocationManager implements AllocationManager {
 
 	@Autowired
