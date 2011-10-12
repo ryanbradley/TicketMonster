@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<book>
+  <bookinfo>
+    <title>Snowdrop Ticket Monster Example Application</title>
+
+    <subtitle>Integrating Spring with the JBoss Enterprise Application
+    Platforms</subtitle>
+
+    <productname>JBoss Web Framework Kit</productname>
+
+    <productnumber>2.0</productnumber>
+
+    <edition>1.0</edition>
+
+    <pubsnumber>0</pubsnumber>
+
+    <abstract>
+      <para>This book provides a walkthrough for the Snowdrop Ticket Monster
+      example application. It illustrates several use cases of the JBoss
+      Enterprise Application Platform with the Spring Framework.</para>
+    </abstract>
+
+    <corpauthor>JBoss by Red Hat</corpauthor>
+
+    <authorgroup>
+      <author>
+        <firstname>Ryan</firstname>
+
+        <surname>Bradley</surname>
+
+        <affiliation>
+          <orgname>JBoss by Red Hat</orgname>
+        </affiliation>
+
+        <email>rbradley@redhat.com</email>
+      </author>
+
+      <author>
+        <firstname>Marius</firstname>
+
+        <surname>Bogoevici</surname>
+
+        <affiliation>
+          <orgname>JBoss by Red Hat</orgname>
+        </affiliation>
+
+        <email>mariusb@redhat.com</email>
+      </author>
+    </authorgroup>
+
+    <pubdate>October 7, 2011</pubdate>
+  </bookinfo>
+
+  <preface>
+    <title>Preface</title>
+
+    <section>
+      <title>Feedback</title>
+
+      <para>If you find a typographical error in this manual, or if you have
+      thought of a way to make this manual better, we would love to hear from
+      you! Please submit a report in JIRA: <ulink
+      url="http://jira.jboss.org/">http://jira.jboss.org/</ulink> against the
+      product <application>Snowdrop</application> and component
+      <emphasis>Examples</emphasis>.</para>
+
+      <para>When submitting a bug report, be sure to mention the manual's
+      identifier: Snowdrop <citetitle>Ticket Monster
+      Example</citetitle>.</para>
+
+      <para>If you have a suggestion for improving the documentation, try to
+      be as specific as possible when describing it. If you have found an
+      error, please include the section number and some of the surrounding
+      text so we can find it easily.</para>
+    </section>
+  </preface>
+
+  <chapter>
+    <title>Introduction</title>
+
+    <para>The Ticket Monster application provides a real world-inspired
+    example of integrating Spring with the JBoss Entprise Platforms. It is a
+    web application, which illustrates several use cases through various
+    combinations of components and technologies. It also illustrates how to
+    use the Snowdrop libraries to provide JBoss-specific features, such as
+    creating a standalone deployment of an
+    <classname>ApplicationContext</classname> and injecting beans from that
+    application context into non-Spring components like Enterprise Java Beans
+    (EJB).</para>
+
+    <para>This book aims to illustrate the mechanics of using Spring with
+    different Java EE 6 components in the specific context of the JBoss
+    Enterprise Platforms, and to recommend methods of achieving certain
+    integration goals.</para>
+
+    <para>The Ticket Monster example is not intended as a guide to creating a
+    domain model. Detailing the various layers of application and UI design is
+    outside the scope of this document. As such, the example application has
+    been designed to illustrate integration use cases, rather than to
+    demonstrate a domain model that strictly follows principles of
+    object-oriented and domain-driven design.</para>
+
+    <section>
+      <title>Prerequisites</title>
+
+      <para>Deployment of the Ticket Monster application requires the
+      following:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Java 6 JDK</para>
+        </listitem>
+
+        <listitem>
+          <para>JBoss Application Server 7.0.0.Final or later</para>
+        </listitem>
+
+        <listitem>
+          <para>Maven 2.0.9 or later, with appropriate repositories</para>
+        </listitem>
+      </itemizedlist>
+
+      <simplesect>
+        <title>Setting Up Maven Repositories</title>
+
+        <para>The Maven project setup does not make any assumptions where the
+        artifacts used in the project are coming from (which repository), as
+        users may have different settings for their Maven repositories (direct
+        access to community repositories, proxies, enterprise repository with
+        approved artifacts). Therefore, the setup of the repositories is left
+        to the user of the application.</para>
+
+        <para>In the most simple case, this example can be built out of the
+        box if the settings.xml file for the local Maven installation enables
+        the repositories from Maven Central and JBoss Releases. Instructions
+        for setting up the latter can be found at:
+        http://community.jboss.org/wiki/MavenGettingStarted-Users.</para>
+
+        <para>The pom.xml can be modified to include references to other
+        repositories, or equivalent artifact versions (if the build
+        environment uses an enterprise-wide repository in which the artifacts
+        have different version numbers).</para>
+      </simplesect>
+    </section>
+
+    <section>
+      <title>How to Build and Run Ticket Monster</title>
+
+      <para>This document will provide a detailed account of the application
+      and its use cases. However, often, it is easier to just run the
+      application to answer your questions.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Building the application</para>
+        </listitem>
+
+        <listitem>
+          <para>Preparing JBoss</para>
+        </listitem>
+
+        <listitem>
+          <para>Deploying the application</para>
+        </listitem>
+
+        <listitem>
+          <para>Starting the application server</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Below, you will find instructions on how to perform each of these
+      steps.</para>
+
+      <simplesect>
+        <title>Building the application</title>
+
+        <para>In this step, we build the application. Since Ticket Monster
+        uses Maven, so it can be built from the command line by simple
+        running:</para>
+
+        <informalexample>
+          <programlisting>mvn clean package</programlisting>
+
+          <para>This produces a WAR file, named TicketMonster.war, under
+          TicketMonster/target. The application can then be deployed by moving
+          this .war file to ${JBOSS_AS_7_HOME}/standalone/deployments and then
+          executing the standalone.sh script, located in
+          ${JBOSS_AS_7_HOME}/bin directory. The database will be initialized
+          during this process by the SQL script, import.sql, included in the
+          src/main/resources directory of the Ticket Monster project. Ticket
+          Monster uses Spring 3.1.0.M2 and Spring Security 3.1.0.RC2.</para>
+        </informalexample>
+      </simplesect>
+
+      <simplesect>
+        <title>Preparing JBoss</title>
+
+        <para>In addition to building the application, the JBoss Application
+        Server must also be properly configured before deploying the
+        application. Specifically, this involves creating a datasource
+        definition within the configuration of the JBoss Application Server.
+        To accomplish this, open the standalone.xml file, located in
+        ${JBOSS_AS_7_HOME}/standalone/configuration. Next, under the
+        &lt;datasources&gt; element, contained within a subsystem of the
+        server, add the following data source definition:<informalexample>
+            <para><programlisting>&lt;datasource jndi-name="java:jboss/datasources/TicketMonsterDS" pool-name="TicketMonsterDS"
+   enabled="true" jta="true" use-java-context="true" use-ccm="true"&gt;
+   &lt;connection-url&gt;
+      jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+   &lt;/connection-url&gt;
+   &lt;driver&gt;
+      h2
+   &lt;/driver&gt;
+   &lt;pool&gt;
+      &lt;prefill&gt;
+          false
+      &lt;/prefill&gt;
+      &lt;use-strict-min&gt;
+          false
+      &lt;/use-strict-min&gt;
+      &lt;flush-strategy&gt;
+          FailingConnectionOnly
+      &lt;/flush-strategy&gt;
+   &lt;/pool&gt;
+   &lt;security&gt;
+      &lt;user-name&gt;
+          sa
+      &lt;/user-name&gt;
+      &lt;password&gt;
+          sa
+      &lt;/password&gt;
+   &lt;/security&gt;
+   &lt;validation&gt;
+      &lt;validate-on-match&gt;
+          false
+      &lt;/validate-on-match&gt;
+      &lt;background-validation&gt;
+          false
+      &lt;/background-validation&gt;
+      &lt;useFastFail&gt;
+          false
+      &lt;/useFastFail&gt;
+   &lt;/validation&gt;
+&lt;/datasource&gt;</programlisting>This definition is necessary for the
+            application to be create an in-memory database for the
+            application, which can be retrieved via a JNDI look-up.</para>
+          </informalexample></para>
+      </simplesect>
+
+      <simplesect>
+        <title>Deploying the Application</title>
+
+        <para>Copy the WAR file produced by the build to deploy folder of the
+        JBoss Application Server.</para>
+
+        <para>The WAR file is located in TicketMonster/target, and should be
+        copied to ${JBOSS_AS_7_HOME}/standalone/deployments.</para>
+      </simplesect>
+    </section>
+
+    <section>
+      <title>Ticket Monster and JBoss Developer's Studio</title>
+
+      <para>The easiest way to gain a deeper understanding of the Ticket
+      Monster web application is to examine the source code directly. This
+      guide will instruct you how to import the application into JBoss
+      Developer's Studio (JBDS).</para>
+
+      <para>Ticket Monster is a Maven-based application; thus, to navigate its
+      structure in JBoss Developer's Studio, you must create an Eclipse
+      project for it. This can be done using the Maven Eclipse
+      plugin:<informalexample>
+          <programlisting>mvn eclipse:eclipse -Dwtpversion=2.0</programlisting>
+
+          <para>Alternatively, the m2e Maven Integration for Eclipse plugin
+          can be used to import the project into JBoss Developer's
+          Studio.</para>
+        </informalexample></para>
+
+      <simplesect>
+        <title>Importing Ticket Monster into JBDS</title>
+
+        <para>Ticket Monster is a Maven-based project, so you can import it
+        into JBDS if you have the m2eclipse Maven integration plugin
+        installed, including the m2eclipse WTP extension. Installation can be
+        found at http://download.eclipse.org/technology/m2e/releases/.</para>
+
+        <para>For importing the project, go to
+        'Import...'-&gt;'Maven'-&gt;'Existing Maven Projects' and select the
+        top directory of the Ticket Monster example. You will be shown the
+        project's pom.xml file.</para>
+      </simplesect>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Understanding the Application Structure</title>
+
+    <para>This chapter will describe the business use cases covered by the
+    Ticket Monster application.</para>
+
+    <section>
+      <title>Application Structure and Use Cases</title>
+
+      <para>The Ticket Monster application is an example of an online ticket
+      reseller, such as Ticketmaster. Users of Ticket Monster should be able
+      to retrieve information about events from the website:<itemizedlist>
+          <listitem>
+            <para>View all events in the Ticket Monster database</para>
+          </listitem>
+
+          <listitem>
+            <para>Query the database of events based on start date, end date,
+            event category, whether it is major or not, etc.</para>
+          </listitem>
+
+          <listitem>
+            <para>Retrieve event specific information such as event
+            description, host venues, venue information, seating sections and
+            prices, and show times</para>
+          </listitem>
+
+          <listitem>
+            <para>View all venues in the Ticket Monster database</para>
+          </listitem>
+
+          <listitem>
+            <para>Display all events being held at a specific venue, and
+            navigate to individual event pages</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <para>As well, users need to reserve and purchase tickets for shows,
+      i.e. occurrences of an event at a specific venue. To accomplish this,
+      the application has the following requirements:<itemizedlist>
+          <listitem>
+            <para>Check a user's security credentials using Spring
+            Security</para>
+          </listitem>
+
+          <listitem>
+            <para>Reserve seats from specific sections to the current user for
+            specific shows</para>
+          </listitem>
+
+          <listitem>
+            <para>Manage a cache of currently reserved or purchased seats for
+            shows in the Ticket Monster database</para>
+          </listitem>
+
+          <listitem>
+            <para>Maintain a session-scoped object of the current user's
+            reservations, allocations (i.e. purchased seats), and price of
+            tickets in the user's shopping cart</para>
+          </listitem>
+
+          <listitem>
+            <para>Persist purchased reservations to the database when a user
+            finishes allocating seats or 'checks out'</para>
+          </listitem>
+
+          <listitem>
+            <para>Display a list of all purchased seat blocks and the total
+            price on the check out page</para>
+          </listitem>
+        </itemizedlist></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Using JBoss and Spring Together</title>
+
+    <para>This chapter will describe the various Spring and JBoss integration
+    use cases covered by the application and how are they implemented in
+    Ticket Monster.</para>
+
+    <section>
+      <title>Integration of JBoss and Spring Use Cases</title>
+
+      <para>The Ticket Monster application covers a number of JBoss and Spring
+      integration use cases. The scenarios selected for this example are
+      focusing on using the Java EE 6 services provided by the JBoss
+      Application Server in Spring applications. Below, the various use cases
+      are grouped into categories:</para>
+
+      <table>
+        <title>Overview of Spring/JBoss Integration Use Cases</title>
+
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry align="center">Category</entry>
+
+              <entry align="center">Use case</entry>
+
+              <entry align="center">How does this involve JBoss AS</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Persistence</entry>
+
+              <entry>Spring/JPA integration</entry>
+
+              <entry>The Persistence Unit is deployed by JBoss and retrieved
+              from JNDI to be injected into Spring beans. PersistenceContext
+              is shared with surrounding EJBs (if any).</entry>
+            </row>
+
+            <row>
+              <entry>Testing</entry>
+
+              <entry>Unit-testing components that have managed infrastructure
+              dependencies</entry>
+
+              <entry>The DataSource and EntityManager are managed by JBoss and
+              acquired from JNDI by Spring when the application is running. In
+              the case of JBoss, developers can test their code in isolation
+              using Spring-specific replacements that 'simulate' the JBoss
+              environment.</entry>
+            </row>
+
+            <row>
+              <entry>Business Logic</entry>
+
+              <entry>Spring-based service beans</entry>
+
+              <entry>The business services are Spring-managed and wrapped into
+              transactions managed by Spring's interceptors. The
+              TransactionManager in use is the JTATransactionManager using
+              JBoss Transactions provided in JBoss AS.</entry>
+            </row>
+
+            <row>
+              <entry>User Interface</entry>
+
+              <entry>Spring MVC and EJB integration</entry>
+
+              <entry>The application uses Spring MVC and the business logic is
+              implemented using JBoss-deployed EJBs, which are injected into
+              the Spring controllers</entry>
+            </row>
+
+            <row>
+              <entry>Aspect-Oriented Programming</entry>
+
+              <entry>Spring-based weaving of POJO aspects</entry>
+
+              <entry>This use case does not have any JBoss AS-specific
+              functionality.</entry>
+            </row>
+
+            <row>
+              <entry>Security</entry>
+
+              <entry>Application-server pre-authentication</entry>
+
+              <entry>The application uses Spring Security for authorizing
+              access to resources. Authentication is provided by the
+              application server.</entry>
+            </row>
+
+            <row>
+              <entry>Caching</entry>
+
+              <entry>Spring-based management of cache</entry>
+
+              <entry>The application uses the Spring Simple Cache Manager to
+              retrieve a Concurrent Map cache, which tracks seat allocations,
+              for future reservations.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+
+    <section>
+      <title>Domain Model</title>
+
+      <para>The package org.jboss.spring.ticketmonster.domain does not include
+      any classes which interact directly with Spring. However, the domain
+      package is important as it contains definitions for the application's
+      entities.</para>
+
+      <figure>
+        <title>Ticket Monster Entities</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="???" />
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>A more detailed description of many of the entities is not
+      provided, as the only other members which they have are
+      primitives.</para>
+    </section>
+
+    <section>
+      <title>Persistence Implementation - JPA</title>
+
+      <para>The application's persistence strategy is implemented using the
+      Java Persistence API (JPA). Persistence-related classes are defined in
+      the org.jboss.spring.ticketmonster.repo package. This package includes
+      implementations of repository interfaces for database access, and Spring
+      context definition fragments that can be re-used elsewhere in the
+      application. This section describes how JPA was used to implement
+      persistence in the Ticket Monster example, as well as how the various
+      repository implementations can be unit tested with the JPA
+      implementation.</para>
+
+      <section>
+        <title>JPA Implementation</title>
+
+        <para>JPA provides a parametrized superclass that is Spring-agnostic
+        as well (except for the usage of the Spring @Autowired annotation -
+        which can be replaced by a simple setter if any reference to Spring
+        needs to be removed). For database access, the JPA implementation uses
+        the JPA EntityManager (javax.persistence.EntityManager) interface to
+        query the database and retrieve results. The JPA Persistence Unit (and
+        subsequent EntityManager) are created by the JBoss Application Server,
+        not by Spring (though the EntityManager is injected by Spring, it is
+        acquired from JNDI). The Spring application context configuration
+        fragments can be found in the following locations:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>src/main/resources/META-INF/spring/ticketmonster-business-context.xml
+            - contains Spring bean definitions for repository of
+            implementations, assumes that the EntityManager bean definition is
+            contained in the infrastructure.xml file</para>
+          </listitem>
+
+          <listitem>
+            <para>src/main/resources/META-INF/spring/infrastructure.xml -
+            contains definitions for infrastructure-related Spring beans, such
+            as the data source, EntityManager, and JTA transaction
+            manager</para>
+          </listitem>
+
+          <listitem>
+            <para>src/main/resources/META-INF/persistence.xml - contains the
+            persistence unit definition for ticketmonsterPU</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section>
+        <title>JUnit Testing of the Repositories</title>
+
+        <para>With the infrastructure of the application coupled so tightly to
+        the application server, we are presented with the issue of thoroughly
+        unit testing and debugging the repositories in isolation, before they
+        are fully integrated with the rest of the application.</para>
+
+        <para>If at deployment, we use services provided by the JBoss
+        Application Server, such as the data source, EntityManager, and
+        transaction manager, then for the unit tests, we will use an embedded
+        data source, Spring's ability to create a LocalEntityManager, and its
+        local transaction manager capabilities.</para>
+
+        <para>For this, we use the spring-test-infrastructure module, a
+        test-scoped dependency in the project's pom. This module contains the
+        modules used for setting up an embedded database (producing a
+        DataSource that can be injected into the
+        LocalContainerEntityManagerFactoryBean). The localized EntityManager
+        and transaction manager definitions is located in the
+        src/test/resources/test-context.xml file, while other definitions
+        related to the JUnit test context can be found in the
+        src/test/resources/META-INF directory.</para>
+
+        <para>The JUnit tests are located in the
+        org.jboss.spring.ticketmonster.test package of the src/test/java
+        directory. The unit tests will use the test context and local
+        infrastructure XML files as in the following example:<informalexample>
+            <programlisting>@ContextConfiguration(locations = {"classpath:test-context.xml",
+"classpath:/META-INF/spring/ticketmonster-business-context.xml",
+"classpath:/META-INF/test-bookingState.xml"})
+@RunWith(SpringJUnit4ClassRunner.class)
+@TransactionConfiguration(defaultRollback=true)
+public class TestTicketMonsterRepository() {
+/* JUnit tests */
+}</programlisting>
+
+            <para>This configuration reuses the 'application-specific' context
+            configuration fragment, i.e. the repository bean definitions, as
+            well as two test-specific (or otherwise said local) context
+            configuration fragments in order to create a Spring context in
+            isolation. Thus, the functionality provided by the repositories
+            can be tested outside the running application.</para>
+          </informalexample></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Service Layer</title>
+
+      <para>On top of the domain and persistence layer sits the service layer
+      of the application. Its role is to co-ordinate the domain objects and
+      repositories in order to perform higher level operations. This is also
+      the layer which provides transaction demarcation, using Spring's
+      @Transactional annotation. One consideration for which transaction
+      demarcation should be done at service level is to ensure that the
+      changes made by service operations are atomic. Otherwise, concurrent
+      operations may leave the application data in an inconsistent state.
+      Demarcating transactions at the repository/DAO level should be done
+      carefully, taking into consideration that multiple repository/DAO
+      invocations that are not surrounded by a wrapping transactions will
+      execute in separate transactional contexts.</para>
+    </section>
+  </chapter>
+</book>
