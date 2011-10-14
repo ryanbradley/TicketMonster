@@ -86,9 +86,8 @@
     combinations of components and technologies. It also illustrates how to
     use the Snowdrop libraries to provide JBoss-specific features, such as
     creating a standalone deployment of an
-    <classname>ApplicationContext</classname> and injecting beans from that
-    application context into non-Spring components like Enterprise Java Beans
-    (EJB).</para>
+    <classname>ApplicationContext</classname> and using many Spring-provided
+    features like security and caching.</para>
 
     <para>This book aims to illustrate the mechanics of using Spring with
     different Java EE 6 components in the specific context of the JBoss
@@ -462,11 +461,12 @@
             <row>
               <entry>User Interface</entry>
 
-              <entry>Spring MVC and EJB integration</entry>
+              <entry>Spring MVC, JSON, and jQuery UI</entry>
 
-              <entry>The application uses Spring MVC and the business logic is
-              implemented using JBoss-deployed EJBs, which are injected into
-              the Spring controllers</entry>
+              <entry>The application uses Spring MVC to create the web
+              controllers, as well as using JSON services to update
+              information displayed in the web view. jQuery UI, specifically
+              Accordion, is used for some particular displays.</entry>
             </row>
 
             <row>
@@ -828,12 +828,98 @@ public class BookingFormController {
       </section>
 
       <section>
-        <title>JSON</title>
+        <title>JavaScript Object Notation</title>
 
         <para>JavaScript Object Notation (JSON) is a subset of the JavaScript
         language used to represent simple objects like associative arrays and
-        basic data structures. For example, a JSON service can be used in the
-        HTML </para>
+        basic data structures. In Ticket Monster, JSON services are mapped to
+        the URLs listed below for the described purposes (the JSP file with
+        the JSON service definition is listed in parentheses):<itemizedlist>
+            <listitem>
+              <para>/shows?eventId={eventId}&amp;venueId={venueId} - retrieves
+              the show times for a given event and venue pair, as specified by
+              the event and venue IDs in the URL (eventDetails.jsp)</para>
+            </listitem>
+
+            <listitem>
+              <para>/venues/{venueId} - retrieves all relevant information
+              about the venue specified by the given ID, such as the venue
+              address and description</para>
+            </listitem>
+
+            <listitem>
+              <para>/categories?eventId={eventId}&amp;venueId={venueId} -
+              retrieves information on all seating sections for shows with the
+              given event and venue IDs (as different events at the same venue
+              may have different seating layout) such as section names,
+              available price categories along with their prices
+              (eventDetails.jsp)</para>
+            </listitem>
+
+            <listitem>
+              <para>/bookings/allocate?showId={showId}&amp;priceCategoryId={priceCategoryId}&amp;quantity={quantity}
+              - searches the cache of seat blocks, both reserved and
+              purchased, for an allocation in the price category specified by
+              priceCategoryId for the show specified by showId. Before
+              searching for a reservation, the JSON service first checks if
+              there are any other seating requests by that User within that
+              section, in which case it combines the requests from the various
+              categories into one large request for that section. Finally,
+              this method searches for an existing reservation, trying to
+              update it if it exists and creating a new reservation if it does
+              not (showDetails.jsp) </para>
+            </listitem>
+          </itemizedlist></para>
+
+        <para>JSON services are implemented by creating a JavaScript function,
+        and passing the parameters of the service to the JavaScript function.
+        Then, we create a String variable with the targeted URL of the JSON
+        service to get the results of the method call, as shown in this
+        example from showDetails.jsp:<informalexample>
+            <programlisting>function updateReservation(showId, priceCategoryId, quantity) {
+    baseUrl = '&lt;c:url value="/bookings/allocate?"/&gt;';
+    jQuery.getJSON(baseUrl + "showId=" + showId + "&amp;priceCategoryId=" + priceCategoryId + "&amp;quantity=" + quantity, function (result) {
+        if(result == true)
+            $("div#priceCategory_" + priceCategoryId).text("Available seats have been allocated.");
+        else
+            $("div#priceCategory_" + priceCategoryId).text("Insufficient available seats.");
+    });
+}</programlisting>
+          </informalexample></para>
+
+        <para>However, to properly bind the URL used in the jQuery.getJSON()
+        call to a Java method, we must use some simple Spring Web annotations.
+        In the @RequestMapping annotation, we must add 'produces =
+        "application/json" ' to indicate that there will be a JSON service
+        corresponding to the URL specified in the same annotation. As well, we
+        must annotate the return type of the Java method with the
+        @ResponseBody annotation so that Spring will serialize to JSON. The
+        updateAllocation() method, from the BookingFormController class, is
+        provided as an example of how these annotations should be used
+        properly:<informalexample>
+            <programlisting>@RequestMapping(value = "/allocate", method=RequestMethod.GET, produces = "application/json")
+public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId, int quantity) {
+    boolean success = false;
+    int sectionQuantity = 0;
+
+    Long sectionId = showDao.findPriceCategory(priceCategoryId).getSection().getId();
+    int previousQuantity = reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, quantity);
+
+    for(PriceCategoryRequest categoryRequest : reservationManager.getBookingState().getCategoryRequests()) {
+        if(categoryRequest.getPriceCategory().getSection().getId().equals(sectionId)) {
+            sectionQuantity += categoryRequest.getQuantity();
+        }
+    }
+
+    success = reservationManager.updateSeatReservation(showId, sectionId, sectionQuantity);
+
+    if(success == false) {
+        reservationManager.getBookingState().updateCategoryRequests(priceCategoryId, previousQuantity);
+    }
+
+    return success;
+}</programlisting>
+          </informalexample></para>
       </section>
 
       <section>
@@ -883,6 +969,109 @@ public class BookingFormController {
       they have been included as business services of the web application. All
       the definitions for the following examples can be found in the
       src/main/resources/META-INF/spring directory.</para>
+
+      <section>
+        <title>Caching</title>
+
+        <para>An important feature of Ticket Monster is the ability for
+        multiple users to reserve tickets for the same show at the same time.
+        To provide this functionality, the application must keep track of all
+        seat blocks that have been reserved and purchased for a given show at
+        all times. However, it would be impractical to persist all of this
+        data to the Ticket Monster database. Instead, we take advantage of
+        another useful feature provided in Spring 3.1 - the Spring Cache
+        Abstraction.</para>
+
+        <section>
+          <title>CacheManager Configuration</title>
+
+          <para>The Spring Cache Abstraction provides a variety of methods for
+          caching, such as annotating entities as @Cacheable and methods as
+          @CacheEvict, or dealing directly with a cache object (often either
+          an Ehcache or Concurrent Map Cache) retrieved by a CacheManager. In
+          the Ticket Monster example, we will inject a CacheManager object,
+          declared as a bean in /WEB-INF/ticketmonster-mvc-context.xml; this
+          way, we can retrieve the cache of reservations using this
+          CacheManager bean. The CacheManager bean definition, as well as the
+          cache configuration, are included below:<informalexample>
+              <programlisting>&lt;bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager"&gt;
+    &lt;property name="caches"&gt;
+        &lt;set&gt;
+            &lt;bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="reservations"/&gt;
+        &lt;/set&gt;
+    &lt;/property&gt;
+&lt;/bean&gt;
+    
+&lt;bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache"&gt;
+    &lt;constructor-arg value="reservations"/&gt;
+&lt;/bean&gt;</programlisting>
+            </informalexample></para>
+
+          <para>In the above code, the Cache Manager bean is declared as a
+          SimpleCacheManager, which is then injected into the various
+          implementations of the service layer interfaces using the @Autowired
+          annotation. As well, we also declare a default cache, obtained by
+          call calling the getCache() method of the SimpleCacheManager with an
+          argument of "reservations", which is a ConcurrentMapCache
+          object.</para>
+        </section>
+
+        <section>
+          <title>Cache Lookups</title>
+
+          <para>In order to use caching effectively, we must create a CacheKey
+          class, located in org.jboss.spring.ticketmonster.domain, which can
+          be uniquely associated with each object stored on the cache. In
+          Ticket Monster, we cache objects using a key consisting of a show ID
+          and a row ID. The actual object stored on the cache, a
+          RowReservation, consists of a CacheKey object for that
+          RowReservation as well as a LinkedList of SeatBlock objects,
+          representing already reserved or purchased seats by their start and
+          end seat. In order for objects to be stored and retrieved from the
+          cache properly, we must first override the hash() and equals()
+          methods of the CacheKey class, which can be generated automatically
+          by JBoss Developer's Studio, as shown here:<informalexample>
+              <programlisting>@Override
+public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((rowId == null) ? 0 : rowId.hashCode());
+    result = prime * result + ((showId == null) ? 0 : showId.hashCode());
+    return result;
+}
+
+@Override
+public boolean equals(Object obj) {
+    if (this == obj)
+        return true;
+    if (obj == null)
+        return false;
+    if (getClass() != obj.getClass())
+        return false;
+
+    CacheKey other = (CacheKey) obj;
+
+    if (rowId == null) {
+        if (other.rowId != null)
+            return false;
+    } else if (!rowId.equals(other.rowId))
+        return false;
+    if (showId == null) {
+        if (other.showId != null)
+            return false;
+    } else if (!showId.equals(other.showId))
+        return false;
+    return true;
+}</programlisting>
+            </informalexample></para>
+
+          <para>For examples of using the injected CacheManager to retrieve a
+          cache, as well as manipulating the retrieved cache, code
+          implementation can be found in both the SimpleReservationManager and
+          SimpleAllocationManager implementations of Ticket Monster's service
+          layer interfaces.</para>
+        </section>
+      </section>
 
       <section>
         <title>Aspects and Cross-Cutting Concerns</title>
