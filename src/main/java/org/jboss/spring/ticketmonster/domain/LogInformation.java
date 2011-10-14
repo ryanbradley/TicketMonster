@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 
@@ -57,35 +58,35 @@ public class LogInformation {
 	public void updated(Long showId, Long sectionId, int quantity) {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.createAllocation(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.createAllocation(..))")
 	public void allocation() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToCache(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToCache(..))")
 	public void persist() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.finalizeReservations(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.finalizeReservations(..))")
 	public void finalize() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.calculateTotal(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.calculateTotal(..))")
 	public void total() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToDatabase(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.service.AllocationManager.persistToDatabase(..))")
 	public void database() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.AllocationDao.populateCache(..)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.AllocationDao.populateCache(..))")
 	public void cache() {
 	}
 	
-	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.UserDao.getByName(String username) && args(username)")
+	@Pointcut("execution(* org.jboss.spring.ticketmonster.repo.UserDao.getByName(String)) && args(username)")
 	public void getUser(String username) {
 	}
 	
-	@AfterReturning("displayEvents(request)")
+	@AfterReturning("events(request)")
 	public void displayEvents(HttpServletRequest request) {
 		String majorString, categoryString, fromDate, untilDate;
 		
@@ -135,18 +136,18 @@ public class LogInformation {
 		return;
 	}
 
-	@AfterReturning(value="viewEvent(id)", argNames = "id")
+	@AfterReturning(value="event(id)", argNames = "id")
 	public void eventDetails(Long id) {
 		logger.info("Returning event information for the event with an ID token of " + id + ".");
 		logger.info("Returning all venues where the shows of the event with an ID token of " + id + " is being held.");
 	}
 
-	@Before("displayVenues()")
+	@Before("venues()")
 	public void displayVenues() {
 		logger.info("Returning information for all venues which are hosting events listed on TicketMonster.");
 	}
 	
-	@Before(value="viewVenue(id)", argNames="id")
+	@Before(value="venue(id)", argNames="id")
 	public void venueDetails(Long id) {
 		logger.info("Returning venue information for the venue specified by the ID token " + id + ".");
 	}

@@ -173,8 +173,8 @@
       <para>Below, you will find instructions on how to perform each of these
       steps.</para>
 
-      <simplesect>
-        <title>Building the application</title>
+      <section>
+        <title>Building the Application</title>
 
         <para>In this step, we build the application. Since Ticket Monster
         uses Maven, so it can be built from the command line by simple
@@ -192,9 +192,9 @@
           src/main/resources directory of the Ticket Monster project. Ticket
           Monster uses Spring 3.1.0.M2 and Spring Security 3.1.0.RC2.</para>
         </informalexample>
-      </simplesect>
+      </section>
 
-      <simplesect>
+      <section>
         <title>Preparing JBoss</title>
 
         <para>In addition to building the application, the JBoss Application
@@ -204,8 +204,10 @@
         To accomplish this, open the standalone.xml file, located in
         ${JBOSS_AS_7_HOME}/standalone/configuration. Next, under the
         &lt;datasources&gt; element, contained within a subsystem of the
-        server, add the following data source definition:<informalexample>
-            <para><programlisting>&lt;datasource jndi-name="java:jboss/datasources/TicketMonsterDS" pool-name="TicketMonsterDS"
+        server, add the following data source definition:</para>
+
+        <informalexample>
+          <para><programlisting>&lt;datasource jndi-name="java:jboss/datasources/TicketMonsterDS" pool-name="TicketMonsterDS"
    enabled="true" jta="true" use-java-context="true" use-ccm="true"&gt;
    &lt;connection-url&gt;
       jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
@@ -244,12 +246,12 @@
       &lt;/useFastFail&gt;
    &lt;/validation&gt;
 &lt;/datasource&gt;</programlisting>This definition is necessary for the
-            application to be create an in-memory database for the
-            application, which can be retrieved via a JNDI look-up.</para>
-          </informalexample></para>
-      </simplesect>
+          application to be create an in-memory database for the application,
+          which can be retrieved via a JNDI look-up.</para>
+        </informalexample>
+      </section>
 
-      <simplesect>
+      <section>
         <title>Deploying the Application</title>
 
         <para>Copy the WAR file produced by the build to deploy folder of the
@@ -257,7 +259,30 @@
 
         <para>The WAR file is located in TicketMonster/target, and should be
         copied to ${JBOSS_AS_7_HOME}/standalone/deployments.</para>
-      </simplesect>
+      </section>
+
+      <section>
+        <title>Authenticated Access</title>
+
+        <para>Accessing all views of the Ticket Monster web application
+        requires the login information for users with the proper
+        authorization. Specifically, the views related to booking tickets
+        cannot be accessed by anyone but a User in the Ticket Monster
+        database. Below are the three 'username, "password" ' pairs that come
+        provided with the Ticket Monster application:<itemizedlist>
+            <listitem>
+              <para>rbradley, "ticketmonster"</para>
+            </listitem>
+
+            <listitem>
+              <para>mbg, "marius"</para>
+            </listitem>
+
+            <listitem>
+              <para>sbryzak, "original"</para>
+            </listitem>
+          </itemizedlist></para>
+      </section>
     </section>
 
     <section>
@@ -581,6 +606,7 @@
 "classpath:/META-INF/spring/ticketmonster-business-context.xml",
 "classpath:/META-INF/test-bookingState.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
+@Transactional
 @TransactionConfiguration(defaultRollback=true)
 public class TestTicketMonsterRepository() {
 /* JUnit tests */
@@ -802,428 +828,281 @@ public class BookingFormController {
       </section>
 
       <section>
-        <title>jQuery and JSON</title>
+        <title>JSON</title>
 
-        <para></para>
+        <para>JavaScript Object Notation (JSON) is a subset of the JavaScript
+        language used to represent simple objects like associative arrays and
+        basic data structures. For example, a JSON service can be used in the
+        HTML </para>
+      </section>
+
+      <section>
+        <title>jQuery UI</title>
+
+        <para>An important feature of Ticket Monster is the ability for a user
+        to view all the seating sections available at a specific venue, as
+        well as the various price categories available in each section. To do
+        this, Ticket Monster uses the Accordion feature of jQuery UI.
+        Accordion is a standard jQuery widget which, given menu of options,
+        displays each option of the menu as its own separate header. Each
+        header is also its own dropdown, so that, on click, each menu option's
+        content will be displayed as a dropdown. One important feature of
+        jQuery Accordion is that only one dropdown can be active at a time;
+        thus, clicking a different header will cause the currently displayed
+        content to collapse.</para>
+
+        <para>In Ticket Monster, jQuery Accordion is implemented on each
+        individual event's view page, i.e. /events/{id} where {id} represents
+        the selected event's ID. To implement jQuery Accordion, jQuery UI must
+        be included in the src/main/webapp directory of the project, as
+        jquery-ui-1.8.14.custom.min.js is in Ticket Monster. Once this is
+        included, Accordion only requires some simple HTML, as demonstrated in
+        the example below, taken from the jQuery UI website:<informalexample>
+            <programlisting>&lt;div id="accordion&gt;
+    &lt;h3&gt;&lt;a href="#"&gt;First Header&lt;/a&gt;&lt;/h3&gt;
+    &lt;div&gt;First menu option content&lt;/div&gt;
+    &lt;h3&gt;&lt;a href="#"&gt;Second Header&lt;/a&gt;&lt;/h3&gt;
+    &lt;div&gt;Second menu option content&lt;/div&gt;
+&lt;/div&gt;</programlisting>
+          </informalexample></para>
+
+        <para>In Ticket Monster, the Accordion section, located in
+        eventDetails.jsp, is implemented using a JavaScript, as a JSON service
+        is required to populate the Accordion based on the items selected in a
+        dropdown menu. JSON services are very important to Ticket Monster for
+        a variety of purposes, such as retrieving a show's price categories as
+        well as updating or creating seat reservations. </para>
       </section>
     </section>
 
     <section>
       <title>Enterprise Integration Features</title>
 
-      <para>Apart from the Spring/JSF/EJB integration, which you have seen in
-      the previous sections, the Sportsclub application suite provides a few
-      other examples of integrating Spring and JBoss. Since all the features
-      are Spring-based, they have been included as business services of the
-      Invoicing web application. All the definitions for the following
-      examples can be found in the /WEB-INF/spring-business-context.xml file
-      defined in the spring-invoicing-webmvc module.</para>
+      <para>The Ticket Monster application provides a few other examples of
+      integrating Spring and JBoss. Since all the features are Spring-based,
+      they have been included as business services of the web application. All
+      the definitions for the following examples can be found in the
+      src/main/resources/META-INF/spring directory.</para>
 
       <section>
         <title>Aspects and Cross-Cutting Concerns</title>
 
-        <para>Payments must be audited. Besides keeping a record of payments
-        associated with an account, we may want to set up an auditing service
-        that will audit every attempt of making a payment. In the simplest
-        case we can just log that information, although in a real life
-        scenario things may be more sophisticated. In order to do so, we set
-        up a PaymentAuditor aspect that intercepts every call made to the
-        PaymentProcessor.</para>
-
-        <para>The aspect is a simple POJO:</para>
-
-        <para><informalexample>
-            <para><programlisting>public class PaymentAuditor
-{
-   /* code ommitted */
-
-   public void auditPayment(Long accountId, BigDecimal amount)
-   {
-     System.out.println("AUDIT ENABLED! A payment has been made to account "
-                          + accountId + " for the amount of " + amount);
-   }
-}</programlisting></para>
-          </informalexample>The aspect is applied through the following
-        definitions:</para>
-
-        <informalexample>
-          <para><programlisting>   &lt;aop:config&gt;
-       &lt;aop:aspect ref="paymentAuditor"&gt;
-           &lt;aop:pointcut id="processingPayment" 
-               expression="execution(* *..PaymentProcessor+.*(..)) &amp;amp;&amp;amp; args(accountId, amount)"/&gt;
-           &lt;aop:before arg-names="accountId, amount" pointcut-ref="processingPayment" method="auditPayment"/&gt; 
-       &lt;/aop:aspect&gt;
-   &lt;/aop:config&gt;
-
-   &lt;bean id="paymentAuditor" class="org.jboss.snowdrop.samples.sportsclub.audit.PaymentAuditor"/&gt; 
-
-</programlisting>As you can see, the aspect is defined as a bean and applied
-          as an aspect through the Spring aop namespace. The pointcut
-          definition is an AspectJ expression.</para>
-        </informalexample>
-      </section>
-
-      <section>
-        <title>Secure invoicing: JBoss-preauthenticated security</title>
-
-        <para>The invoicing module also illustrates the usage of JBoss-based
-        preauthentication and interaction with Spring Security. Access to the
-        invoicing module is secured using the Java EE security mechanisms, as
-        described web.xml:</para>
-
-        <para><informalexample>
-            <para><programlisting>&lt;security-constraint&gt;
-          &lt;web-resource-collection&gt;
-               &lt;web-resource-name&gt;All resources&lt;/web-resource-name&gt;
-               &lt;description&gt;Protects all resources&lt;/description&gt;
-               &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-          &lt;/web-resource-collection&gt;
-          &lt;auth-constraint&gt;
-               &lt;role-name&gt;*&lt;/role-name&gt;
-          &lt;/auth-constraint&gt;
-     &lt;/security-constraint&gt;
-    &lt;login-config&gt;
-        &lt;auth-method&gt;BASIC&lt;/auth-method&gt;
-        &lt;realm-name&gt;sportsclub-invoicing&lt;/realm-name&gt;
-    &lt;/login-config&gt;
-    &lt;security-role&gt;
-        &lt;role-name&gt;ADMINISTRATOR&lt;/role-name&gt;
-    &lt;/security-role&gt;
-    &lt;security-role&gt;
-        &lt;role-name&gt;EMPLOYEE&lt;/role-name&gt;
-    &lt;/security-role&gt;</programlisting></para>
-
-            <para>In this scenario, the security domain is set up externaly
-            (for example for multiple applications) and linked to the web
-            application by the definition in jboss-web.xml</para>
-
-            <informalexample>
-              <para></para>
-            </informalexample>
-
-            <programlisting>&lt;jboss-web&gt;
-     &lt;security-domain&gt;java:/jaas/employees&lt;/security-domain&gt;
-&lt;/jboss-web&gt;</programlisting>
-
-            <para>In the scenario implemented by this application, the concept
-            of an 'employee who can access the application' is external to the
-            application itself (perhaps multiple applications can use the same
-            security domain) and defined globally in the
-            security-jboss-beans.xml file (deployed in the server setup
-            phase).</para>
-
-            <informalexample>
-              <para></para>
-            </informalexample>
-
-            <programlisting>&lt;application-policy xmlns="urn:jboss:security-beans:1.0" name="employees"&gt;
-        &lt;authentication&gt;
-            &lt;login-module code="org.jboss.security.auth.spi.DatabaseServerLoginModule"
-                          flag="required"&gt;
-                &lt;module-option name="unauthenticatedIdentity"&gt;guest&lt;/module-option&gt;
-                &lt;module-option name="dsJndiName"&gt;java:/SportsClubDS&lt;/module-option&gt;
-                &lt;module-option name="principalsQuery"&gt;
-                    select passwd from USERS where username=?
-                &lt;/module-option&gt;
-                &lt;module-option name="rolesQuery"&gt;
-                    select userRoles,'Roles' from ROLES where username=?
-                &lt;/module-option&gt;
-            &lt;/login-module&gt;
-        &lt;/authentication&gt;
-    &lt;/application-policy&gt;</programlisting>
-
-            <para>Essentially, the login will be performed based on the data
-            contained in the USERS and USERROLES tables defined up during the
-            process of setting up the Sportsclub DS datasource (however, it is
-            not the application that accesses the database directly, but the
-            JaaS login module):</para>
-
-            <informalexample>
-              <para></para>
-            </informalexample>
-
-            <programlisting>INSERT INTO USERS VALUES ('admin','adminPass')
-INSERT INTO USERS VALUES ('employee','employeePass')
-INSERT INTO ROLES VALUES ('admin','ADMINISTRATOR')
-INSERT INTO ROLES VALUES ('admin','EMPLOYEE')
-INSERT INTO ROLES VALUES ('employee','EMPLOYEE')
-</programlisting>
-
-            <para>The two users admin and employee are used to illustrate the
-            different authorization levels in the application. The application
-            uses Spring Security for authorizing access to the invoicing
-            application's components (web pages and methods) as described in
-            /WEB-INF/spring-security-context.xml. Because the application can
-            be built either with Spring 2.5 and Spring 3, it will also use
-            different Spring Security versions. Because of package name
-            changes from Spring Security 2 to Spring Security 3, the</para>
-
-            <para>Of specific interest to our application is the
-            filterSecurityInterceptor bean definition, which contains the
-            access security metadata definitions:</para>
-
-            <informalexample>
-              <para><programlisting>&lt;bean id="filterSecurityInterceptor" class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor"&gt;
-        &lt;property name="authenticationManager" ref="authenticationManager"/&gt;
-        &lt;property name="accessDecisionManager" ref="httpRequestAccessDecisionManager"/&gt;
-        &lt;property name="securityMetadataSource"&gt;
-            &lt;sec:filter-invocation-definition-source&gt;
-                &lt;sec:intercept-url pattern="/generateInvoice.do" access="ROLE_ADMINISTRATOR"/&gt;
-                &lt;sec:intercept-url pattern="/**" access="ROLE_EMPLOYEE"/&gt;
-            &lt;/sec:filter-invocation-definition-source&gt;
-        &lt;/property&gt;
-    &lt;/bean&gt;</programlisting>As you can see, anyone who is an employee
-              can access any section of the site, but only administrators
-              (i.e. the 'admin') user can generate invoices.</para>
-
-              <para>A similar provision is made for payments. Application
-              classes will be scanned for security annotations, as requested
-              by the following bean definition:</para>
-
-              <programlisting>
-    &lt;sec:global-method-security secured-annotations="enabled"/&gt;
-</programlisting>
-            </informalexample>
-          </informalexample></para>
-      </section>
-
-      <section>
-        <title>Configuring Spring beans through JMX</title>
-
-        <para>JMX is a very important tool for monitoring and configuring Java
-        applications. Collecting information about the system and the ability
-        of making configuration at runtime are important administration
-        features. For this example, the requirement is to be able to turn
-        auditing on and off, at runtime, whenever required. Removing an aspect
-        once it has been applied by Spring is not possible, so the solution in
-        this case is to define a flag property on the aspect, which controls
-        whether the auditing functionality will be invoked or not.</para>
-
-        <para>In order to be able to make changes at runtime, the Spring bean
-        which implements the aspect will be configured as a JMX bean and
-        registered in the MBean server of JBoss. In this example, we are using
-        annotations to define Spring-specific JMX metadata. The complete
-        definition for the PaymentAuditor is:</para>
-
-        <para><informalexample>
-            <para><programlisting>@ManagedResource(objectName = "sportsclub:name=paymentAuditor", description = "Payment Auditor")
-@Component
-public class PaymentAuditor
-{
-
-   private static final Log LOG = LogFactory.getLog(PaymentAuditor.class);
-
-   private boolean enabled = true;
-
-   @ManagedAttribute(description = "Audit enabled")
-   public void setEnabled(boolean enabled)
-   {
-      LOG.info("Audit " +  (enabled ? "enabled":"disabled"));
-      this.enabled = enabled;
-   }
-
-   @ManagedAttribute(description = "Audit enabled")
-   public boolean getEnabled()
-   {
-      return this.enabled;
-   }
-
-   public void auditPayment(Long accountId, BigDecimal amount)
-   {
-      if (this.enabled)
-      {
-         LOG.info("A payment has been made to account " + accountId + " for the amount of " + amount);
-      }
-   }
-}</programlisting>The annotations ManagedResource and ManagedAttribute are
-            using to indicate what classes and properties are JMX-managed. In
-            order to expose the bean through JMX, it must be exported using
-            Spring's MBean Exporter.</para>
-
-            <para><programlisting>&lt;bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/&gt;
-
-   &lt;bean class="org.springframework.jmx.export.MBeanExporter"&gt;
-       &lt;property name="autodetectModeName" value="AUTODETECT_ASSEMBLER"/&gt;
-       &lt;property name="ensureUniqueRuntimeObjectNames" value="true"/&gt;
-       &lt;property name="namingStrategy"&gt;
-           &lt;bean class="org.springframework.jmx.export.naming.MetadataNamingStrategy"&gt;
-               &lt;property name="attributeSource" ref="attributeSource"/&gt;
-           &lt;/bean&gt;
-       &lt;/property&gt;
-       &lt;property name="assembler"&gt;
-           &lt;bean class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler"&gt;
-               &lt;property name="attributeSource" ref="attributeSource"/&gt;
-           &lt;/bean&gt;
-       &lt;/property&gt;
-   &lt;/bean&gt;</programlisting></para>
+        <para>Given the use cases of the Ticket Monster application, it is
+        very important for the application to keep record of transaction order
+        (such as which seats were reserved when and by whom) as well as
+        confirmation of payment. One method of the application maintaining
+        this information is to use advice on cross-cutting concerns. In Ticket
+        Monster, we implement this advice using Spring Aspect-Oriented
+        Programming (Spring AOP), which provides a simple set of AspectJ
+        annotations that can be used to advise on the application's business
+        logic. To configure Spring AOP, first we must add the following
+        definition to the ticketmonster-business-context.xml of the
+        META-INF/spring directory:<informalexample>
+            <para><programlisting>&lt;aop:aspectj-autoproxy proxy-target-class="true"/&gt;</programlisting></para>
           </informalexample></para>
 
-        <para>As a result, you can turn this functionality on and off directly
-        from the JBoss AS JMX administration console, using the
-        "sportsclub:name=paymentAuditor" bean to interact with the payment
-        auditor.</para>
+        <para>This simple XML tag, provided by the Spring aop namespace,
+        allows us to use AspectJ annotations to create pointcuts, Below is an
+        example of the use of AspectJ annotations to declare pointcuts and
+        cross-cutting advice in Ticket Monster's LogInformation
+        class:<informalexample>
+            <programlisting>@Aspect
+public class LogInformation {
 
-        <para>As explained in the JMS section, a separate MBean is set up for
-        setting messages to the payment notifications message queue.</para>
+protected final Log logger = LogFactory.getLog(getClass()); 
+
+@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.displayEvents(javax.servlet.http.HttpServletRequest)) &amp;&amp; args(request)")
+public void events(HttpServletRequest request) {
+}
+
+    /* Other @Pointcut definitions */
+
+@AfterReturning("events(request)")
+public void displayEvents(HttpServletRequest request) {
+    String majorString, categoryString, fromDate, untilDate;
+
+    majorString = request.getParameter("major");
+    categoryString = request.getParameter("category");
+    fromDate = request.getParameter("from");
+    untilDate = request.getParameter("until");
+
+    if(majorString != null) {
+        logger.info("Returning event information for all events with the major field marked as: " + majorString + ".");
+        return;
+    }
+
+    else if(categoryString != null) {
+        logger.info("Returning event information for all events in the category: ");
+        int categoryId = categoryString.charAt(0) - '0';
+        switch(categoryId) {
+            case 1:
+            logger.info("Concerts.");
+            return;
+            case 2:
+            logger.info("Theatre.");
+            return;
+            case 3:
+            logger.info("Musicals.");
+            return;
+            case 4:
+            logger.info("Sports");
+            return;
+            case 5:
+            logger.info("Comedy.");
+            return;
+            default:
+            logger.info("Invalid Category");
+            return;
+        }
+    }
+
+    else if(fromDate != null &amp;&amp; untilDate != null) {
+        logger.info("Returning event information for all events starting on or after: " + fromDate + " and ending on or before " + untilDate  + "."); 
+    }
+
+    else {
+        logger.info("Returning event information for all events currently in the TicketMonster database.");
+    }
+
+    return;
+}
+
+    /* Other cross-cutting concern advice */
+
+}</programlisting>
+          </informalexample></para>
+
+        <para>In the above example, the @Aspect annotation indicates to the
+        application that the LogInformation class should be scanned for
+        pointcuts and cross-cutting advice. The @Pointcut annotation defines a
+        pointcut, which specifies the joinpoint when cross-cutting advice will
+        be applied, such as the execution of a particular method or within a
+        certain type, to provide two examples. In the case of an execution
+        pointcut, where the joinpoint occurs on the execution of a method, we
+        use annotations such as @Before, @AfterReturning, @AfterThrowing, or
+        @After, to indicate whether the joinpoint will occur before execution,
+        after successful execution, after an exception is thrown, etc. Note
+        that, in the above example, to pass a parameter to advice via the
+        pointcut, we must add the parameter type to the execution designator
+        and an args() designator, specifying the parameter names to be passed.
+        As well, it should be mentioned that, while in this example, we only
+        use cross-cutting advice to log information, aspect-oriented
+        programming can be used for more complex uses, e.g. calls to methods
+        upon successful completion of each transaction.</para>
       </section>
 
       <section>
-        <title>Payment processing: exposing a web service</title>
+        <title>JBoss-Authenticated Security</title>
 
-        <para>Another way of interacting with external applications, is by
-        exposing a web service. In this scenario, payment notifications may
-        not arrive only as asynchronous events on a message queue, but also as
-        synchronous web service invocations. For this purpose, the application
-        will implement two web services using two different
-        technologies:</para>
+        <para>To ensure that only authenticated users are able to make
+        reservations and pay for previously reserved seats, we use Spring
+        Security 3.1.0.RC2 to restrict access to certain pages of the Ticket
+        Monster example. Access to the reservations and checkout page (i.e.
+        all URLs of '/booking**') is restricted, as described in
+        META-INF/spring/ticketmonster-security-context.xml, To enable Spring
+        Security, we must first add this ticketmonster-security-context.xml
+        file to the contextConfigLocation, specified as a
+        &lt;context-param&gt; elementin web.xml. </para>
 
-        <itemizedlist>
-          <listitem>
-            <para>a Spring-injected JAX-WS-based web service
-            (contract-first);</para>
-          </listitem>
+        <para>One level of security is added by enabling Spring Security
+        annotations. Using these annotations, we can ensure that certain
+        methods can only be called by users with the specified credentials.
+        This is accomplished by adding the following XML code to the
+        ticketmonster-security-context.xml:<informalexample>
+            <para><programlisting>&lt;global-method-security pre-post-annotations="enabled"/&gt;</programlisting></para>
+          </informalexample></para>
 
-          <listitem>
-            <para>a complete Spring Web Services-based implementation
-            (contract-last);</para>
-          </listitem>
-        </itemizedlist>
+        <para>With these annotations enabled, we can then annotate methods,
+        such as the methods of the ReservationManager interface, as
+        @PreAuthorize("hasRole('ROLE_USER')"). By including this annotation,
+        only those with the role of User, in this case those with an account
+        in the Ticket Monster database, can call methods of the
+        ReservationManager interface.</para>
 
-        <section>
-          <title>Using a JAX-WS web service</title>
+        <para>To add another layer of security to the Ticket Monster example,
+        we restrict the access to certain URLs within the Ticket Monster
+        application. This is accomplished by adding intercept-url definitions
+        to the ticketmonster-security-context.xml file:<informalexample>
+            <programlisting>&lt;http pattern="/static/**" security="none" /&gt;
 
-          <para>In this scenario, a JAX-WS annotated class is provided by the
-          application:</para>
+&lt;http use-expressions="true"&gt;
+    &lt;intercept-url pattern="/bookings/**" access="hasRole('ROLE_USER')"/&gt;
+    &lt;intercept-url pattern="/events**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/events/**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/venues**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/venues/**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/shows/**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/categories**" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/index.jsp" access="permitAll"/&gt;
+    &lt;intercept-url pattern="/**" access="denyAll"/&gt;
+    &lt;form-login/&gt;
+    &lt;logout logout-success-url="/"/&gt;
+&lt;/http&gt;</programlisting>
+          </informalexample></para>
 
-          <informalexample>
-            <para><programlisting>@WebService
-public class PaymentNotificationService extends SpringBeanAutowiringSupport
-{
+        <para>There are a few important points to note from the above section
+        of code:<itemizedlist>
+            <listitem>
+              <para>It is essential to make sure there is no security on the
+              '/static/**' URLs, otherwise no images, CSS files, etc. will be
+              accessible to non-authenticated users</para>
+            </listitem>
 
-   @Autowired
-   private PaymentProcessor paymentProcessor;
+            <listitem>
+              <para>An &lt;intercept-url&gt; tag should be included to cover
+              each web view, even if the access is 'permitAll', though access
+              can also be 'denyAll', 'hasRole('ROLE_USER'),
+              'hasRole('ROLE_SUPERVISOR'), or custom-defined roles</para>
+            </listitem>
 
-   @WebMethod
-   public Long notifyPayment(Long accountNumber, BigDecimal amount)
-   {
-      return paymentProcessor.processPayment(accountNumber, amount);
-   }
+            <listitem>
+              <para>If JSON services are used, the correct access must be
+              given to the URL of the JSON call</para>
+            </listitem>
 
-}</programlisting>By extending SpringBeanAutowiringSupport, the class
-            PaymentNotificationService will be injected automatically with the
-            same PaymentProcessor instance that is used by the JMS
-            notification processor, and defined in the application context
-            created from WEB-INF/spring-business-context.xml. This is
-            necessary, because no bean of the type PaymentNotificationService
-            is defined in the application context. Instead, the web service is
-            defined and mapped as a servlet in /WEB-INF/web.xml:</para>
+            <listitem>
+              <para>The &lt;form-login/&gt; will ensure that Spring Security
+              prompts for authentication before displaying a page which the
+              user does not currently have authorization to view</para>
+            </listitem>
+          </itemizedlist></para>
 
-            <para><programlisting>&lt;servlet&gt;
-       &lt;servlet-name&gt;PaymentNotificationService&lt;/servlet-name&gt;
-       &lt;servlet-class&gt;org.jboss.snowdrop.samples.sportsclub.ws.PaymentNotificationService&lt;/servlet-class&gt;
-   &lt;/servlet&gt;
+        <para>Finally, we must tell Ticket Monster how to verify a user's
+        credentials when they attempt to log in. For security purposes, Ticket
+        Monster stores passwords as salted one-way hashes, created by Spring
+        Security's StandardPasswordEncoder. Once we have encoded each
+        password, we can either store the hashed passwords in the
+        ticketmonster-security-context.xml file itself or in the Ticket
+        Monster database, querying the database to verify credentials. This
+        implementation uses the latter implementation of password encryption,
+        as demonstrated by code below from the security context and database
+        initialization files.<informalexample>
+            <programlisting>// From ticketmonster-security-context.xml
 
-   &lt;servlet-mapping&gt;
-       &lt;servlet-name&gt;PaymentNotificationService&lt;/servlet-name&gt;
-       &lt;url-pattern&gt;/ws/payment&lt;/url-pattern&gt;
-   &lt;/servlet-mapping&gt;</programlisting>As a result, the a JAX-WS web
-            service can be accessed at http://localhost:8080/ws/payment. The
-            service can be tested using a free SOAP testing tool such as SOAP
-            UI.</para>
-          </informalexample>
-        </section>
+&lt;beans:bean id="encoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder"/&gt;
 
-        <section>
-          <title>Implementing a Spring Web Services web service</title>
+&lt;authentication-manager&gt;
+    &lt;authentication-provider&gt;
+    &lt;password-encoder ref="encoder"/&gt;
+    &lt;jdbc-user-service data-source-ref="dataSource" 
+        users-by-username-query="select username, password, enabled from User where username = ?"
+        authorities-by-username-query="select username, 'ROLE_USER' from User where username = ?"/&gt;
+    &lt;/authentication-provider&gt;
+&lt;/authentication-manager&gt;
 
-          <para>Spring Web Services is focused on implementing contract-first
-          web services, as opposed to the contract-last approach taken in the
-          JAX-WS example (although it should be noted that JAX-WS can support
-          contract-last web services too). In the contract-first development
-          style, the WSDL and request/reply document schemas are produced
-          first, and define the contract between the service client and
-          implementor. It is the responsibility of the service supplier to
-          handle the request and reply documents appropriately.</para>
+// From import.sql
 
-          <para></para>
+insert into User (id, username, password, enabled, firstName, lastName) values (1, 'sbryzak', '12bfe8fb06f06eedec67fb43ef6ab8c850a577db73e758c40b5fceff86d9e214c36612e430b23a5e', 'true', 'Shane', 'Bryzak');
+insert into User (id, username, password, enabled, firstName, lastName) values (2, 'mbg', 'eefcbef8c277b21f88d7fa36dc7e33fbf243587de1cac2dcc4edcaa717796e7326980ad18161bd4f', 'true', 'Marius', 'Bogoevici');
+insert into User (id, username, password, enabled, firstName, lastName) values (3, 'rbradley', 'e5b60370d330faeddb4aef7b34ef2877cebcfaad814e62da7e9d3abe8b3be6146410572b2f21047c', 'true', 'Ryan', 'Bradley');</programlisting>
+          </informalexample></para>
 
-          <para>The structure of the Spring-WS based web service is similar to
-          a Spring MVC application. The entry point is a distinct type of
-          dispatcher servlet, backed by an application context definition, as
-          follows (Spring 3-based applications may omit the VFS-ready
-          application context declaration):</para>
-
-          <informalexample>
-            <para><programlisting>&lt;servlet&gt;
-  &lt;servlet-name&gt;spring-ws-servlet&lt;/servlet-name&gt;
-  &lt;servlet-class&gt;org.springframework.ws.transport.http.MessageDispatcherServlet&lt;/servlet-class&gt;
-    &lt;init-param&gt;
-      &lt;param-name&gt;contextClass&lt;/param-name&gt;
-      &lt;param-value&gt;org.jboss.spring.vfs.context.VFSXmlWebApplicationContext&lt;/param-value&gt;
-    &lt;/init-param&gt;
-    &lt;init-param&gt;
-         &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-         &lt;param-value&gt;/WEB-INF/spring-ws-config.xml&lt;/param-value&gt;
-    &lt;/init-param&gt;
-&lt;/servlet&gt;
-
-&lt;servlet-mapping&gt;
-   &lt;servlet-name&gt;spring-ws-servlet&lt;/servlet-name&gt;
-   &lt;url-pattern&gt;/spring-ws/payment&lt;/url-pattern&gt;
-&lt;/servlet-mapping&gt;
-</programlisting></para>
-          </informalexample>
-
-          <para>The actual endpoint that handles the SOAP requests is defined
-          as follows:</para>
-
-          <informalexample>
-            <para><programlisting>@Endpoint
-public class PaymentNotificationHandler
-{
-   @Autowired
-   private PaymentProcessor paymentProcessor;
-
-   @PayloadRoot(localPart = "notifyPayment", namespace = "http://ws.sportsclub.samples.snowdrop.jboss.org/")
-   public PaymentResponse notifyPayment(PaymentRequest paymentNotification)
-   {
-      Long paymentId = paymentProcessor.processPayment(paymentNotification.getAccountNumber(), paymentNotification.getAmount());
-      return new PaymentResponse(paymentId);
-   }
-
-}</programlisting></para>
-
-            <para>The @Endpoint annotation indicatest that this class contains
-            web service endpoint methods and allows for this component to be
-            detected as a Spring bean through classpath scanning. The
-            @PayloadRoot anotation indicates that any SOAP request submitted
-            to the dispatcher servlet will be routed to the notifyPayment
-            method if the root element of the payload is<code>
-            {http://ws.sportsclub.samples.snowdrop.jboss.org/}notifyPayment</code>.
-            The request payload will be automatically unmarshalled in a
-            PaymentRequest object sent as argument to the method. The return
-            value is a PaymentResponse object which will be automatically
-            marshalled as XML content and will become the payload of the SOAP
-            response that gets sent back. IThe Spring Web Services
-            configuration indicates that a JAXB marshaller should be used
-            specifically in this case.</para>
-
-            <informalexample>
-              <para><programlisting>&lt;bean id="marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller"&gt;
-        &lt;property name="classesToBeBound"&gt;
-            &lt;list&gt;
-                &lt;value&gt;org.jboss.snowdrop.samples.sportsclub.ws.PaymentRequest&lt;/value&gt;
-                &lt;value&gt;org.jboss.snowdrop.samples.sportsclub.ws.PaymentResponse&lt;/value&gt;
-            &lt;/list&gt;
-        &lt;/property&gt;
-    &lt;/bean&gt;</programlisting></para>
-            </informalexample>
-
-            <para>The detailed application context definition can be found in
-            the src/webapp/WEB-INF/spring-ws-config.xml file of the context
-            configuration. The web service can be accessed at</para>
-          </informalexample>
-        </section>
+        <para>For those interested in adding their own User to the database,
+        the id, username, firstName, and lastName fields are self-explanatory.
+        The enabled field should indicate whether the added user should have
+        ROLE_USER priveleges. As well, instructions to encode passwords can be
+        found in the Spring Security tutorial at
+        http://static.springsource.org/spring-security/site/tutorial.html.</para>
       </section>
     </section>
   </chapter>
