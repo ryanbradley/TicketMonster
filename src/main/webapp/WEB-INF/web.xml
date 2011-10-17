@@ -13,7 +13,13 @@
   		<param-value>classpath:/META-INF/spring/ticketmonster-business-context.xml,
               classpath:/META-INF/spring/infrastructure.xml,
               classpath:/META-INF/spring/bookingState.xml,
-              classpath:/META-INF/spring/ticketmonster-security-context.xml</param-value>
+              classpath:/META-INF/spring/ticketmonster-security-context.xml
+              classpath:/META-INF/spring/applicationContextCache.xml</param-value>
+  	</context-param>
+  	
+  	<context-param>
+  		<param-name>spring.profiles.active</param-name>
+  		<param-value>jboss</param-value>
   	</context-param>
   	
   	<filter>

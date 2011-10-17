@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Application context definition for the Ticket Monster cache -->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:cache="http://www.springframework.org/schema/cache"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xmlns:infinispan="http://www.jboss.org/schema/infinispan/spring"
+		
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+							http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
+							http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+							http://www.jboss.org/schema/infinispan/spring http://www.jboss.org/schema/infinispan/spring/infinispan-spring.xsd">
+
+	<cache:annotation-driven/>
+	
+	<beans profile="local">
+		<infinispan:embedded-cache-manager/>
+	</beans>
+	
+	<beans profile="jboss">
+		<infinispan:container-cache-manager cache-container-ref="cacheContainer"/>
+		<jee:jndi-lookup jndi-name="java:comp/env/infinispan/cacheContainer" id="cacheContainer" 
+				expected-type="org.infinispan.manager.CacheContainer"/>
+	</beans>
+							
+</beans>

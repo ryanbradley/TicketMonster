@@ -27,6 +27,7 @@
         <jboss.servlet.api.version>1.0.0.Final</jboss.servlet.api.version>
         <tiles.version>2.1.3</tiles.version>
         <jackson.version>1.6.4</jackson.version>
+        <infinispan.version>5.1.0.BETA1</infinispan.version>
     </properties>
 
     <dependencies>
@@ -218,6 +219,11 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>org.infinispan</groupId>
+        	<artifactId>infinispan-spring</artifactId>
+        	<version>${infinispan.version}</version>
         </dependency>
     </dependencies>
     <build>
