@@ -28,6 +28,8 @@
 	
 	<bean id="allocationManager" class="org.jboss.spring.ticketmonster.service.SimpleAllocationManager"/>
 	
+	<bean id="logInformation" class="org.jboss.spring.ticketmonster.domain.LogInformation"/>
+	
 	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
@@ -44,7 +46,5 @@
 	<tx:annotation-driven />
 	
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	
-	<bean id="logInformation" class="org.jboss.spring.ticketmonster.domain.LogInformation"/>
 
 </beans>

@@ -17,7 +17,7 @@ import org.aspectj.lang.annotation.Pointcut;
  *
  */
 
-//@Aspect
+@Aspect
 public class LogInformation {
 	
 	protected final Log logger = LogFactory.getLog(getClass()); 
