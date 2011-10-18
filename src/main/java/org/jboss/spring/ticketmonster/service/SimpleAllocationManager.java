@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.infinispan.manager.CacheContainer;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
@@ -17,7 +16,8 @@ import org.jboss.spring.ticketmonster.domain.Show;
 import org.jboss.spring.ticketmonster.repo.AllocationDao;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +41,12 @@ public class SimpleAllocationManager implements AllocationManager {
 /*	@Autowired
 	private CacheManager cacheManager;*/
 	
-	@Autowired
-	private BookingState bookingState;
+    @Autowired
+    @Qualifier("reservations")
+    private Cache reservationsCache;
 	
 	@Autowired
-	private CacheContainer cacheContainer;
+	private BookingState bookingState;
 	
 	public BookingState getBookingState() {
 		return bookingState;
@@ -85,7 +86,6 @@ public class SimpleAllocationManager implements AllocationManager {
 	}
 	
 	public void persistToCache(SeatBlock block) {
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
 		CacheKey key = block.getKey();
 		
 		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();

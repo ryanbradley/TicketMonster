@@ -14,12 +14,7 @@
               classpath:/META-INF/spring/infrastructure.xml,
               classpath:/META-INF/spring/bookingState.xml,
               classpath:/META-INF/spring/ticketmonster-security-context.xml
-              classpath:/META-INF/spring/applicationContextCache.xml</param-value>
-  	</context-param>
-  	
-  	<context-param>
-  		<param-name>spring.profiles.active</param-name>
-  		<param-value>jboss</param-value>
+		</param-value>
   	</context-param>
   	
   	<filter>
@@ -67,8 +62,8 @@
   	<welcome-file>checkout.jsp</welcome-file>
   </welcome-file-list>
 
-   <persistence-context-ref>
-       <persistence-context-ref-name>persistence/TicketMonster/entityManager</persistence-context-ref-name>
-       <persistence-unit-name>ticketmonsterPU</persistence-unit-name>
-   </persistence-context-ref>
+  <persistence-context-ref>
+  	<persistence-context-ref-name>persistence/TicketMonster/entityManager</persistence-context-ref-name>
+    <persistence-unit-name>ticketmonsterPU</persistence-unit-name>
+  </persistence-context-ref>
 </web-app>

@@ -37,6 +37,7 @@
 	</bean>
 	
 	<bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
+		<qualifier value="reservations"/>
 		<constructor-arg value="reservations"/>
 	</bean>
 	

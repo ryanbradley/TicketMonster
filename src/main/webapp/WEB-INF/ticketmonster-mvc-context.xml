@@ -41,7 +41,7 @@
         <property name="order" value="0"/>
     </bean>
     
-    <!-- Cache Manager bean declaration -->
+    <!-- Cache Manager bean declaration
     
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
     	<property name="caches">
@@ -53,7 +53,7 @@
     
     <bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
         <constructor-arg value="reservations"/>
-    </bean>
+    </bean> -->
 
     <!-- All resources must be prefixed with /static (e.g. /static/jquery-1.6.1.min.js )-->
 

@@ -6,13 +6,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.infinispan.manager.CacheContainer;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
 import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +30,8 @@ public class AllocationDaoImpl implements AllocationDao {
 	private EntityManager entityManager;
 	
 	@Autowired
-	private CacheContainer cacheContainer;
+	@Qualifier("reservations")
+	private Cache reservationsCache;
 	
 /*	@Autowired
 	private CacheManager cacheManager;
@@ -63,7 +64,6 @@ public class AllocationDaoImpl implements AllocationDao {
 	}
 	
 	public void insertSeatBlock(Allocation allocation) {
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
 		CacheKey key = new CacheKey(allocation.getShow().getId(), allocation.getRow().getId());
 		
 		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();

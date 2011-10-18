@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.infinispan.manager.CacheContainer;
 import org.jboss.spring.ticketmonster.domain.BookingRequest;
 import org.jboss.spring.ticketmonster.domain.BookingState;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
@@ -19,7 +18,8 @@ import org.jboss.spring.ticketmonster.domain.SectionRow;
 import org.jboss.spring.ticketmonster.repo.AllocationDao;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,12 +42,13 @@ public class SimpleReservationManager implements ReservationManager {
 	
 /*	@Autowired
 	private CacheManager cacheManager;*/
+
+	@Autowired
+	@Qualifier("reservations")
+    private Cache reservationsCache;
 	
 	@Autowired
 	private BookingState bookingState;
-	
-	@Autowired
-	private CacheContainer cacheContainer;
 	
 	private static final boolean RESERVED = false;
 	
@@ -85,8 +86,6 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 
 	public boolean findContiguousSeats(Long showId, Long sectionId, int quantity) {
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
-		
 		Section section = showDao.findSection(sectionId);
 		List<SectionRow> rows = showDao.getRowsBySection(section, quantity);
 		
@@ -222,8 +221,6 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 	
 	public SeatBlock update(Long showId, Long sectionId, int quantity) {
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
-		
 		Long rowId = 0l;
 		
 		for(SeatBlock block : this.bookingState.getReserved()) {
@@ -279,8 +276,6 @@ public class SimpleReservationManager implements ReservationManager {
 	}
 	
 	public void removeSeatReservation(Long showId, Long sectionId)	{
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
-		
 		Long rowId = 0l;
 		
 		for(SeatBlock block : bookingState.getReserved()) {
@@ -317,8 +312,6 @@ public class SimpleReservationManager implements ReservationManager {
 	
 	public boolean checkAvailability(Long showId, Long sectionId, int quantity) {
 		boolean available = false;
-		ConcurrentMapCache reservationsCache = (ConcurrentMapCache) cacheContainer.getCache();
-		
 		Long rowId = 0l;
 		
 		for(SeatBlock block : this.bookingState.getReserved()) {
