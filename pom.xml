@@ -12,7 +12,7 @@
 
     <properties>
         <junit.version>4.7</junit.version>
-        <aspectj.version>1.6.8</aspectj.version>
+        <aspectj.version>1.6.11</aspectj.version>
         <hibernate.version>3.3.0.GA</hibernate.version>
         <hibernate.entitymanager.version>3.4.0.GA</hibernate.entitymanager.version>
         <spring.version>3.1.0.RC1</spring.version>

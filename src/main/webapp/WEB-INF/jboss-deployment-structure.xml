@@ -2,6 +2,7 @@
    <deployment>
    	   <dependencies>
    	   		<module name="org.apache.commons.logging"/>
+            <module name="org.jboss.ironjacamar.jdbcadapters"/>
    	   </dependencies>
    </deployment>
 </jboss-deployment-structure>
