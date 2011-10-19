@@ -61,4 +61,7 @@
 
     <mvc:default-servlet-handler/>
 
+    <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+
 </beans>

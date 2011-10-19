@@ -45,6 +45,5 @@
 	
 	<tx:annotation-driven />
 	
-	<aop:aspectj-autoproxy proxy-target-class="true"/>
 
 </beans>
