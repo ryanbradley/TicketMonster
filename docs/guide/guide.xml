@@ -979,19 +979,20 @@ public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId,
         seat blocks that have been reserved and purchased for a given show at
         all times. However, it would be impractical to persist all of this
         data to the Ticket Monster database. Instead, we take advantage of
-        another useful feature provided in Spring 3.1 - the Spring Cache
-        Abstraction.</para>
+        another useful feature provided in Spring 3.1, the Spring Cache
+        Abstraction, either by declaring a CacheManager bean or using the
+        CacheManager packaged with JBoss AS 7.</para>
 
         <section>
           <title>CacheManager Configuration</title>
 
           <para>The Spring Cache Abstraction provides a variety of methods for
           caching, such as annotating entities as @Cacheable and methods as
-          @CacheEvict, or dealing directly with a cache object (often either
+          @CacheEvict, or dealing directly with a Cache object (often either
           an Ehcache or Concurrent Map Cache) retrieved by a CacheManager. In
-          the Ticket Monster example, we will inject a CacheManager object,
-          declared as a bean in /WEB-INF/ticketmonster-mvc-context.xml; this
-          way, we can retrieve the cache of reservations using this
+          the Ticket Monster example, we will inject a Cache object, declared
+          as a bean in /META-INF/spring/ticketmonster-business-context.xml;
+          this way, we can retrieve the cache of reservations using this
           CacheManager bean. The CacheManager bean definition, as well as the
           cache configuration, are included below:<informalexample>
               <programlisting>&lt;bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager"&gt;
@@ -1003,6 +1004,7 @@ public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId,
 &lt;/bean&gt;
     
 &lt;bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache"&gt;
+    &lt;qualifier value="reservations"/&gt;
     &lt;constructor-arg value="reservations"/&gt;
 &lt;/bean&gt;</programlisting>
             </informalexample></para>
@@ -1012,8 +1014,82 @@ public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId,
           implementations of the service layer interfaces using the @Autowired
           annotation. As well, we also declare a default cache, obtained by
           call calling the getCache() method of the SimpleCacheManager with an
-          argument of "reservations", which is a ConcurrentMapCache
-          object.</para>
+          argument of "reservations", which is a ConcurrentMapCache object. As
+          well, the &lt;qualifier&gt; element can be used to identify the
+          Cache object when it is injected into our Java classes. This is
+          accomplished using the @Qualifier annotation, as demonstrated in the
+          simple Cache definition below:<informalexample>
+              <programlisting>@Autowired
+@Qualifier("reservations")
+private Cache reservationsCache;</programlisting>
+            </informalexample></para>
+
+          <para>The above definition injects the ConcurrentMapCache bean,
+          defined in ticketmonster-business-context.xml, with the qualifier of
+          "reservations" into the Java class where this code is placed.</para>
+        </section>
+
+        <section>
+          <title>Infinispan CacheContainer</title>
+
+          <para>JBoss Application Server 7 provides a simple Infinispan
+          subsystem in the server configuration. This Infinispan subsystem can
+          be used to define and configure multiple cache container elements.
+          Using cache containers provided by the application server, we can
+          define several caches for each cache container, and access these
+          caches by retrieving a CacheManager object from the application
+          server's ResourceManager. The Ticket Monster application properly
+          illustrates this functionality. To set it up in one's own
+          application, first we must add CacheContainer and Cache definitions
+          to the server configuration file, in this case
+          ${JBOSS_AS_7_HOME}/standalone/configuration/standalone.xml, as
+          illustrated below:<informalexample>
+              <programlisting>&lt;cache-container name="ticket-monster" default-cache="reservations"&gt;
+    &lt;local-cache name="reservations"&gt;
+        &lt;eviction strategy="LRU" max-entries="10000"/&gt;
+        &lt;expiration max-idle="100000"/&gt;
+    &lt;/local-cache&gt;
+&lt;/cache-container&gt;</programlisting>
+            </informalexample></para>
+
+          <para>The above XML code should be added to the Infinispan subsystem
+          of the standalone.xml file. Next, we must add a file, located in
+          META-INF/spring/applicationContextCache.xml, to the application
+          classpath. This file, added via the contextConfigLocation context
+          parameter in WEB-INF/web.xml, provides the application context
+          definition for the Infinispan cache. The contents of the
+          applicationContextCache.xml file are explained
+          below:<informalexample>
+              <programlisting>&lt;cache:annotation-driven/&gt;
+
+&lt;beans profile="local"&gt;
+    &lt;infinispan:embedded-cache-manager/&gt;
+&lt;/beans&gt;
+
+&lt;beans profile="jboss"&gt;
+    &lt;infinispan:container-cache-manager cache-container-ref="cacheContainer"/&gt;
+    &lt;jee:jndi-lookup jndi-name="java:comp/env/infinispan/cacheContainer" id="cacheContainer" 
+        expected-type="org.infinispan.manager.CacheContainer"/&gt;
+&lt;/beans&gt;</programlisting>
+            </informalexample></para>
+
+          <para>The &lt;cache:annotation-driven/&gt; tag enables the use of
+          Spring Cache Abstraction annotations. The two profile definitions
+          create two separate profiles which obtain a CacheManager object in
+          two different ways from the application server. The 'local' profile
+          uses the CacheManager embedded in JBoss AS 7, whereas the 'jboss'
+          profile uses a CacheContainer object to retrieve a CacheManager
+          (hence the &lt;infinispan:container-cache-manager&gt; tag). First,
+          the 'jboss' profile performs a JNDI lookup for the CacheContainer,
+          which was defined earlier in standalone.xml, and the application
+          server then uses this CacheContainer to get a CacheManager. To
+          specify the active profile, we add the following context parameter
+          to WEB-INF/web.xml:<informalexample>
+              <programlisting>&lt;context-param&gt;
+    &lt;param-name&gt;spring.profiles.active&lt;/param-name&gt;
+    &lt;param-value&gt;${active.profile}&lt;/param-value&gt;
+&lt;/context-param&gt;</programlisting>
+            </informalexample></para>
         </section>
 
         <section>
@@ -1085,99 +1161,95 @@ public boolean equals(Object obj) {
         Programming (Spring AOP), which provides a simple set of AspectJ
         annotations that can be used to advise on the application's business
         logic. To configure Spring AOP, first we must add the following
-        definition to the ticketmonster-business-context.xml of the
-        META-INF/spring directory:<informalexample>
+        definition to META-INF/spring/ticketmonster-business-context.xml and
+        to WEB-INF/ticketmonster-mvc-context.xml, as both application context
+        files include the definitions of beans to be advised:<informalexample>
             <para><programlisting>&lt;aop:aspectj-autoproxy proxy-target-class="true"/&gt;</programlisting></para>
           </informalexample></para>
 
         <para>This simple XML tag, provided by the Spring aop namespace,
-        allows us to use AspectJ annotations to create pointcuts, Below is an
-        example of the use of AspectJ annotations to declare pointcuts and
-        cross-cutting advice in Ticket Monster's LogInformation
-        class:<informalexample>
+        allows us to use AspectJ annotations to create pointcuts, Advice for
+        cross-cutting concerns is contained in the
+        org.jboss.spring.ticketmonster.advice package. This package contains
+        three separate classes, ControllerLog, ServiceLog, and RepositoryLog.
+        These classes contain advice for cross-cutting concerns to deal with
+        MVC controllers, service implementations, and repository
+        implementations respectively. Below is an example of the use of
+        AspectJ annotations to declare pointcuts and cross-cutting advice in
+        Ticket Monster's RepositoryLog class:<informalexample>
             <programlisting>@Aspect
-public class LogInformation {
+@Component
+public class RepositoryLog {
 
-protected final Log logger = LogFactory.getLog(getClass()); 
+    protected final Log logger = LogFactory.getLog(getClass()); 
 
-@Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.displayEvents(javax.servlet.http.HttpServletRequest)) &amp;&amp; args(request)")
-public void events(HttpServletRequest request) {
-}
-
-    /* Other @Pointcut definitions */
-
-@AfterReturning("events(request)")
-public void displayEvents(HttpServletRequest request) {
-    String majorString, categoryString, fromDate, untilDate;
-
-    majorString = request.getParameter("major");
-    categoryString = request.getParameter("category");
-    fromDate = request.getParameter("from");
-    untilDate = request.getParameter("until");
-
-    if(majorString != null) {
-        logger.info("Returning event information for all events with the major field marked as: " + majorString + ".");
-        return;
+    @Pointcut("execution(* org.jboss.spring.ticketmonster.repo.AllocationDao.populateCache(..))")
+    public void cache() {
     }
-
-    else if(categoryString != null) {
-        logger.info("Returning event information for all events in the category: ");
-        int categoryId = categoryString.charAt(0) - '0';
-        switch(categoryId) {
-            case 1:
-            logger.info("Concerts.");
-            return;
-            case 2:
-            logger.info("Theatre.");
-            return;
-            case 3:
-            logger.info("Musicals.");
-            return;
-            case 4:
-            logger.info("Sports");
-            return;
-            case 5:
-            logger.info("Comedy.");
-            return;
-            default:
-            logger.info("Invalid Category");
-            return;
-        }
+    
+    @Pointcut("execution(* org.jboss.spring.ticketmonster.repo.UserDao.getByName(String)) &amp;&amp; args(username)")
+    public void getUser(String username) {
     }
-
-    else if(fromDate != null &amp;&amp; untilDate != null) {
-        logger.info("Returning event information for all events starting on or after: " + fromDate + " and ending on or before " + untilDate  + "."); 
+    
+    @Before("cache()")
+    public void startup() {
+        logger.info("Populating the reservations cache with previously made allocations that are stored in the database.");
     }
-
-    else {
-        logger.info("Returning event information for all events currently in the TicketMonster database.");
+    
+    @AfterThrowing("cache()")
+    public void bootstrapFail() {
+        logger.info("Population of the cache with allocations in the database failed.");
     }
-
-    return;
-}
-
-    /* Other cross-cutting concern advice */
-
+    
+    @AfterReturning("cache()")
+    public void bootstrap() {
+        logger.info("Successfully populated the cache with Allocation objects from the database.  Already purchased SeatBlocks have been marked as such.");
+    }
+    
+    @AfterReturning("getUser(username)")
+    public void user(String username) {
+        logger.info("Retrieved User object from the database with a 'username' field of " + username + ".");
+    }
 }</programlisting>
           </informalexample></para>
 
         <para>In the above example, the @Aspect annotation indicates to the
-        application that the LogInformation class should be scanned for
-        pointcuts and cross-cutting advice. The @Pointcut annotation defines a
-        pointcut, which specifies the joinpoint when cross-cutting advice will
-        be applied, such as the execution of a particular method or within a
-        certain type, to provide two examples. In the case of an execution
-        pointcut, where the joinpoint occurs on the execution of a method, we
-        use annotations such as @Before, @AfterReturning, @AfterThrowing, or
-        @After, to indicate whether the joinpoint will occur before execution,
-        after successful execution, after an exception is thrown, etc. Note
-        that, in the above example, to pass a parameter to advice via the
-        pointcut, we must add the parameter type to the execution designator
-        and an args() designator, specifying the parameter names to be passed.
-        As well, it should be mentioned that, while in this example, we only
-        use cross-cutting advice to log information, aspect-oriented
-        programming can be used for more complex uses, e.g. calls to methods
-        upon successful completion of each transaction.</para>
+        application that the RepositoryLog class should be scanned for
+        pointcuts and cross-cutting advice. As well, the @Component annotation
+        indicates that this class is a Spring-managed component. We divide the
+        advice performed by Ticket Monster across a variety of classes. This
+        allows us to create easily readable code, avoiding large amounts of
+        code between the pointcut definition and advice on that pointcut, as
+        well as add more advice classes easily. By annotating each class with
+        @Component, we no longer have to declare each bean separately in
+        context files. Instead, we use a Spring component scan to find any
+        beans that should be added to the application context. This is
+        accomplished by adding the following line to
+        META-INF/spring/ticketmonster-business-context.xml:<informalexample>
+            <programlisting>&lt;context:component-scan base-package="org.jboss.spring.ticketmonster.advice"/&gt;</programlisting>
+          </informalexample>The @Pointcut annotation defines a pointcut, which
+        specifies the joinpoint when cross-cutting advice will be applied,
+        such as the execution of a particular method or within a certain type,
+        to provide two examples. In the case of an execution pointcut, where
+        the joinpoint occurs on the execution of a method, we use annotations
+        such as @Before, @AfterReturning, @AfterThrowing, or @After, to
+        indicate whether the joinpoint will occur before execution, after
+        successful execution, after an exception is thrown, etc. Note that, in
+        the above example, to pass a parameter to advice via the pointcut, we
+        must add the parameter type to the execution designator and an args()
+        designator, specifying the parameter names to be passed. As well, it
+        should be mentioned that, while in this example, we only use
+        cross-cutting advice to log information, aspect-oriented programming
+        can be used for more complex uses, e.g. calls to methods upon
+        successful completion of each transaction.</para>
+
+        <para>It is very important to note that logging is a simple task that
+        does not require Spring AOP, it could easily be done directly in the
+        methods themselves. However, Spring AOP is a very powerful tool which
+        can be used in a wide variety of very complex use cases. The use of
+        Spring AOP in Ticket Monster simply provides an example of how to
+        properly configure Spring AOP and how to implement it in simple use
+        cases.</para>
       </section>
 
       <section>

@@ -41,20 +41,6 @@
         <property name="order" value="0"/>
     </bean>
     
-    <!-- Cache Manager bean declaration
-    
-    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
-    	<property name="caches">
-    		<set>
- 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="reservations"/>
-    		</set>
-    	</property>
-    </bean>
-    
-    <bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
-        <constructor-arg value="reservations"/>
-    </bean> -->
-
     <!-- All resources must be prefixed with /static (e.g. /static/jquery-1.6.1.min.js )-->
 
     <mvc:resources mapping="/static/**" location="/" />
@@ -62,6 +48,5 @@
     <mvc:default-servlet-handler/>
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
-
 
 </beans>

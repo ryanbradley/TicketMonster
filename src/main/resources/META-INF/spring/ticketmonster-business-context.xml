@@ -28,8 +28,6 @@
 	
 	<bean id="allocationManager" class="org.jboss.spring.ticketmonster.service.SimpleAllocationManager"/>
 	
-	<bean id="logInformation" class="org.jboss.spring.ticketmonster.domain.LogInformation"/>
-	
 	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
@@ -38,6 +36,8 @@
 		</property>
 	</bean>
 	
+	<!-- CacheManager and Cache bean declarations -->
+	
 	<bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
 		<qualifier value="reservations"/>
 		<constructor-arg value="reservations"/>
@@ -45,5 +45,8 @@
 	
 	<tx:annotation-driven />
 	
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+	
+	<context:component-scan base-package="org.jboss.spring.ticketmonster.advice"/>
 
 </beans>
