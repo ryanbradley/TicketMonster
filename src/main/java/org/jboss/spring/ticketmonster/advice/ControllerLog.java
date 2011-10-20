@@ -1,9 +1,8 @@
 package org.jboss.spring.ticketmonster.advice;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -21,37 +20,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class ControllerLog {
 
-    protected final Log logger = LogFactory.getLog(getClass()); 
+    protected final Log logger = LogFactory.getLog(getClass());
+    
+    @Pointcut("within(org.jboss.spring.ticketmonster.mvc.*)")
+    public void mvc() {
+    }
+    
+    @Before("mvc()")
+    public void logEntry(JoinPoint joinPoint) {
+        int index = 0;
+        Object[] args = joinPoint.getArgs();
+        String arguments = new String();
+        for(Object obj : args) {
+            index++;
+            arguments += obj.toString();
+            if(index < args.length) {
+                arguments += ", ";
+            }
+            else {
+                arguments += ".";
+            }
+        }
+        logger.info("Entering the web controller method " + joinPoint.getSignature().getName() + "() with the following arguments: " + arguments);
+    }
+    
+    @AfterReturning("mvc()")
+    public void logReturnSuccess(JoinPoint joinPoint) {
+        logger.info("Returning successfully from the web controller method " + joinPoint.getSignature().getName() + "().");
+    }
 
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.EventController.displayEvents(javax.servlet.http.HttpServletRequest)) && args(request)")
-    public void events(HttpServletRequest request) {
-    }
-    
-    @Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.EventController.viewEvent(Long)) && args(id)", argNames="id")
-    public void event(Long id) {
-    }
-    
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.VenueController.displayVenues(..))")
-    public void venues() {
-    }
-    
-    @Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.VenueController.viewVenue(Long)) && args(id)", argNames="id")
-    public void venue(Long id) {
-    }
-    
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.ShowController.getShowTimes(..))")
-    public void showTimes() {
-    }
-    
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.mvc.ShowController.getCategories(..))")
-    public void categories() {
-    }
-
-    @Pointcut(value = "execution(* org.jboss.spring.ticketmonster.mvc.BookingFormController.viewShow(Long)) && args(id)", argNames="id")
-    public void show(Long id) {
-    }
-
-    @AfterReturning("events(request)")
+/*  @AfterReturning("events(request)")
     public void displayEvents(HttpServletRequest request) {
         String majorString, categoryString, fromDate, untilDate;
         
@@ -99,37 +97,5 @@ public class ControllerLog {
         }
         
         return;
-    }
-
-    @AfterReturning(value="event(id)", argNames = "id")
-    public void eventDetails(Long id) {
-        logger.info("Returning event information for the event with an ID token of " + id + ".");
-        logger.info("Returning all venues where the shows of the event with an ID token of " + id + " is being held.");
-    }
-
-    @Before("venues()")
-    public void displayVenues() {
-        logger.info("Returning information for all venues which are hosting events listed on TicketMonster.");
-    }
-    
-    @Before(value="venue(id)", argNames="id")
-    public void venueDetails(Long id) {
-        logger.info("Returning venue information for the venue specified by the ID token " + id + ".");
-    }
-
-    @Before("showTimes()")
-    public void getShowTimes() {
-        logger.info("Retrieving show times for event at venue.");
-    }
-    
-    @Before("categories()")
-    public void getCategories() {
-        logger.info("Retrieving all price categories for show.");
-    }
-
-    @Before(value="show(id)", argNames="id")
-    public void viewShow(Long id) {
-        logger.info("Displaying all relevant details, including event, venue, time, and price categories for the show with ID token " + id);
-    }
-
+    }*/
 }

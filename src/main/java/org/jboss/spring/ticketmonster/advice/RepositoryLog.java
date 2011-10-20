@@ -2,6 +2,7 @@ package org.jboss.spring.ticketmonster.advice;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
@@ -20,33 +21,39 @@ import org.springframework.stereotype.Component;
 @Component
 public class RepositoryLog {
 
-    protected final Log logger = LogFactory.getLog(getClass()); 
-
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.repo.AllocationDao.populateCache(..))")
-    public void cache() {
+    protected final Log logger = LogFactory.getLog(getClass());
+    
+    @Pointcut("within(org.jboss.spring.ticketmonster.repo*)")
+    public void repo() {
     }
     
-    @Pointcut("execution(* org.jboss.spring.ticketmonster.repo.UserDao.getByName(String)) && args(username)")
-    public void getUser(String username) {
+    @Before("repo()")
+    public void logEntry(JoinPoint joinPoint) {
+        String arguments = new String();
+        int index = 0;
+        Object[] args = joinPoint.getArgs();
+        
+        for(Object obj : args) {
+            index++;
+            if(index < args.length) {
+                arguments += obj.toString();
+                arguments += ", ";
+            }
+            else {
+                arguments += ".";
+            }
+        }
+        
+        logger.info("Entering the repository/DAO method " + joinPoint.getSignature().getName() + "() with the following arguments: " + arguments);
     }
     
-    @Before("cache()")
-    public void startup() {
-        logger.info("Populating the reservations cache with previously made allocations that are stored in the database.");
+    @AfterReturning("repo()")
+    public void logReturnSuccess(JoinPoint joinPoint) {
+        logger.info("Returning successfully from the repository/DAO method " + joinPoint.getSignature().getName() + "().");
     }
     
-    @AfterThrowing("cache()")
-    public void bootstrapFail() {
-        logger.info("Population of the cache with allocations in the database failed.");
-    }
-    
-    @AfterReturning("cache()")
-    public void bootstrap() {
-        logger.info("Successfully populated the cache with Allocation objects from the database.  Already purchased SeatBlocks have been marked as such.");
-    }
-    
-    @AfterReturning("getUser(username)")
-    public void user(String username) {
-        logger.info("Retrieved User object from the database with a 'username' field of " + username + ".");
+    @AfterThrowing(pointcut="repo()", throwing="e")
+    public void logReturnThrown(JoinPoint joinPoint, Exception e) {
+        logger.info("Exception " + e.getMessage() + " thrown by " + joinPoint.getSignature().getName() + "().");
     }
 }
