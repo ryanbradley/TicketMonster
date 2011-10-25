@@ -389,3 +389,5 @@ insert into PriceCategory (id, event_id, venue_id, section_id, category_id, pric
 insert into PriceCategory (id, event_id, venue_id, section_id, category_id, price) values (16, 1, 1, 2, 1, 199.50);
 insert into PriceCategory (id, event_id, venue_id, section_id, category_id, price) values (17, 1, 1, 3, 1, 179.50);
 insert into PriceCategory (id, event_id, venue_id, section_id, category_id, price) values (18, 1, 1, 4, 1, 149.50);
+
+COMMIT;

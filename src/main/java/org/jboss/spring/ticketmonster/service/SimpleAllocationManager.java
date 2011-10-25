@@ -38,9 +38,6 @@ public class SimpleAllocationManager implements AllocationManager {
 	@Autowired
 	private AllocationDao allocationDao;
 	
-/*	@Autowired
-	private CacheManager cacheManager;*/
-	
     @Autowired
     @Qualifier("reservations")
     private Cache reservationsCache;

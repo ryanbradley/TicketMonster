@@ -6,6 +6,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.spring.ticketmonster.domain.Allocation;
 import org.jboss.spring.ticketmonster.domain.CacheKey;
 import org.jboss.spring.ticketmonster.domain.RowReservation;
@@ -33,14 +35,13 @@ public class AllocationDaoImpl implements AllocationDao {
 	@Qualifier("reservations")
 	private Cache reservationsCache;
 	
-/*	@Autowired
-	private CacheManager cacheManager;
-*/	
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private static final boolean PURCHASED = true;
 
 	@PreAuthorize("hasRole('ROLE_USER')")	
 	public void persistAllocation(Allocation allocation) {
-		entityManager.persist(allocation);
+		entityManager.merge(allocation);
 
 		return;
 	}
@@ -56,8 +57,10 @@ public class AllocationDaoImpl implements AllocationDao {
 		List<Allocation> allocations = this.getAllocations();
 		
 		for(Allocation allocation : allocations) {
-			if(allocation.getShow().getId().equals(showId) && allocation.getRow().getId().equals(rowId))
-				this.insertSeatBlock(allocation);
+			if(allocation.getShow().getId().equals(showId) && allocation.getRow().getId().equals(rowId)) {	    
+			    logger.info("Inserting allocation.");
+			    this.insertSeatBlock(allocation);
+			}
 		}
 		
 		return;
@@ -65,37 +68,72 @@ public class AllocationDaoImpl implements AllocationDao {
 	
 	public void insertSeatBlock(Allocation allocation) {
 		CacheKey key = new CacheKey(allocation.getShow().getId(), allocation.getRow().getId());
+		RowReservation reservation = new RowReservation();
+		LinkedList<SeatBlock> reserved = new LinkedList<SeatBlock>();
+		logger.info("In insertSeatBlock() method.");
 		
-		RowReservation reservation = (RowReservation) reservationsCache.get(key).get();
-		LinkedList<SeatBlock> reserved = reservation.getReservedSeats();
+		if(reservationsCache.get(key) != null) {
+		    reservation = (RowReservation) reservationsCache.get(key).get();
+		    reserved = reservation.getReservedSeats();
+		    logger.info("Cache entry is not null.");
+		}
+		else {
+		    reservation.setReservedSeats(reserved);
+		    logger.info("Cache entry is null");
+		    logger.info("Reserved isEmpty(): " + reserved.isEmpty());
+		}
+
+        // If there are no reserved/allocated seats for that row currently in the cache:
+        if(reserved.isEmpty()) {
+            logger.info("Reserved seats linked list is empty.");                
+            SeatBlock newBlock = this.createSeatBlock(allocation);
+            reserved.add(newBlock);
+            reservation.setReservedSeats(reserved);
+            reservationsCache.put(key, reservation);
+            return;
+        }
 		
 		for(SeatBlock block : reserved) {
-			if(reserved.isEmpty()) {
+		    logger.info("Entering for loop.");
+		    
+		    // If the current block is the first in the linked list.
+			if(block == reserved.getFirst()) {
+                logger.info("First block.");			    
 				SeatBlock newBlock = this.createSeatBlock(allocation);
-				reserved.add(newBlock);
-				reservation.setReservedSeats(reserved);
-				reservationsCache.put(key, reservation);
-				return;
+				if(newBlock.getEndSeat() < block.getStartSeat()) {
+				    reserved.add(0, newBlock);
+				}
+				else {
+				    reserved.add(newBlock);
+				}
+	                reservation.setReservedSeats(reserved);
+	                reservationsCache.put(key, reservation);		    
+				    return;
 			}
-
+			
+			// If the allocation represents the last block in the row:
 			else if(block == reserved.getLast()) {
 				SeatBlock newBlock = this.createSeatBlock(allocation);
-				reserved.add(newBlock);
-				reservation.setReservedSeats(reserved);
-				reservationsCache.put(key, reservation);				
-				return;
+				if(newBlock.getStartSeat() > block.getEndSeat()) {
+    				reserved.add(newBlock);
+    				reservation.setReservedSeats(reserved);
+    				reservationsCache.put(key, reservation);				
+    				return;
+				}
 			}
 
+			// General case
 			else {
 				SeatBlock beforeBlock = reserved.get(reserved.indexOf(block)-1);
 				
-				if((beforeBlock.getEndSeat() < allocation.getStartSeat()) && (block.getStartSeat() > allocation.getEndSeat())) {
+				if((beforeBlock.getEndSeat() < allocation.getStartSeat()) && (allocation.getEndSeat() < block.getStartSeat())) {
 					SeatBlock newBlock = this.createSeatBlock(allocation);
-					reserved.add(reserved.indexOf(beforeBlock)+1, newBlock);
+					reserved.add(reserved.indexOf(block), newBlock);
 					reservation.setReservedSeats(reserved);
 					reservationsCache.put(key, reservation);
 					return;
 				}
+				continue;
 			}
 			
 		}

@@ -39,9 +39,6 @@ public class SimpleReservationManager implements ReservationManager {
 
 	@Autowired
 	private ShowDao showDao;
-	
-/*	@Autowired
-	private CacheManager cacheManager;*/
 
 	@Autowired
 	@Qualifier("reservations")
