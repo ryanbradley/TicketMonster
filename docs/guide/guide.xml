@@ -247,6 +247,10 @@
 &lt;/datasource&gt;</programlisting>This definition is necessary for the
           application to be create an in-memory database for the application,
           which can be retrieved via a JNDI look-up.</para>
+
+          <para>Instructions on preparing a persistent data source, i.e. one
+          which does not lose information when the application server is shut
+          down, will be provided later in this guide book.</para>
         </informalexample>
       </section>
 
@@ -442,7 +446,7 @@
               <row>
                 <entry>commons-logging:commons-logging - 1.1.1</entry>
 
-                <entry>The commons-logging library is included for </entry>
+                <entry>The commons-logging library is included for</entry>
               </row>
 
               <row>
@@ -1122,7 +1126,7 @@ public class BookingFormController {
               categories into one large request for that section. Finally,
               this method searches for an existing reservation, trying to
               update it if it exists and creating a new reservation if it does
-              not (showDetails.jsp) </para>
+              not (showDetails.jsp)</para>
             </listitem>
           </itemizedlist></para>
 
@@ -1212,7 +1216,7 @@ public @ResponseBody boolean updateAllocation(Long showId, Long priceCategoryId,
         is required to populate the Accordion based on the items selected in a
         dropdown menu. JSON services are very important to Ticket Monster for
         a variety of purposes, such as retrieving a show's price categories as
-        well as updating or creating seat reservations. </para>
+        well as updating or creating seat reservations.</para>
       </section>
     </section>
 
@@ -1518,7 +1522,7 @@ public class RepositoryLog {
         META-INF/spring/ticketmonster-security-context.xml, To enable Spring
         Security, we must first add this ticketmonster-security-context.xml
         file to the contextConfigLocation, specified as a
-        &lt;context-param&gt; elementin web.xml. </para>
+        &lt;context-param&gt; elementin web.xml.</para>
 
         <para>One level of security is added by enabling Spring Security
         annotations. Using these annotations, we can ensure that certain
@@ -1619,6 +1623,97 @@ insert into User (id, username, password, enabled, firstName, lastName) values (
         ROLE_USER priveleges. As well, instructions to encode passwords can be
         found in the Spring Security tutorial at
         http://static.springsource.org/spring-security/site/tutorial.html.</para>
+      </section>
+
+      <section>
+        <title>Implementing Database Persistence</title>
+
+        <para>To this point, the Ticket Monster application has the
+        functionality to support most of its use cases, such as reserving
+        tickets for multiple shows and finalizing those reservations. However,
+        one disadvantage of the current application structure is that,
+        whenever the application server is shut down, this information is
+        lost, as Ticket Monster uses an in-memory database. A more realistic
+        implementation of the Ticket Monster use cases would use a separate,
+        persistent database, which stores information, such as previously made
+        allocations, even when the application server is not running. The
+        changes required to implement database persistence within Ticket
+        Monster are very simple. First, we must modify our data source
+        definition within
+        ${JBOSS_AS_7_HOME}/standalone/configuration/standalone.xml, it should
+        now be:<informalexample>
+            <programlisting>&lt;datasource jndi-name="java:jboss/datasources/TicketMonsterDS" pool-name="TicketMonsterDS" enabled="true" jta="true" use-java-context="true" use-ccm="true"&gt;
+    &lt;connection-url&gt;
+        jdbc:hsqldb:hsql://localhost/TicketMonsterDS
+    &lt;/connection-url&gt;
+    &lt;driver&gt;
+        hsqldb
+    &lt;/driver&gt;
+    &lt;pool&gt;
+        &lt;prefill&gt;
+            false
+        &lt;/prefill&gt;
+        &lt;use-strict-min&gt;
+            false
+        &lt;/use-strict-min&gt;
+        &lt;flush-strategy&gt;
+            FailingConnectionOnly
+        &lt;/flush-strategy&gt;
+    &lt;/pool&gt;
+    &lt;security&gt;
+        &lt;user-name&gt;
+            sa
+        &lt;/user-name&gt;
+        &lt;password&gt;
+        &lt;/password&gt;
+    &lt;/security&gt;
+    &lt;validation&gt;
+        &lt;validate-on-match&gt;
+            false
+        &lt;/validate-on-match&gt;
+        &lt;background-validation&gt;
+            false
+        &lt;/background-validation&gt;
+        &lt;use-fast-fail&gt;
+            false
+        &lt;/use-fast-fail&gt;
+    &lt;/validation&gt;
+&lt;/datasource&gt;</programlisting>
+          </informalexample></para>
+
+        <para>This edited data source definition creates a data source, called
+        TicketMonsterDS, that is independent of the application server and can
+        be referenced than the application, as opposed to one that is created
+        whenever the application server is started.</para>
+
+        <para>Next, we must modify our persistence.xml file, removing one of
+        the properties of our persistence unit, ticketmonsterPU. Specifically,
+        we remove the property '&lt;property name="hibernate.hbm2ddl.auto"
+        value="create-drop"/&gt;'. This property causes the application server
+        to drop the database schema whenever the SessionFactory is closed
+        explicitly, thus contradicting our objective of a persistent database.
+        To create and initialize our database, we must add a file,
+        create-db.sql, which creates tables for each of Ticket Monster's
+        entities, first dropping those tables if they already exist in the
+        database. Then we add two scripts, server.sh and init-db.sh, the
+        former to start the database and the latter to initialize it. Thus, we
+        now execute './server.sh' to start the database, and './init-db.sh',
+        which executes the SQL files create-db.sql and then import.sql, to
+        initialize it. Once these steps have been performed, we can deploy the
+        application with database persistence, i.e. even if we restart the
+        application server, allocations will be maintained unless we execute
+        the init-db.sh script again. The aforementioned SQL files, including
+        import.sql (moved from src/main/resources), can be found in the 'db'
+        sub-directory of the Ticket Monster project.</para>
+
+        <para>It should be also mentioned that database persistence places
+        some additional requirements on the business logic of the application.
+        Specifically, Ticket Monster must now bootstrap the cache. In other
+        words, whenever a seat block is requested for a given show and row
+        pair, the application must first retrieve all allocations for that row
+        and show and place them in the cache, to avoid overlapping
+        reservations. This is accomplished via the populateCache() method of
+        the AllocationDao interface.</para>
       </section>
     </section>
   </chapter>
