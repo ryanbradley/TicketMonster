@@ -14,13 +14,16 @@ import org.jboss.spring.ticketmonster.domain.SeatBlock;
 import org.jboss.spring.ticketmonster.repo.ShowDao;
 import org.jboss.spring.ticketmonster.service.AllocationManager;
 import org.jboss.spring.ticketmonster.service.ReservationManager;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 "classpath:/META-INF/test-bookingState.xml"})
 @Transactional
 @TransactionConfiguration(defaultRollback=true)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class AllocationManagerTest {
 	
 	@Autowired
@@ -135,5 +139,4 @@ public class AllocationManagerTest {
 		Double total = allocationManager.calculateTotal(categoryRequests);
 		Assert.assertEquals(5332.5, total, 0);
 	}
-	
 }
