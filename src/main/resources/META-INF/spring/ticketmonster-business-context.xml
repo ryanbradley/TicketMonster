@@ -28,15 +28,15 @@
 	
 	<bean id="allocationManager" class="org.jboss.spring.ticketmonster.service.SimpleAllocationManager"/>
 	
-	<bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+	<!-- <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
 		<property name="caches">
 			<set>
 				<bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean" p:name="reservations"/>
 			</set>
 		</property>
-	</bean>
+	</bean> -->
 	
-	<!-- CacheManager and Cache bean declarations -->
+	<!-- CacheManager and Cache bean declarations  -->
 	
 	<bean id="defaultCache" factory-bean="cacheManager" factory-method="getCache">
 		<qualifier value="reservations"/>

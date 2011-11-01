@@ -504,7 +504,11 @@
               <row>
                 <entry>org.springframework:spring-aop - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The Spring AOP library is included with scope compile
+                for the the use of the &lt;aop&gt; namespace in the XML
+                context files. Specifically, it is used for the
+                &lt;aop:aspectj-autoproxy&gt; element, indicating the use of
+                Spring AOP for advice on cross-cutting concerns.</entry>
               </row>
 
               <row>
@@ -516,13 +520,21 @@
               <row>
                 <entry>org.springframework:spring-beans - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>This dependency must be included with scope compile so
+                that we can define Spring beans. For example, we need to
+                declare Spring beans for the repository implementations, in
+                order to inject them into the web controllers.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-context - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-context JAR is included as a dependency with
+                scope compile so that we can use annotations such as
+                @Component to indicate beans without explicitly declaring them
+                in a *context.xml file. Beans for these classes will then be
+                created if we target their package with a
+                &lt;context:component-scan&gt;.</entry>
               </row>
 
               <row>
@@ -566,19 +578,30 @@
               <row>
                 <entry>org.springframework:spring-tx - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-tx JAR is included as scope compile for the
+                use of the &lt;tx&gt; namespace, e.g the
+                &lt;tx:annotation-driven/&gt; element, which enables the use
+                of Spring annotations like @Transactional.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-web - 3.10.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-web JAR is included as scope compile for the
+                use of Spring's web annotations. For example, this dependency
+                is required for the use of annotations like @RequestMapping,
+                which determines the URL mapping of a controller, or a method
+                within that controller.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-webmvc - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>This library is included with scope compile for the use
+                of the &lt;mvc&gt; namespace in the
+                ticketmonster-mvc-context.xml file. For example, the
+                &lt;mvc:annotation-driven/&gt;, indicating that any Spring MVC
+                controller classes will be annotated as @Controller.</entry>
               </row>
 
               <row>
@@ -641,9 +664,13 @@
               </row>
 
               <row>
-                <entry>org.infinispan:infinispan-spring - 5.1.0.BETA1</entry>
+                <entry>org.infinispan:infinispan-spring - 5.1.0.BETA2</entry>
 
-                <entry></entry>
+                <entry>The infinispan-spring library is a dependency, with
+                scope compile, that is necessary for the use of the Infinispan
+                cache container that is provided with JBoss Application Server
+                7. Configuration of this cache implementation can be viewed in
+                src/main/resources/META-INF/spring/applicationContextCache.xml.</entry>
               </row>
             </tbody>
           </tgroup>

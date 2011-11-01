@@ -13,8 +13,14 @@
   		<param-value>classpath:/META-INF/spring/ticketmonster-business-context.xml,
               classpath:/META-INF/spring/infrastructure.xml,
               classpath:/META-INF/spring/bookingState.xml,
-              classpath:/META-INF/spring/ticketmonster-security-context.xml
+              classpath:/META-INF/spring/ticketmonster-security-context.xml,
+              classpath:/META-INF/spring/applicationContextCache.xml
 		</param-value>
+  	</context-param>
+  	
+  	<context-param>
+  		<param-name>spring.profiles.active</param-name>
+  		<param-value>jboss</param-value>
   	</context-param>
   	 	
   	<filter>
@@ -66,4 +72,10 @@
   	<persistence-context-ref-name>persistence/TicketMonster/entityManager</persistence-context-ref-name>
     <persistence-unit-name>ticketmonsterPU</persistence-unit-name>
   </persistence-context-ref>
+  
+  <resource-ref>
+  	<res-ref-name>infinispan/ticketmonster</res-ref-name>
+  	<res-type>org.infinispan.manager.CacheContainer</res-type>
+  	<mapped-name>java:jboss/infinispan/ticketmonster</mapped-name>
+  </resource-ref>
 </web-app>
