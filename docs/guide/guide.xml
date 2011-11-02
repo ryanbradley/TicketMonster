@@ -406,9 +406,15 @@
       deployment, such as the inclusion of a
       /WEB-INF/jboss-deployment-structure.xml file and its contents.</para>
 
-      <para>Below is a list of dependencies (listed by group ID and artifact
-      ID), their versions, and their importance to the Ticket Monster web
-      application, i.e. why they were included with a certain scope:<table>
+      <para>Dependencies are included as one of three scopes: provided,
+      compile, and test. 'Provided' dependencies are those which are included
+      with the application before it is compile, such as dependencies packaged
+      with the application server. 'Compile' dependencies are downloaded and
+      added to the classpath when the application is compiled. Finally, 'test'
+      dependencies are only included in the classpath when the application is
+      running tests. Below is a list of dependencies (listed by group ID and
+      artifact ID), their versions, and their importance to the Ticket Monster
+      web application, i.e. why they were included with a certain scope:<table>
           <title>Overview of Ticket Monster Dependencies</title>
 
           <tgroup cols="2">
@@ -434,25 +440,40 @@
               <row>
                 <entry>cglib:cglib-nodep - 2.2</entry>
 
-                <entry></entry>
+                <entry>The cglib library is included with scope compile to
+                extend Java classes or implement Java interfaces at run-time.
+                This specific jar, cglib-nodep, is the version packaged with
+                no dependencies.</entry>
               </row>
 
               <row>
                 <entry>commons-dbcp:commons-dbcp - 1.2.2</entry>
 
-                <entry></entry>
+                <entry>The commons-dbcp is included in Ticket Monster's
+                pom.xml for testing purposes. To reduce wasted time opening
+                connections for each user, we use the commons-dbcp library to
+                maintain a pool of open database connections.</entry>
               </row>
 
               <row>
                 <entry>commons-logging:commons-logging - 1.1.1</entry>
 
-                <entry>The commons-logging library is included for</entry>
+                <entry>The commons-logging library is included with scope
+                provided for Ticket Monster's logging functionality. This
+                dependency provides the Log and LogFactory classes used by
+                Ticket Monster's advising (logging) classes within the
+                'advice' package. The commons-logging library is provided
+                directly as a dependency via the
+                jboss-deployment-structure.xml file.</entry>
               </row>
 
               <row>
                 <entry>commons-pool:commons-pool - 1.3</entry>
 
-                <entry></entry>
+                <entry>The commons-pool library is included for testing of the
+                Ticket Monster application. This package provides the
+                underlying pool objects that are utilized by the Apache
+                Commons Database Connectivity Pool (commons-dbcp).</entry>
               </row>
 
               <row>
@@ -466,39 +487,58 @@
               <row>
                 <entry>org.aspectj:aspectjweaver - 1.6.11</entry>
 
-                <entry></entry>
+                <entry>The aspectjweaver JAR is a dependency of Spring AOP,
+                hence it is scoped compile. This library provides AspectJ
+                Load-Time Weaving support, to integrate advice into the Ticket
+                Monster run-time.</entry>
               </row>
 
               <row>
                 <entry>org.aspectj:aspectjrt - 1.6.11</entry>
 
-                <entry></entry>
+                <entry>The aspectjrt JAR is a dependency of Spring AOP, thus
+                requiring its scope to be compile as well. The main importance
+                of the aspectjrt library to Ticket Monster is that it provides
+                all AspectJ-related annotations as well as definitions of the
+                JoinPoint class.</entry>
               </row>
 
               <row>
                 <entry>org.hibernate:hibernate-core - 3.3.0.GA</entry>
 
-                <entry></entry>
+                <entry>The hibernate-core library, provided for Ticket Monster
+                by the Java Persistence API, is necessary for persistence
+                implementation, using the Object/Relational Mapping
+                (ORM).</entry>
               </row>
 
               <row>
                 <entry>org.hibernate:hibernate-entitymanager -
                 3.4.0.GA</entry>
 
-                <entry></entry>
+                <entry>The hibernate-entity-manager JAR, provided by the Java
+                Persistence API, gives Ticket Monster a means of managing
+                entities. This library includes implementations of the
+                EntityManager and EntityManagerFactory interfaces, providing
+                the application with an EntityManager object.</entry>
               </row>
 
               <row>
-                <entry>org.jboss.spec.javax.servlet:jboss-servelt-api_3.0_spec
+                <entry>org.jboss.spec.javax.servlet:jboss-servlet-api_3.0_spec
                 - 1.0.0.FINAL</entry>
 
-                <entry></entry>
+                <entry>The jboss-servlet-api package is provided by the JBoss
+                Application Server. It includes classes, such as the
+                HttpServletRequest and HttpServletResponse, which allow us to
+                use Java to communicate with the servlet.</entry>
               </row>
 
               <row>
                 <entry>org.slf4j:slf4j-simple - 1.4.2</entry>
 
-                <entry></entry>
+                <entry>The slf4j-simple library is used for the testing of the
+                Ticket Monster application. This library provides logging
+                support for testing.</entry>
               </row>
 
               <row>
@@ -514,7 +554,9 @@
               <row>
                 <entry>org.springframework:spring-asm - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The Spring ASM library, added at compile time, is an
+                assembler library which is used analyze, modify, and
+                manipulate Java code into binary code at runtime.</entry>
               </row>
 
               <row>
@@ -541,38 +583,56 @@
                 <entry>org.springframework:spring-context-support -
                 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-context-support JAR is necessary as its
+                classes support the functionality of the Spring context
+                namespace.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-core - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>This library contains, as its name suggests, Spring's
+                core utilities which are used by many other Spring libraries.
+                Thus, spring-core is itself a dependency for many of Ticket
+                Monster's dependencies.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-expression -
                 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-expression JAR is necessary for the use of
+                the Spring Expression Language (SpEL), which is used in the
+                Ticket Monster example for XML-based bean definitions.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-jdbc - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>Spring's JDBC support, packaged in the spring-jdbc
+                library, is used in Ticket Monster for two purposes. For one,
+                it can be used for database setup and access if we are not
+                using a persistent database. As well, it is used to configure
+                an embedded database for testing of Ticket Monster.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-orm - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-orm library allows us to integrate Spring
+                with support packages for Object Relational Mappers (ORM),
+                such as the Java Persistence API and Hibernate.</entry>
               </row>
 
               <row>
                 <entry>org.springframework:spring-test - 3.1.0.RC1</entry>
 
-                <entry></entry>
+                <entry>The spring-test library provides Spring's test context
+                framework. For example, it allows us to use the
+                @ContextConfiguration annotation, which can be used to specify
+                the context files for a JUnit test. With this annotation, we
+                can then create our own separate test context, allowing us to
+                test the application more rigorously.</entry>
               </row>
 
               <row>
@@ -608,59 +668,91 @@
                 <entry>org.springframework.security:spring-security-core -
                 3.1.0.RC2</entry>
 
-                <entry></entry>
+                <entry>This JAR provides the core utilities for used by Spring
+                Security's peripheral libraries.</entry>
               </row>
 
               <row>
                 <entry>org.springframework.security:spring-security-config -
                 3.1.0.RC2</entry>
 
-                <entry></entry>
+                <entry>The spring-security-config library is added as scope
+                compile so that the security namespace can be used in the
+                application context; allowing us to properly configure our
+                desired settings for Spring Security.</entry>
               </row>
 
               <row>
-                <entry>org.springframework.security:spring-security-asl -
+                <entry>org.springframework.security:spring-security-acl -
                 3.1.0.RC2</entry>
 
-                <entry></entry>
+                <entry>The spring-security-acl dependency, scoped compile, is
+                necessary for domain object security. Spring Security creates
+                an access control list (ACL) for each domain object in the
+                application, which records what other objects can and cannot
+                do with that object.</entry>
               </row>
 
               <row>
                 <entry>org.springframework.security:spring-security-web -
                 3.1.0.RC2</entry>
 
-                <entry></entry>
+                <entry>The spring-security-web library, brought into Ticket
+                Monster at compile time, contains filters and related
+                web-infrastructure classes. For example, spring-security-web
+                is required as a dependency if we are going to use Spring
+                Security's web authentication services or URL-based access
+                control (i.e. different user permissions for different
+                URLs).</entry>
               </row>
 
               <row>
                 <entry>org.springframework.security:spring-security-taglibs -
                 3.1.0.RC2</entry>
 
-                <entry></entry>
+                <entry>The spring-security-taglibs library, included with
+                scope compile, is included so that security constraints can be
+                applied in JSPs. For example, this allows us to use the
+                &lt;sec&gt; namespace, e.g. the &lt;sec:authorize&gt; tag
+                limiting certain content on a view to users with specified
+                permissions.</entry>
               </row>
 
               <row>
                 <entry>taglibs:standard - 1.1.2</entry>
 
-                <entry></entry>
+                <entry>The Apache Standard Taglibs library (taglibs:standard),
+                scoped compile, is an implementation of the JSP Standard Tag
+                Library. In Ticket Monster, this permits us to use the
+                &lt;c&gt; and &lt;fmt&gt; namespaces within our JSPs.</entry>
               </row>
 
               <row>
                 <entry>org.apache.tiles:tiles-jsp - 2.1.3</entry>
 
-                <entry></entry>
+                <entry>This library is included with scope compile for the use
+                of the &lt;tiles&gt; namespace. For example, in Ticket
+                Monster, this library is used to create the standard.jsp
+                Apache Tiles template, which is the definition for all JSP web
+                views.</entry>
               </row>
 
               <row>
                 <entry>org.codehaus.jackson:jackson-mapper-asl - 1.6.4</entry>
 
-                <entry></entry>
+                <entry>The Jackson mapper-asl dependency is a Spring
+                dependency, so it is scoped compile as well. It is responsible
+                for handling the Java/JSON conversion for Ticket Monster's
+                JSON methods.</entry>
               </row>
 
               <row>
                 <entry>org.codehaus.jackson:jackson-core-asl - 1.6.4</entry>
 
-                <entry></entry>
+                <entry>The Jackson core-asl dependency is a Spring dependency,
+                and is thus brought in to the application at compile time as
+                well. It is responsible for handling the Java/JSON conversion
+                for Ticket Monster's JSON methods.</entry>
               </row>
 
               <row>
@@ -675,6 +767,19 @@
             </tbody>
           </tgroup>
         </table></para>
+
+      <para>Further, to properly deploy the Ticket Monster application on
+      JBoss AS 7, we must manipulate the class-loading. To control
+      class-loading in a finer way, we use a JBoss specific deployment
+      descriptor file jboss-deployment-structure.xml, located in
+      src/main/webapp/WEB-INF. This file can be used to add dependencies,
+      define additional modules, or exclude dependencies which are normally
+      automatically added. In Ticket Monster, this file is only used to add
+      dependencies explicitly. The dependencies added are
+      org.apache.commons.logging, for logging purposes; org.infinispan, for
+      the implementation of an Infinispan cache; and
+      org.jboss.ironjacamar.jdbcadapters, to connect the Java EE platform to
+      the embedded JDBC database.</para>
     </section>
   </chapter>
 
