@@ -19,7 +19,6 @@ public class User implements Serializable
    private static final long serialVersionUID = -4501716573185869164L;
    
    private Long id;
-// private IdentityObject identity;
    private String username;
    private String firstName;
    private String lastName;
@@ -79,18 +78,5 @@ public class User implements Serializable
    @PreAuthorize("hasRole('ROLE_ADMIN')")
    public void setPassword(String password) {
 	   this.password = password;
-   }   
-
-	/*
-	@OneToOne
-	public IdentityObject getIdentity()
-	{
-   		return identity;
-	}
-
-	public void setIdentity(IdentityObject identity)
-	{
-   		this.identity = identity;
-	}
-*/
+   }
 }

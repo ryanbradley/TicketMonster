@@ -113,7 +113,7 @@
         </listitem>
 
         <listitem>
-          <para>JBoss Application Server 7.0.0.Final or later</para>
+          <para>JBoss Application Server 7.0.2.Final or later</para>
         </listitem>
 
         <listitem>
@@ -1002,24 +1002,124 @@
     <section>
       <title>Domain Model</title>
 
-      <para>The package org.jboss.spring.ticketmonster.domain does not include
-      any classes which interact directly with Spring. However, the domain
-      package is important as it contains definitions for the application's
-      entities.</para>
+      <para>This section includes a description of the entities used by Ticket
+      Monster, specifically focusing on how they are interconnected,
+      illustrated by flow charts. It will not go into great depth describing
+      each individual field, as many of these fields are primitives whose
+      purpose can be ascertained from a quick analysis of the class definition
+      or use. As well, this section will provide a brief overview of the
+      session-scoped BookingState object.</para>
 
-      <figure>
-        <title>Ticket Monster Entities</title>
+      <section>
+        <title>Entities</title>
 
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="???" />
-          </imageobject>
-        </mediaobject>
-      </figure>
+        <para>The package org.jboss.spring.ticketmonster.domain does not
+        include any classes which interact directly with Spring. However, the
+        domain package is important as it contains definitions for the
+        application's entities. The entities of the Ticket Monster application
+        can be divided into three categories: show entities, allocation
+        entities, and document entities. Below are three entity diagrams,
+        showing the entities of each group and how they are connected. Note
+        that arrows lead from one entity to a field of that entity, i.e. there
+        is an arrow pointing from the VenueLayout entity to the Venue entity
+        becuase VenueLayout has a Venue field in its definition. Further, the
+        numbers beside each arrow connecting entities indicates the
+        multiplicity of the connection. For example, the connection between
+        VenueLayout and Venue is (1..n):1 as there can be many different
+        VenueLayout objects for the same Venue. On the other hand, Show and
+        VenueLayout have a 1:1 connection as there can only be one distinct
+        VenueLayout for a given Show object.</para>
 
-      <para>A more detailed description of many of the entities is not
-      provided, as the only other members which they have are
-      primitives.</para>
+        <para>For administrator use cases, show entities are of utmost
+        importance. As the name would suggest, these entities revolve around
+        Show objects, i.e. instances of a given Event at a specific Venue on a
+        certain Date. A Show object has a field for the Event it is an
+        instance of, the Venue it is being held at, the date, and the layout
+        of the venue for that Show (a VenueLayout object). The entity diagram
+        for Ticket Monster's show-related entities is given below:</para>
+
+        <figure>
+          <title>Ticket Monster Show Entity Diagram</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Images/ShowEntities.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>The allocation entities are more aligned with Ticket Monster's
+        user use cases. These entities deal with seats that have been
+        purchased by users (Allocation objects) and how those seats fit into
+        the purchases for a given Show. An Allocation object is created when a
+        User purchases seats that they have previously reserved. This
+        Allocation object holds the following information: the User who made
+        it, the Show it belongs to, the SectionRow where the purchased seats
+        are located, the quantity, the first seat, and the last seat. From the
+        Allocation's SectionRow field, we can retrieve the Section that the
+        seat is in, and, through that, the price and the VenueLayout. Thus,
+        from a User's Allocation objects we can determine what Shows they have
+        purchased tickets to, where their seats are at each Show, and the
+        total price of their purchase.</para>
+
+        <figure>
+          <title>Ticket Monster Allocation Entity Diagram</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Images/AllocationEntities.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+
+        <para>To provide descriptions for Event and Venue objects, Ticket
+        Monster stores these Strings in a distinct entity called a Document. A
+        Document object's content is the Revision field which holds the
+        current content of the Document. Thus, to change the description of an
+        Event or Venue, one can simply create a new Revision object with the
+        desired description and set this as the active field for the Event or
+        Venue's description (a Document object). This simple entity
+        relationship is shown in the diagram below. Note that the relationship
+        between Document and Revision is described as one-to-many in this
+        diagram. In the Document class definition, this relationship is
+        annotated as @OneToOne; however, this annotation is simply used for
+        the purpose of matching the Document to the active Revision. The
+        logical relationship is still one-to-many, as there can be many
+        Revisions which map to the same Document object.</para>
+
+        <figure>
+          <title>Ticket Monster Document Entity Diagram</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="Images/DocumentEntities.png" />
+            </imageobject>
+          </mediaobject>
+        </figure>
+      </section>
+
+      <section>
+        <title>BookingState and Session-Scoped Objects</title>
+
+        <para>For this application's use cases, we require that Users are able
+        to update reservations made during the current session (provided that
+        the reservation has not been finalized yet) as well as make
+        reservations for many different shows while still maintaining a record
+        of all allocations made and the total price of said allocations. To
+        accomplish this, we create a BookingState class in Ticket Monster's
+        domain package and declare a session-scoped BookingState bean. In
+        other words, a BookingState object will be created whenever a User
+        logs in to the application, and that BookingState object will be
+        associated with that User. As well, we use the Spring AOP namespace
+        and mark the bean as &lt;aop:scoped-proxy&gt;, meaning that we can
+        inject this object in multiple locations in the business logic and be
+        confident that the same instance will be included in each case. The
+        bean definition for the BookingState object can be found in
+        src/main/resources/META-INF/spring/bookingState.xml.</para>
+
+        <para>This BookingState object is then used to maintain a list of the
+        reservations and Allocations made </para>
+      </section>
     </section>
 
     <section>
