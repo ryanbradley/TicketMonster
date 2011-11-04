@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<preface id="preface-Ticket_Monster">
+	<title>Preface</title>
+	<!-- Conventions -->
+	<xi:include href="Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude">
+		<xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">
+			<xi:include href="Conventions.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+		</xi:fallback>
+	</xi:include>
+
+	<!-- Feedback -->
+	<xi:include href="Feedback.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+</preface>

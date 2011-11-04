@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
+<!ENTITY % BOOK_ENTITIES SYSTEM "guide.ent">
+%BOOK_ENTITIES;
+]>
+
+<bookinfo id="book-guide-guide">
+
+    <title>Snowdrop Ticket Monster Example Application</title>
+    <subtitle>Integrating Spring with the JBoss Enterprise Application Platforms</subtitle>
+    <productname>JBoss Web Framework Kit</productname>
+    <productnumber>2.0</productnumber>
+    <edition>1.0</edition>
+    <pubsnumber>0</pubsnumber>
+    
+    <abstract>
+      <para>This book provides a walkthrough for the Snowdrop Ticket Monster
+      example application. It illustrates several use cases of the JBoss
+      Enterprise Application Platform with the Spring Framework.</para>
+    </abstract>
+
+	<corpauthor>
+		<inlinemediaobject>
+			<imageobject>
+				<imagedata fileref="Images/jbosscorp_logo.png" format="PNG"/>
+			</imageobject>
+		</inlinemediaobject>
+	</corpauthor>
+
+	<!-- Legal Notice -->
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Legal_Notice.xml">
+    	<xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">
+        	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Legal_Notice.xml"/>
+    	</xi:fallback>
+  	</xi:include>
+	
+	<!-- Author Group -->
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Author_Group.xml"/>
+
+    <pubdate>October 7, 2011</pubdate>
+  </bookinfo>
