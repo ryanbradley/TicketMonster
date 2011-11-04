@@ -1114,11 +1114,35 @@
         and mark the bean as &lt;aop:scoped-proxy&gt;, meaning that we can
         inject this object in multiple locations in the business logic and be
         confident that the same instance will be included in each case. The
-        bean definition for the BookingState object can be found in
-        src/main/resources/META-INF/spring/bookingState.xml.</para>
+        bean definition for the BookingState object, located in
+        src/main/resources/META-INF/spring/bookingState.xml, is provided
+        below:<informalexample>
+            <programlisting>&lt;bean id="bookingState" class="org.jboss.spring.ticketmonster.domain.BookingState" scope="session"&gt;
+    &lt;!-- This next element affects the proxying of the surrounding bean. --&gt;
+    &lt;aop:scoped-proxy/&gt;
+&lt;/bean&gt;</programlisting>
+          </informalexample></para>
 
         <para>This BookingState object is then used to maintain a list of the
-        reservations and Allocations made </para>
+        reservations and Allocations made by the User in the current session,
+        adding a reservation to the list of reserved seat blocks when it is
+        made, and creating and adding a new Allocation object to the list of
+        Allocations when it is finalized. With this list of the User's
+        reserved seat blocks, when a new reservation is made, we check if a
+        reservation with the same key (show ID and row ID pair) that can be
+        updated. Otherwise, we create a new reservation. This BookingState
+        object can then be used to calculate total price and display the
+        purchased seats when a User logs out.</para>
+
+        <para>A final important note about the BookingState class is that we
+        must return it to its original state before it is destroyed. For
+        example, we would not want reservations that were made, but not
+        finalized, to stay in the cache after the User logged out. To do this,
+        we use the @PreDestroy annotation. Using @PreDestroy to annotate a
+        method, cleanup(), which reverses reservations that were not finalized
+        and clears many of the BookingState object's fields, we ensure that
+        this method is called before the BookingState bean is garbage
+        collected. </para>
       </section>
     </section>
 
