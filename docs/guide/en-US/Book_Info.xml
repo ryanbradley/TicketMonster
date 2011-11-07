@@ -28,11 +28,7 @@
 	</corpauthor>
 
 	<!-- Legal Notice -->
-	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Common_Content/Legal_Notice.xml">
-    	<xi:fallback xmlns:xi="http://www.w3.org/2001/XInclude">
-        	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Legal_Notice.xml"/>
-    	</xi:fallback>
-  	</xi:include>
+	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Legal_Notice.xml"/>
 	
 	<!-- Author Group -->
 	<xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Author_Group.xml"/>
